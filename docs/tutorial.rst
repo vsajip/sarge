@@ -8,8 +8,7 @@ This is the place to start your practical exploration of ``sarge``.
 Installation and testing
 ------------------------
 
-sarge is a pure-Python library. You should be able to install it (when 
-available on PyPI, **which is not yet**) using::
+sarge is a pure-Python library. You should be able to install it using::
 
     pip install sarge
 

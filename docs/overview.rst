@@ -185,17 +185,14 @@ all versions are tested on all platforms, but are expected to work correctly).
 Project status
 --------------
 
-The project is currently in the early stages of development, and has not yet
-reached an alpha release. This documentation is being released early in
-order to get feedback on the functionality and the API.
+The project has reached alpha status in its development: there is a test
+suite and it has been exercised on Windows, Ubuntu and Mac OS X. However,
+because of the timing sensitivity of the functionality, testing needs to be
+performed on as wide a range of hardware and platforms as possible.
 
-You can leave such feedback by raising a new issue on the `documentation
-project's issue
-tracker <https://bitbucket.org/vinay.sajip/docs-sarge/issues/new>`_
+You can leave feedback by raising a new issue on the `issue
+tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_
 (BitBucket registration not necessary, but recommended).
-
-There is a full unit test suite for ``sarge`` -- though the project has not
-yet been released, test coverage is comfortably over 90% for ``sarge``.
 
 .. note:: For testing under Windows, you need to install the `GnuWin32
    coreutils <http://gnuwin32.sourceforge.net/packages/coreutils.htm>`_

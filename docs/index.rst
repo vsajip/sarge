@@ -12,8 +12,7 @@ Welcome to the documentation for ``sarge``, a wrapper for :mod:`subprocess`
 which aims to make life easier for anyone who needs to interact with external
 applications from their Python code.
 
-**Please note:** this documentation is *work in progress* and in *pre-release*
-status.
+**Please note:** this documentation is *work in progress*.
 
 .. toctree::
    :maxdepth: 3
