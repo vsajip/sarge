@@ -393,6 +393,19 @@ assumed that anything you pass in ``env`` is *added* to the contents of
 in a Posix shell, the environment is generally inherited with certain
 additions for a specific command invocation.
 
+Working directory and other options
+-----------------------------------
+
+You can set the working directory for a :class:`Command` or :class:`Pipeline`
+using the ``cwd`` keyword argument to the constructor, which is passed through
+to the subprocess when it's created. Likewise, you can use the other keyword
+arguments which are accepted by the :class:`subprocess.Popen` constructor.
+
+Avoid using the ``stdin`` keyword argument -- instead, use the ``input`` keyword
+argument to the :meth:`Command.run` and :meth:`Pipeline.run` methods, or the
+:func:`run`, :func:`capture_stdout`, :func:`capture_stderr`, and
+:func:`capture_both` functions.
+
 Unicode and bytes
 -----------------
 
