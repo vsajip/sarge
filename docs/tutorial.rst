@@ -478,6 +478,33 @@ and now, in the other terminal, look for defunct processes again::
 
 No zombies found :-)
 
+About threading and forking
+---------------------------
+
+If you run commands asynchronously (e.g. using ``&``), then a thread is spawned
+to run each such command asynchronously. Remember that thread scheduling
+behaviour can be unexpected -- things may not always run in the order you
+expect. For example, the command line::
+
+    echo foo & echo bar & echo baz
+
+should run all of the ``echo`` commands concurrently as far as possible,
+but you can't be sure of the exact sequence in which these commands complete --
+it may vary from machine to machine and even from one run to the next. This has
+nothing to do with ``sarge`` - there are no guarantees with just plain Bash,
+either.
+
+On Posix, :mod:`subprocess` uses :func:`os.fork` to create the child process,
+and you may see dire warnings about mixing threads and processes. It *is* a
+heady mix, to be sure: you need to understand what's going on in order to avoid
+nasty surprises. If you run into any such, it may be hard to get help because
+others can't reproduce the problems. However, that's no reason to shy away from
+providing the functionality altogether.
+
+Please report any problems you find in this area either via the
+`mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
+tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
+
 Next steps
 ----------
 
