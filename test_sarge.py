@@ -136,7 +136,7 @@ class SargeTest(unittest.TestCase):
         self.ensure_testfile()
         with open('testfile.txt', 'rb') as f:
             content = f.read().splitlines(True)
-        with Capture() as out:
+        with Capture(timeout=1) as out:
             p = run('cat testfile.txt testfile.txt', stdout=out,
                     async=True)
             # Do some other work in parallel, including reading from the
