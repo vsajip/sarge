@@ -206,6 +206,16 @@ tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_
    you run the test harness (``test_sarge.py``).
 
 
+API stability
+-------------
+
+Although every attempt will be made to keep API changes to the absolute minimum,
+it should be borne in mind that the software is in its very early stages. For
+example, the asynchronous feature (where commands are run in separate threads
+when you specify ``&`` in a command pipeline) can be considered experimental,
+and there may be changes in this area. However, you aren't forced to use this
+feature, and ``sarge`` should be useful without it.
+
 Next steps
 ----------
 

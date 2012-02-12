@@ -481,10 +481,10 @@ No zombies found :-)
 About threading and forking
 ---------------------------
 
-If you run commands asynchronously (e.g. using ``&``), then a thread is spawned
-to run each such command asynchronously. Remember that thread scheduling
-behaviour can be unexpected -- things may not always run in the order you
-expect. For example, the command line::
+If you run commands asynchronously by using ``&`` in a command pipeline, then a
+thread is spawned to run each such command asynchronously. Remember that thread
+scheduling behaviour can be unexpected -- things may not always run in the order
+you expect. For example, the command line::
 
     echo foo & echo bar & echo baz
 
@@ -495,13 +495,17 @@ nothing to do with ``sarge`` - there are no guarantees with just plain Bash,
 either.
 
 On Posix, :mod:`subprocess` uses :func:`os.fork` to create the child process,
-and you may see dire warnings about mixing threads and processes. It *is* a
-heady mix, to be sure: you need to understand what's going on in order to avoid
-nasty surprises. If you run into any such, it may be hard to get help because
-others can't reproduce the problems. However, that's no reason to shy away from
-providing the functionality altogether.
+and you may see dire warnings on the Internet about mixing threads, processes
+and ``fork()``. It *is* a heady mix, to be sure: you need to understand what's
+going on in order to avoid nasty surprises. If you run into any such, it may be
+hard to get help because others can't reproduce the problems. However, that's no
+reason to shy away from providing the functionality altogether.
 
-Please report any problems you find in this area either via the
+For an exposition of the sort of things which might bite you if you are using
+locks, threading and ``fork()``, see
+`this post <http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
+
+Please report any problems you find in this area (or any other) either via the
 `mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
 tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
 
