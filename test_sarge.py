@@ -5,10 +5,7 @@
 # Test harness for sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
 
-# We don't use Unicode literals under 2.x because shlex on 2.x expects
-# native strings and barfs if handed Unicode :-(
-#
-#from __future__ import unicode_literals
+from __future__ import unicode_literals
 
 from io import TextIOWrapper
 import logging

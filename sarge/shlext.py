@@ -5,7 +5,19 @@
 # Enhancements in shlex to tokenize closer to the way real shells do
 #
 from collections import deque
+from io import StringIO
 import shlex
+import sys
+
+# We need to behave differently on 2,x and 3,x, because on 2.x
+# shlex barfs on Unicode, and must be given str.
+
+if sys.version_info[0] < 3:
+    PY3 = False
+    text_type = unicode
+else:
+    PY3 = True
+    text_type = str
 
 class shell_shlex(shlex.shlex):
     def __init__(self, instream=None, **kwargs):
@@ -15,6 +27,9 @@ class shell_shlex(shlex.shlex):
             control = kwargs.pop('control')
             if control is True:
                 control = '();<>|&'
+        # shlex on 2.x doesn't like being passed Unicode :-(
+        if not PY3 and isinstance(instream, text_type):
+            instream = instream.encode('utf-8')
         shlex.shlex.__init__(self, instream, **kwargs)
         self.control = control
         self.wordchars += '-./*?=' # these chars because allowed in file names
