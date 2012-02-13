@@ -36,7 +36,8 @@ In the simplest cases, sarge doesn't provide any major advantage over
 
 The ``echo`` command got run, as expected, and printed its output on the
 console. In addition, a ``Pipeline`` object got returned. Don't worry too much
-about what this is for now - it's more useful when more complex combinations of
+about what this is for now -- it's more useful when more complex combinations
+ of
 commands are run.
 
 By comparison, the analogous case with ``subprocess`` would be::
@@ -79,7 +80,7 @@ whereas this would have been more involved if you were just using
     0
 
 You get two return codes, one for each command. The same information is
-available from ``sarge``, in one place - the :class:`Pipeline` instance that's
+available from ``sarge``, in one place -- the :class:`Pipeline` instance that's
 returned from a :func:`run` call::
 
     >>> run('echo "Hello,"; echo "world!"').returncodes
@@ -243,7 +244,8 @@ keyword parameters.
 
 As in the above example, you can use the ``bytes`` or ``text`` property of a
 :class:`Capture` instance to read all the bytes or text captured. The latter
-just decodes the former using the default encoding.
+just decodes the former using UTF-8 (the default encoding isn't used,
+because on Python 2.x, the default encoding isn't UTF-8 -- it's ASCII).
 
 There are some convenience functions -- :func:`capture_stdout`,
 :func:`capture_stderr` and :func:`capture_both` -- which work just like
@@ -251,16 +253,18 @@ There are some convenience functions -- :func:`capture_stdout`,
 which can be accessed using the appropriate attribute on the
 :class:`Pipeline` instance returned from the functions.
 
-There are more convenience functions, :func:`get_stdout` and :func:`get_stderr`,
-which work just like :func:`capture_stdout` and :func:`capture_stderr`
-respectively, but return the captured text. For example::
+There are more convenience functions, :func:`get_stdout`, :func:`get_stderr`
+and :func:`get_both`, which work just like :func:`capture_stdout`,
+:func:`capture_stderr` and :func:`capture_both` respectively, but return the
+captured text. For example::
 
     >>> from sarge import get_stdout
     >>> get_stdout('echo foo; echo bar')
     u'foo\nbar\n'
 
 .. versionadded:: 0.1.1
-   The :func:`get_stdout` and :func:`get_stderr` functions were added.
+   The :func:`get_stdout`, :func:`get_stderr` and :func:`get_both` functions
+   were added.
 
 
 A :class:`Capture` instance can capture output from one or
@@ -401,7 +405,7 @@ supplied, is expected to be the *complete* environment passed to the child
 process. This can lead to problems on Windows, where if you don't pass the
 ``SYSTEMROOT`` environment variable, things can break. With ``sarge``, it's
 assumed that anything you pass in ``env`` is *added* to the contents of
-``os.environ``. This is almost always what you want - after all,
+``os.environ``. This is almost always what you want -- after all,
 in a Posix shell, the environment is generally inherited with certain
 additions for a specific command invocation.
 
@@ -423,7 +427,8 @@ Unicode and bytes
 
 All data between your process and sub-processes is communicated as bytes. Any
 text passed as input to :func:`run` or a :meth:`~Pipeline.run` method will be
-converted to bytes using the default encoding (usually UTF-8).
+converted to bytes using UTF-8 (the default encoding isn't used, because on
+Python 2.x, the default encoding isn't UTF-8 -- it's ASCII).
 
 As ``sarge`` requires Python 2.6 or later, you can use ``from __future__
 import unicode_literals`` and byte literals like ``b'foo'`` so that your code
@@ -503,7 +508,7 @@ you expect. For example, the command line::
 should run all of the ``echo`` commands concurrently as far as possible,
 but you can't be sure of the exact sequence in which these commands complete --
 it may vary from machine to machine and even from one run to the next. This has
-nothing to do with ``sarge`` - there are no guarantees with just plain Bash,
+nothing to do with ``sarge`` -- there are no guarantees with just plain Bash,
 either.
 
 On Posix, :mod:`subprocess` uses :func:`os.fork` to create the child process,

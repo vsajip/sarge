@@ -17,7 +17,8 @@ import unittest
 
 from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
                    shell_format, run, parse_command_line, capture_stdout,
-                   get_stdout, capture_stderr, get_stderr, capture_both, Popen)
+                   get_stdout, capture_stderr, get_stderr, capture_both,
+                   get_both, Popen)
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
@@ -446,6 +447,11 @@ class SargeTest(unittest.TestCase):
         self.ensure_emitter()
         s = get_stderr('"%s" emitter.py > %s' % (sys.executable, os.devnull))
         self.assertEqual(s.strip(), 'bar')
+
+    def test_get_both(self):
+        self.ensure_emitter()
+        t = get_both('"%s" emitter.py' % sys.executable)
+        self.assertEqual([s.strip() for s in t], ['foo', 'bar'])
 
     def test_capture_both(self):
         self.ensure_emitter()

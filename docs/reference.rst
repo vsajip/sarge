@@ -99,6 +99,21 @@ Functions
    :param kwargs: As for :func:`run`.
    :return: As for :func:`run`.
 
+.. function:: get_both(command, input=None, async=False, **kwargs)
+
+   This function is a convenience wrapper which does the same as
+   :func:`capture_both` but also returns the text captured. Use this when
+   you know the output is not voluminous, so it doesn't matter that it's
+   buffered in memory.
+
+   :param command: As for :func:`run`.
+   :param input: As for :func:`run`.
+   :param kwargs: As for :func:`run`.
+   :return: The captured text as a 2-element tuple, with the ``stdout`` text
+            in the first element and the ``stderr`` text in the second.
+
+   .. versionadded:: 0.1.1
+
 
 .. function:: shell_quote(s)
 
@@ -160,7 +175,7 @@ Classes
                     file-like object are written to the ``stdin``
                     stream of the sub-process.
       :type input:  Text, bytes or a file-like object containing bytes.
-      :param async: If ``True``, the command is run asynchronously - that is
+      :param async: If ``True``, the command is run asynchronously -- that is
                     to say, :meth:`wait` is not called on the underlying
                     :class:`~subprocess.Popen` instance.
       :type async: bool
@@ -193,7 +208,7 @@ Classes
       :param input: The same as for the :meth:`Command.run` method.
       :param async: The same as for the :meth:`Command.run` method. Note that
                     parts of the pipeline may specify synchronous or
-                    asynchronous running - this flag refers to the pipeline
+                    asynchronous running -- this flag refers to the pipeline
                     as a whole.
 
    .. method:: wait()
@@ -271,7 +286,7 @@ Classes
    standard library version allows you to specify ``stderr=STDOUT`` to
    indicate that the standard error stream of the sub-process be the same as
    its standard output stream. However. there's no facility in the standard
-   library to do ``stdout=STDERR`` - but it *is* provided in this subclass.
+   library to do ``stdout=STDERR`` -- but it *is* provided in this subclass.
 
    In fact, the two streams can be swapped by doing ``stdout=STDERR,
    stderr=STDOUT`` in a call. The ``STDERR`` value is defined in ``sarge``
@@ -309,7 +324,7 @@ i.e. a return code other than 0. Of course, in practice all of ``a``, ``b``,
 ``c`` and ``d`` could have arguments, not shown above for simplicity's sake.
 
 Each operand on either side of ``&&`` or ``||`` could also consist of a
-pipeline - a set of commands connected such that the output streams of one
+pipeline -- a set of commands connected such that the output streams of one
 feed into the input stream of another. For example::
 
     echo foo | cat

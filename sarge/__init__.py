@@ -1201,6 +1201,16 @@ def get_stderr(cmd, **kwargs):
     p = capture_stderr(cmd, **kwargs)
     return p.stderr.text
 
+def get_both(cmd, **kwargs):
+    """
+    This is the same as :func:`capture_both`, but it returns the captured
+    text from the two streams as a 2-element tuple, with the ``stdout`` text as
+    the first element and the ``stderr`` text as the second. Use this when you
+    know the output will not be voluminous - it will be buffered in memory.
+    """
+    p = capture_both(cmd, **kwargs)
+    return p.stdout.text, p.stderr.text
+
 
 def parse_command_line(source, posix=True):
     """

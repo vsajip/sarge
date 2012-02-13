@@ -27,7 +27,7 @@ Blocking and timeouts
 Each of the :meth:`~Capture.read`, :meth:`~Capture.readline` and
 :meth:`~Capture.readlines` methods has optional ``block`` and ``timeout``
 keyword arguments. These default to ``True`` and ``None`` respectively,
-which means block indefinitely until there's some data - the standard
+which means block indefinitely until there's some data -- the standard
 behaviour for file-like objects. However, these can be overridden internally
 in a couple of ways:
 
@@ -85,7 +85,7 @@ which can be useful in some cases.
 
 This functionality works through a class :class:`sarge.Popen` which subclasses
 :class:`subprocess.Popen` and overrides the internal ``_get_handles`` method to
-work the necessary magic - which is to duplicate, close and swap handles as
+work the necessary magic -- which is to duplicate, close and swap handles as
 needed.
 
 How shell quoting works
@@ -157,7 +157,7 @@ Future changes
 At the moment, if a :class:`Capture` is used, it will read from its sub-process
 output streams into a queue, which can then be read by your code. If you don't
 read from the :class:`Capture` in a timely fashion, a lot of data could
-potentially be buffered in memory - the same thing that happens when you use
+potentially be buffered in memory -- the same thing that happens when you use
 :meth:`subprocess.Popen.communicate`. There might be added some means of
 "turning the tap off", i.e. pausing the reader threads so that the capturing
 threads stop reading from the sub-process streams. This will, of course, cause
