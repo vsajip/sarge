@@ -251,7 +251,19 @@ There are some convenience functions -- :func:`capture_stdout`,
 which can be accessed using the appropriate attribute on the
 :class:`Pipeline` instance returned from the functions.
 
-Under the hood, a :class:`Capture` instance can capture output from one or
+There are more convenience functions, :func:`get_stdout` and :func:`get_stderr`,
+which work just like :func:`capture_stdout` and :func:`capture_stderr`
+respectively, but return the captured text. For example::
+
+    >>> from sarge import get_stdout
+    >>> get_stdout('echo foo; echo bar')
+    u'foo\nbar\n'
+
+.. versionadded:: 0.1.1
+   The :func:`get_stdout` and :func:`get_stderr` functions were added.
+
+
+A :class:`Capture` instance can capture output from one or
 more sub-process streams, and will create a thread for each such stream so
 that it can read all sub-process output without causing the sub-processes to
 block on their output I/O. However, if you use a :class:`Capture`,
@@ -504,6 +516,11 @@ reason to shy away from providing the functionality altogether.
 For an exposition of the sort of things which might bite you if you are using
 locks, threading and ``fork()``, see
 `this post <http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
+
+Other resources on this topic:
+
+* https://www.lsgalilei.org/glibc-doc/Threads-and-Fork.html#Threads-and-Fork
+* http://bugs.python.org/issue6721
 
 Please report any problems you find in this area (or any other) either via the
 `mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
