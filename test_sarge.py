@@ -5,6 +5,11 @@
 # Test harness for sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
 
+# We don't use Unicode literals under 2.x because shlex on 2.x expects
+# native strings and barfs if handed Unicode :-(
+#
+#from __future__ import unicode_literals
+
 from io import TextIOWrapper
 import logging
 import os
@@ -15,7 +20,7 @@ import unittest
 
 from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
                    shell_format, run, parse_command_line, capture_stdout,
-                   capture_stderr, capture_both, Popen)
+                   get_stdout, capture_stderr, get_stderr, capture_both, Popen)
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
@@ -430,11 +435,20 @@ class SargeTest(unittest.TestCase):
         p = capture_stdout('echo foo')
         self.assertEqual(p.stdout.text.strip(), 'foo')
 
+    def test_get_stdout(self):
+        s = get_stdout('echo foo; echo bar')
+        self.assertEqual(s, 'foo\nbar\n')
+
     def test_capture_stderr(self):
         self.ensure_emitter()
         p = capture_stderr('"%s" emitter.py > %s' % (sys.executable,
                                                      os.devnull))
         self.assertEqual(p.stderr.text.strip(), 'bar')
+
+    def test_get_stderr(self):
+        self.ensure_emitter()
+        s = get_stderr('"%s" emitter.py > %s' % (sys.executable, os.devnull))
+        self.assertEqual(s.strip(), 'bar')
 
     def test_capture_both(self):
         self.ensure_emitter()

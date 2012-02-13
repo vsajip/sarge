@@ -25,7 +25,7 @@ __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'shell_formatter', 'shell_format', 'run', 'parse_command_line',
            'capture_stdout', 'capture_stderr', 'capture_both')
 
-__version__ = '0.2dev'
+__version__ = '0.1.1dev'
 
 logger = logging.getLogger(__name__)
 
@@ -1182,6 +1182,25 @@ def capture_both(cmd, **kwargs):
     kwargs['stdout'] = Capture()
     kwargs['stderr'] = Capture()
     return run(cmd, **kwargs)
+
+def get_stdout(cmd, **kwargs):
+    """
+    This is the same as :func:`capture_stdout`, but it returns the captured
+    text. Use this when you know the output will not be voluminous - it will
+    be buffered in memory.
+    """
+    p = capture_stdout(cmd, **kwargs)
+    return p.stdout.text
+
+def get_stderr(cmd, **kwargs):
+    """
+    This is the same as :func:`capture_stderr`, but it returns the captured
+    text. Use this when you know the output will not be voluminous - it will
+    be buffered in memory.
+    """
+    p = capture_stderr(cmd, **kwargs)
+    return p.stderr.text
+
 
 def parse_command_line(source, posix=True):
     """

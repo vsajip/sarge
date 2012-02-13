@@ -47,6 +47,20 @@ Functions
    :param kwargs: As for :func:`run`.
    :return: As for :func:`run`.
 
+.. function:: get_stdout(command, input=None, async=False, **kwargs)
+
+   This function is a convenience wrapper which does the same as
+   :func:`capture_stdout` but also returns the text captured. Use this when
+   you know the output is not voluminous, so it doesn't matter that it's
+   buffered in memory.
+
+   :param command: As for :func:`run`.
+   :param input: As for :func:`run`.
+   :param kwargs: As for :func:`run`.
+   :return: The captured text.
+
+   .. versionadded:: 0.1.1
+
 .. function:: capture_stderr(command, input=None, async=False, **kwargs)
 
    This function is a convenience wrapper which does the same as :func:`run`
@@ -58,6 +72,20 @@ Functions
    :param input: As for :func:`run`.
    :param kwargs: As for :func:`run`.
    :return: As for :func:`run`.
+
+.. function:: get_stderr(command, input=None, async=False, **kwargs)
+
+   This function is a convenience wrapper which does the same as
+   :func:`capture_stderr` but also returns the text captured. Use this when
+   you know the output is not voluminous, so it doesn't matter that it's
+   buffered in memory.
+
+   :param command: As for :func:`run`.
+   :param input: As for :func:`run`.
+   :param kwargs: As for :func:`run`.
+   :return: The captured text.
+
+   .. versionadded:: 0.1.1
 
 .. function:: capture_both(command, input=None, async=False, **kwargs)
 
