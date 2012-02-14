@@ -397,6 +397,8 @@ problems, you may or may not have luck (on Posix, at least) using the
 it). This invokes a program directing its output to a pseudo-tty device which
 gives line buffering behaviour. This doesn't always work, though :-(
 
+.. _environments:
+
 Environments
 ------------
 
@@ -445,7 +447,8 @@ Python 2.x, the default encoding isn't UTF-8 -- it's ASCII).
 
 As ``sarge`` requires Python 2.6 or later, you can use ``from __future__
 import unicode_literals`` and byte literals like ``b'foo'`` so that your code
-looks and behaves the same under Python 2.x and Python 3.x.
+looks and behaves the same under Python 2.x and Python 3.x. (See the note on
+using native string keys and values in :ref:`environments`.)
 
 As mentioned above, :class:`Capture` instances return bytes, but you can wrap
 with :class:`io.TextIOWrapper` if you want text.
@@ -551,4 +554,4 @@ Next steps
 ----------
 
 You might find it helpful to look at information about how ``sarge`` works
-internally -- :ref:`internals` -- or the :ref:`reference`.
+internally -- :ref:`internals` -- or peruse the :ref:`reference`.

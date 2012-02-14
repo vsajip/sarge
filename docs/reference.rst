@@ -29,7 +29,10 @@ Functions
    :param input: Input data to be passed to the command(s). If text is passed,
                  it's converted to ``bytes`` using the default encoding. The
                  bytes are converted to a file-like object (a
-                 :class:`BytesIO` instance).
+                 :class:`BytesIO` instance). If a value such as a file-like
+                 object, integer file descriptor or special value like
+                 ``subprocess.PIPE`` is passed, it is passed through
+                 unchanged to :class:`subprocess.Popen`.
    :type input: Text, bytes or a file-like object containing bytes (not text).
    :param kwargs: Any keyword parameters which you might want to pass to the
                    wrapped :class:`Pipeline` instance.
