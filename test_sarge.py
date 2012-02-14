@@ -444,7 +444,7 @@ class SargeTest(unittest.TestCase):
 
     def test_get_stdout(self):
         s = get_stdout('echo foo; echo bar')
-        self.assertEqual(s, 'foo\nbar\n')
+        self.assertEqual(s.split(), ['foo', 'bar'])
 
     def test_capture_stderr(self):
         self.ensure_emitter()
