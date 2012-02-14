@@ -165,6 +165,15 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(dk, ek)
         self.assertEqual(d['FOO'], 'BAR')
 
+    def test_env_usage(self):
+        if os.name == 'nt':
+            cmd = 'echo %FOO%'
+        else:
+            cmd = 'echo $FOO'
+        c = Command(cmd, env={'FOO': 'BAR'}, stdout=Capture(), shell=True)
+        c.run()
+        self.assertEqual(c.stdout.text.strip(), 'BAR')
+
     def test_shlex(self):
         TESTS = (
             ('',
