@@ -495,8 +495,8 @@ and now, in the other terminal, look for defunct processes again::
 
 No zombies found :-)
 
-About threading and forking
----------------------------
+About threading and forking on Posix
+------------------------------------
 
 If you run commands asynchronously by using ``&`` in a command pipeline, then a
 thread is spawned to run each such command asynchronously. Remember that thread
@@ -516,11 +516,14 @@ and you may see dire warnings on the Internet about mixing threads, processes
 and ``fork()``. It *is* a heady mix, to be sure: you need to understand what's
 going on in order to avoid nasty surprises. If you run into any such, it may be
 hard to get help because others can't reproduce the problems. However, that's no
-reason to shy away from providing the functionality altogether.
+reason to shy away from providing the functionality altogether. Such issues
+do not occur on Windows, for example: because Windows doesn't have a ``fork()
+`` system call, child processes are created in a different way which doesn't
+give rise to the issues which sometimes crop up in a Posix environment.
 
 For an exposition of the sort of things which might bite you if you are using
-locks, threading and ``fork()``, see
-`this post <http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
+locks, threading and ``fork()`` on Posix, see `this post
+<http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
 
 Other resources on this topic:
 
