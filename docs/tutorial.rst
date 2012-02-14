@@ -409,6 +409,19 @@ assumed that anything you pass in ``env`` is *added* to the contents of
 in a Posix shell, the environment is generally inherited with certain
 additions for a specific command invocation.
 
+.. note:: On Python 2.x on Windows, environment keys and values must be of
+   type ``str`` - Unicode values will cause a ``TypeError``. Be careful of
+   this if you use ``from __future__ import unicode_literals``. For example,
+   the test harness for sarge uses Unicode literals on 2.x,
+   necessitating the use of different logic for 2.x and 3.x::
+
+        if PY3:
+            env = {'FOO': 'BAR'}
+        else:
+            # Python 2.x wants native strings, at least on Windows
+            env = { b'FOO': b'BAR' }
+
+
 Working directory and other options
 -----------------------------------
 

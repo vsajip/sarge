@@ -163,7 +163,8 @@ class SargeTest(unittest.TestCase):
             env = {'FOO': 'BAR'}
         else:
             # Python 2.x wants native strings, at least on Windows
-            env = {'FOO'.encode('utf-8'): 'BAR'.encode('utf-8')}
+            # (and literals are Unicode in this module)
+            env = { b'FOO': b'BAR' }
         c = Command('echo foo', env=env)
         d = c.kwargs['env']
         ek = set(e)
@@ -181,7 +182,8 @@ class SargeTest(unittest.TestCase):
             env = {'FOO': 'BAR'}
         else:
             # Python 2.x wants native strings, at least on Windows
-            env = {'FOO'.encode('utf-8'): 'BAR'.encode('utf-8')}
+            # (and literals are Unicode in this module)
+            env = { b'FOO': b'BAR' }
         c = Command(cmd, env=env, stdout=Capture(), shell=True)
         c.run()
         self.assertEqual(c.stdout.text.strip(), 'BAR')
