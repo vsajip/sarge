@@ -453,10 +453,14 @@ class Command(object):
             env.update(e)
             kwargs['env'] = env
         self.process_ready = threading.Event()
+        self.process = None
         logger.debug('%r created', self)
 
     def __repr__(self):
-        s = ' '.join(self.args)
+        if isinstance(self.args, basestring):
+            s = self.args
+        else:
+            s = ' '.join(self.args)
         return '%s(%r)' % (self.__class__.__name__, s)
 
     def run(self, input=None, async=False):
@@ -506,12 +510,9 @@ class Command(object):
             if not async:
                 logger.debug('about to wait for process')
                 p.wait()
-        except Exception:   #pragma: no cover
-            logger.exception('Failed while spawning process')
-            self.process = p = None
         finally:
             self.process_ready.set()
-        logger.debug('returning %s (%s)', self, p)
+        logger.debug('returning %s (%s)', self, self.process)
         return self
 
     def wait(self):
