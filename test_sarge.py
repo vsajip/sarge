@@ -24,6 +24,8 @@ from stack_tracer import start_trace, stop_trace
 
 TRACE_THREADS = True    # debugging only
 
+PY3 = sys.version_info[0] >= 3
+
 if os.name == 'nt': #pragma: no cover
     FILES = ('libiconv2.dll', 'libintl3.dll', 'cat.exe', 'echo.exe',
              'tee.exe', 'false.exe', 'true.exe', 'sleep.exe', 'touch.exe')
@@ -157,7 +159,12 @@ class SargeTest(unittest.TestCase):
 
     def test_env(self):
         e = os.environ
-        c = Command('echo foo', env={'FOO': 'BAR'})
+        if PY3:
+            env = {'FOO': 'BAR'}
+        else:
+            # Python 2.x wants native strings, at least on Windows
+            env = {'FOO'.encode('utf-8'): 'BAR'.encode('utf-8')}
+        c = Command('echo foo', env=env)
         d = c.kwargs['env']
         ek = set(e)
         dk = set(d)
@@ -170,7 +177,12 @@ class SargeTest(unittest.TestCase):
             cmd = 'echo %FOO%'
         else:
             cmd = 'echo $FOO'
-        c = Command(cmd, env={'FOO': 'BAR'}, stdout=Capture(), shell=True)
+        if PY3:
+            env = {'FOO': 'BAR'}
+        else:
+            # Python 2.x wants native strings, at least on Windows
+            env = {'FOO'.encode('utf-8'): 'BAR'.encode('utf-8')}
+        c = Command(cmd, env=env, stdout=Capture(), shell=True)
         c.run()
         self.assertEqual(c.stdout.text.strip(), 'BAR')
 
