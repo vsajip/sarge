@@ -185,7 +185,28 @@ Classes
 
    .. method:: wait()
 
-     Wait for the command's underlying sub-process to complete.
+      Wait for the command's underlying sub-process to complete.
+
+   .. method:: terminate()
+
+      Terminate the command's underlying sub-process by calling
+      :meth:`subprocess.Popen.terminate` on it.
+
+      .. versionadded:: 0.1.1
+
+   .. method:: kill()
+
+      Kill the command's underlying sub-process by calling
+      :meth:`subprocess.Popen.kill` on it.
+
+      .. versionadded:: 0.1.1
+
+   .. method:: poll()
+
+      Poll the command's underlying sub-process by calling
+      :meth:`subprocess.Popen.poll` on it. Returns the result of that call.
+
+      .. versionadded:: 0.1.1
 
 
 .. class:: Pipeline(source, posix=True, **kwargs)

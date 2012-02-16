@@ -522,11 +522,48 @@ class Command(object):
         self.process_ready.wait()
         p = self.process
         if not p:   #pragma: no cover
+            import pdb; pdb.set_trace()
             logger.warning('No process found for %s', self)
             result = None
         else:
             result = p.wait()
         return result
+
+    def terminate(self):
+        """
+        Terminate a command's underlying subprocess.
+
+        .. versionadded:: 0.1.1
+        """
+        self.process_ready.wait()
+        p = self.process
+        if not p: #pragma: no cover
+            raise ValueError('There is no subprocess')
+        p.terminate()
+
+    def kill(self):
+        """
+        Kill a command's underlying subprocess.
+
+        .. versionadded:: 0.1.1
+        """
+        self.process_ready.wait()
+        p = self.process
+        if not p: #pragma: no cover
+            raise ValueError('There is no subprocess')
+        p.kill()
+
+    def poll(self):
+        """
+        Poll a command's underlying subprocess.
+
+        .. versionadded:: 0.1.1
+        """
+        self.process_ready.wait()
+        p = self.process
+        if not p: #pragma: no cover
+            raise ValueError('There is no subprocess')
+        return p.poll()
 
     @property
     def returncode(self):
