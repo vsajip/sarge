@@ -811,6 +811,7 @@ class Pipeline(WithMixin):
         self.kwargs = kwargs
         self.stdout = kwargs.pop('stdout', None)
         self.stderr = kwargs.pop('stderr', None)
+        self.lock = threading.RLock()
 
     def find_last_command(self, node):
         """
@@ -937,7 +938,8 @@ class Pipeline(WithMixin):
         and append it to the list of commands.
         """
         cmd = Command(args, **kwargs)
-        self.commands.append(cmd)
+        with self.lock:
+            self.commands.append(cmd)
         return cmd
 
     def get_redirects(self, node):
@@ -959,7 +961,8 @@ class Pipeline(WithMixin):
                 mode = 'ab'
             if isinstance(fn, string_types):
                 stream = open(fn, mode)
-                self.opened.append(stream)
+                with self.lock:
+                    self.opened.append(stream)
             elif fd == 1:
                 assert fn == ('&', 2)
                 stream = STDERR
@@ -1154,7 +1157,8 @@ class Pipeline(WithMixin):
                 # run_node, and waited on int the pipeline's wait and run
                 # methods.
                 e = threading.Event()
-                self.events.append(e)
+                with self.lock:
+                    self.events.append(e)
                 t = threading.Thread(target=self.run_node, args=(curr, input,
                                      False, e))
                 t.daemon = True
