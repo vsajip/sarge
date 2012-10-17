@@ -37,8 +37,7 @@ In the simplest cases, sarge doesn't provide any major advantage over
 The ``echo`` command got run, as expected, and printed its output on the
 console. In addition, a ``Pipeline`` object got returned. Don't worry too much
 about what this is for now -- it's more useful when more complex combinations
- of
-commands are run.
+of commands are run.
 
 By comparison, the analogous case with ``subprocess`` would be::
 
@@ -108,6 +107,11 @@ consequences::
 This behaviour helps to avoid `shell injection
 <http://en.wikipedia.org/wiki/Code_injection#Shell_injection>`_ attacks.
 
+There might be circumstances where you need to use ``shell=True``,
+in which case you should consider formatting your commands with placeholders
+and quoting any variable parts that you get from external sources (such as
+user input). Which brings us on to ...
+
 Formatting commands with placeholders for safe usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -148,8 +152,8 @@ input::
 This function is used internally by :func:`shell_format`, so you shouldn't need
 to call it directly except in unusual cases.
 
-Passing input to commands
--------------------------
+Passing input data to commands
+------------------------------
 
 You can pass input to a command pipeline using the ``input`` keyword parameter
 to :func:`run`::
@@ -158,9 +162,13 @@ to :func:`run`::
     >>> p = run('cat|cat', input='foo')
     foo>>>
 
-You can pass a string, bytes or a file-like object of bytes. If it's not
-already, what you pass in is converted to a file-like object of bytes,
+You can pass a string, bytes or a file-like object of bytes. If it's a string
+or bytes, what you pass in is converted to a file-like object of bytes,
 which is sent to the child process' ``stdin`` stream in a separate thread.
+
+You can also pass in special values like ``subprocess.PIPE`` -- these are
+passed to the ``subprocess`` layer as-is.
+
 
 Chaining commands conditionally
 -------------------------------
@@ -376,7 +384,11 @@ it's still a zombie because we haven't "reaped" it by making a call to
 :meth:`~Command.wait`. Once that's done, the zombie disappears and we get the
 return code.
 
-Note that two elements are needed for this example to work:
+Buffering issues
+^^^^^^^^^^^^^^^^
+
+From the point of view of buffering, note that two elements are needed for
+this example to work:
 
 * We specify ``buffer_size=1`` in the Capture constructor. Without this,
   data would only be read into the Capture's queue after an I/O completes --
@@ -396,6 +408,23 @@ problems, you may or may not have luck (on Posix, at least) using the
 ``unbuffer`` utility from the ``expect-dev`` package (do a Web search to find
 it). This invokes a program directing its output to a pseudo-tty device which
 gives line buffering behaviour. This doesn't always work, though :-(
+
+Direct terminal usage
+^^^^^^^^^^^^^^^^^^^^^
+
+Some programs don't work through their ``stdin``/``stdout``/``stderr``
+streams, instead opting to work directly with their controlling terminal. In
+such cases, you can't work with these programs using ``sarge``; you need to use
+a pseudo-terminal approach, such as is provided by (for example)
+`pexpect <http://noah.org/wiki/pexpect>`_. ``Sarge`` works within the limits
+of the
+:mod:`subprocess` module, which means sticking to ``stdin``, ``stdout`` and
+``stderr`` as ordinary streams or pipes (but not pseudo-terminals).
+
+Examples of programs which work directly through their controlling terminal
+are ``ftp`` and ``ssh`` - the password prompts for these programs are
+generally always printed to the controlling terminal rather than ``stdout`` or
+``stderr``.
 
 .. _environments:
 
@@ -435,7 +464,8 @@ arguments which are accepted by the :class:`subprocess.Popen` constructor.
 Avoid using the ``stdin`` keyword argument -- instead, use the ``input`` keyword
 argument to the :meth:`Command.run` and :meth:`Pipeline.run` methods, or the
 :func:`run`, :func:`capture_stdout`, :func:`capture_stderr`, and
-:func:`capture_both` functions.
+:func:`capture_both` functions. The ``input`` keyword makes it easier for you
+to pass literal text or byte data.
 
 Unicode and bytes
 -----------------

@@ -144,6 +144,7 @@ class WithMixin(object):
         self.close()
 
 default_capture_timeout = 0.02
+default_expect_timeout = 5.0
 
 class Capture(WithMixin):
     """
@@ -174,6 +175,9 @@ class Capture(WithMixin):
         self.current = None
         self._bytes = None
         self.threads = []
+        self.patterns = []
+        self.matched = threading.Event()
+        self.match = None
         self.counter = self.__class__.counter
         self.__class__.counter += 1
 
@@ -213,6 +217,8 @@ class Capture(WithMixin):
             if chunk:
                 self.buffer.put_nowait(chunk)
                 logger.debug('queued chunk of length %d', len(chunk))
+                if self.patterns:
+                    self.try_match()
             if len(chunk) < chunk_size:
                 break
         logger.debug('%r: finished reading stream %s', self, stream)
@@ -315,6 +321,38 @@ class Capture(WithMixin):
             data = self.current + data
         self.current = None
         return data.splitlines(True)
+
+    def try_match(self):
+        data = self.bytes
+        for p in self.patterns:
+            m = p.match(data)
+            if m:
+                break
+        if m:
+            self.match = m
+            self.matched.set()
+
+    def expect(self, patterns, timeout=None):
+        def as_pattern(p):
+            if isinstance(p, string_types):
+                p = re.compile(p)
+            return p
+
+        if isinstance(patterns, string_types):
+            patterns = [patterns]
+        self.patterns = [as_pattern(p) for p in patterns]
+        self.matched.clear()
+        self.match = None
+        self.try_match()
+        if timeout is None:
+            timeout = default_expect_timeout
+        self.matched.wait(timeout)
+        if not self.matched.is_set():
+            result = (None, None, None)
+        else:
+            m = self.match
+            result = (None, None, None)
+        return result
 
     def __iter__(self):
         while True:
