@@ -94,9 +94,10 @@ How shell quoting works
 The :func:`shell_quote` function works as follows. Firstly,
 an empty string is converted to ``''``. Next, a check is made to see if the
 string has already been quoted (i.e. it begins and ends with the ``'``
-character), and if so, it is returned unchanged. Otherwise,
-it's bracketed with the ``'`` character and every internal instance of ``'``
-is replaced with ``'"'"'``.
+character), and if so, it is returned enclosed in ``"`` and with any contained
+`"` characters escaped with a backslash. Otherwise, it's bracketed with the
+``'`` character and every internal instance of ``'`` is replaced with
+``'"'"'``.
 
 How shell command formatting works
 ----------------------------------

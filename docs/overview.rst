@@ -216,6 +216,48 @@ when you specify ``&`` in a command pipeline) can be considered experimental,
 and there may be changes in this area. However, you aren't forced to use this
 feature, and ``sarge`` should be useful without it.
 
+Change log
+----------
+
+0.1.1
+~~~~~
+
+Released: Not yet.
+
+- Experimental ``expect`` method added to ``Capture`` class.
+
+- added ``terminate``, ``kill`` and ``poll`` methods to ``Command``
+  class to operate on the wrapped subprocess.
+
+- ``Command.run`` now propagates exceptions which occur while spawning
+  subprocesses.
+
+- Fixed issue #3: ``run`` et al now accept commands as lists, just as
+  ``subprocess.Popen`` does.
+
+- Fixed issue #2: ``shell_quote`` implementation improved.
+
+- Improved ``shell_shlex`` resilience by handling Unicode on 2.x (where
+  ``shlex`` breaks if passed Unicode).
+
+- Added ``get_stdout``, ``get_stderr`` and ``get_both`` for when subprocess
+  output is not expected to be voluminous.
+
+- Added an internal lock to serialise access to shared data.
+
+- Tests added to cover added functionality and reported issues.
+
+- Numerous documentation updates.
+
+
+0.1
+~~~
+
+Released: 2012-02-10
+
+- Initial release.
+
+
 Next steps
 ----------
 
