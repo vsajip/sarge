@@ -136,6 +136,13 @@ class SargeTest(unittest.TestCase):
                 run('cat testfile.txt testfile.txt', stdout=out).returncode, 0)
             lines = out.readlines()
             self.assertEqual(len(lines), len(content) * 2)
+        # run with a list (see Issue #3)
+        with Capture() as out:
+            self.assertEqual(
+                run(['cat', 'testfile.txt', 'testfile.txt'],
+                    stdout=out).returncode, 0)
+            lines = out.readlines()
+            self.assertEqual(len(lines), len(content) * 2)
 
     def test_run_async(self):
         self.ensure_testfile()

@@ -842,8 +842,13 @@ class Pipeline(WithMixin):
     :param kwargs: Whatever you might pass to :class:`subprocess.Popen'.
     """
     def __init__(self, source, posix=True, **kwargs):
-        self.source = source
-        self.tree = t = command_line_parser.parse(source, posix=posix)
+        if isinstance(source, (list, tuple)):
+            self.source = ' '.join(source)
+            t = Node(kind='command', command=source, redirects={})
+        else:
+            self.source = source
+            t = command_line_parser.parse(source, posix=posix)
+        self.tree = t
         self.last = self.find_last_command(t)
         self.events = []
         self.kwargs = kwargs
