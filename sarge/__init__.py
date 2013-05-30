@@ -68,7 +68,7 @@ def shell_quote(s):
     if not s:
         result = "''"
     elif len(s) >= 2 and (s[0], s[-1]) == ("'", "'"):
-        result = s
+        result = '"%s"' % s.replace('"', r'\"')
     elif not UNSAFE.search(s):
         result = s
     else:
