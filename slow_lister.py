@@ -62,7 +62,7 @@ def main(args=None):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, filename='slow_lister.log',
-                        filemode='w', format='%(asctime)s %(message)s')
+                        filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     try:
         rc = main()
     except Exception as e:

@@ -8,7 +8,7 @@ logging.basicConfig(filename='test_expect.log', filemode='w',
                     level=logging.INFO,
                     format='%(asctime)s %(levelname)-8s %(name)s %(threadName)s %(lineno)4d %(message)s')
 cap = Capture(buffer_size=-1)   # line buffered
-p = run('python slow_lister.py -d 0.01 docs/_build/html/tutorial.html', async=True,
+p = run('python slow_lister.py -d 0.01 -i "<head|body>" docs/_build/html/tutorial.html', async=True,
         stdout=cap)
 stime = time.time()
 logger.info('Calling expect for head')
