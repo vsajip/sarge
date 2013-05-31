@@ -28,7 +28,7 @@ def main(args=None):
                 s = ''
                 level = logging.DEBUG
             logger.log(level, 'Wrote out %d bytes%s', bytes_written, s)
-            time.sleep(0.5)
+            time.sleep(0.25)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, filename='slow_lister.log',

@@ -178,6 +178,7 @@ class Capture(WithMixin):
         self.pattern = None
         self.matched = threading.Event()
         self.match = None
+        self.match_index = 0
         self.counter = self.__class__.counter
         self.__class__.counter += 1
 
@@ -338,15 +339,18 @@ class Capture(WithMixin):
     def try_match(self):
         data = self.bytes
         if data and self.pattern:
-            m = self.pattern.search(data)
+            m = self.pattern.search(data, self.match_index)
             if m:
                 logger.debug('Found at %s after %d bytes', m.span(), len(data))
                 self.match = m
+                self.match_index = m.end()
                 self.matched.set()
 
     def expect(self, pattern, timeout=None):
         def as_pattern(p):
             if isinstance(p, string_types):
+                if isinstance(p, text_type):
+                    p = p.encode('utf-8')
                 p = re.compile(p)
             return p
 
