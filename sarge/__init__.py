@@ -351,7 +351,7 @@ class Capture(WithMixin):
             if isinstance(p, string_types):
                 if isinstance(p, text_type):
                     p = p.encode('utf-8')
-                p = re.compile(p)
+                p = re.compile(p, re.MULTILINE)
             return p
 
         self.pattern = as_pattern(pattern)
@@ -377,8 +377,9 @@ class Capture(WithMixin):
                 break
             yield line
 
-    def close(self):
-        #self._done = True
+    def close(self, stop_threads=False):
+        if stop_threads:
+            self._done = True   # may lose some data sent from subprocess
         for t in self.threads:
             try:
                 t.join()
