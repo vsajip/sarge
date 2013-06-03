@@ -544,6 +544,24 @@ class SargeTest(unittest.TestCase):
         finally:
             shutil.rmtree(d)
 
+    def test_expect(self):
+        cap = Capture(buffer_size=-1)   # line buffered
+        p = run('python lister.py -d 0.01', async=True, stdout=cap)
+        timeout = 1.0
+        m1 = cap.expect('^line 1$', 1.0)
+        self.assertTrue(m1)
+        m2 = cap.expect('^line 5$', 1.0)
+        self.assertTrue(m2)
+        m3 = cap.expect('^line 1.*$', 1.0)
+        self.assertTrue(m3)
+        cap.close(True)
+        p.commands[0].kill()
+        data = cap.bytes
+        self.assertTrue(data[m1.start():m1.end()], 'line 1')
+        self.assertTrue(data[m2.start():m2.end()], 'line 5')
+        self.assertTrue(data[m3.start():m3.end()], 'line 10')
+
+
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
     fn = 'test_sarge-%d.%d.log' % sys.version_info[:2]

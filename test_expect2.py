@@ -8,7 +8,7 @@ logging.basicConfig(filename='test_expect.log', filemode='w',
                     level=logging.INFO,
                     format='%(asctime)s %(levelname)-8s %(name)s %(threadName)s %(lineno)4d %(message)s')
 cap = Capture(buffer_size=-1)   # line buffered
-p = run('python slow_lister.py -d 0.01', async=True,
+p = run('python lister.py -d 0.01', async=True,
         stdout=cap)
 
 WAIT_TIME = 1.0

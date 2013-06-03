@@ -358,17 +358,11 @@ class Capture(WithMixin):
         self.matched.clear()
         self.match = None
         self.try_match()
-        if timeout is None:
-            timeout = default_expect_timeout
-        self.matched.wait(timeout)
-        if not self.matched.is_set():
-            logger.debug('No match found.')
-            result = (None, None, None)
-        else:
-            logger.debug('Match found.')
-            m = self.match
-            result = (None, None, None)
-        return result
+        if not self.match:
+            if timeout is None:
+                timeout = default_expect_timeout
+            self.matched.wait(timeout)
+        return self.match
 
     def __iter__(self):
         while True:
