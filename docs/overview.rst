@@ -224,13 +224,16 @@ Change log
 
 Released: Not yet.
 
-- Experimental ``expect`` method added to ``Capture`` class.
+- ``expect`` method added to ``Capture`` class, to allow searching
+  for specific patterns in subprocess output streams.
 
 - added ``terminate``, ``kill`` and ``poll`` methods to ``Command``
   class to operate on the wrapped subprocess.
 
 - ``Command.run`` now propagates exceptions which occur while spawning
   subprocesses.
+
+- Fixed issue #4: ``shell_shlex`` does not split on ``@``.
 
 - Fixed issue #3: ``run`` et al now accept commands as lists, just as
   ``subprocess.Popen`` does.

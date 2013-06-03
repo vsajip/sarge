@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2013 Vinay M. Sajip. See LICENSE for licensing information.
+#
+# Part of the test harness for sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
+#
 import logging
 import optparse
 import os

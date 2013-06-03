@@ -147,7 +147,7 @@ input::
     >>> shell_quote('"ab?"')
     '\'"ab?"\''
     >>> shell_quote("'ab?'")
-    "'ab?'"
+    '"\'ab?\'"'
 
 This function is used internally by :func:`shell_format`, so you shouldn't need
 to call it directly except in unusual cases.
@@ -388,11 +388,14 @@ Buffering issues
 ^^^^^^^^^^^^^^^^
 
 From the point of view of buffering, note that two elements are needed for
-this example to work:
+the above example to work:
 
 * We specify ``buffer_size=1`` in the Capture constructor. Without this,
   data would only be read into the Capture's queue after an I/O completes --
-  which would depend on how many bytes the Capture reads at a time.
+  which would depend on how many bytes the Capture reads at a time. You can
+  also pass a ``buffer_size=-1`` to indicate that you want to use line-
+  buffering, i.e. read a line at a time from the child process. (This may only
+  work if the child process flushes its outbut buffers after every line.)
 * We make a ``flush`` call in the ``receiver`` script, to ensure that the pipe
   is flushed to the capture queue. You could avoid the  ``flush`` call in the
   above example if you used ``python -u receiver`` as the command (which runs
@@ -408,6 +411,55 @@ problems, you may or may not have luck (on Posix, at least) using the
 ``unbuffer`` utility from the ``expect-dev`` package (do a Web search to find
 it). This invokes a program directing its output to a pseudo-tty device which
 gives line buffering behaviour. This doesn't always work, though :-(
+
+Looking for specific patterns in child process output
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can look for specific patterns in the output of a child process, by using
+the :meth:`~Capture.expect` method of the :class:`Capture` class. This takes a
+string, bytestring or regular expression pattern object and a timeout, and
+either returns a regular expression match object (if a match was found in the
+specified timeout) or ``None`` (if no match was found in the specified
+timeout). If you pass in a bytestring, it will be converted to a regular
+expression pattern. If you pass in text, it will be encoded to bytes using the
+``utf-8`` codec and then to a regular expression pattern. This pattern will be
+used to look for a match (using ``search``). If you pass in a regular
+expression pattern, make sure it is meant for bytes rather than text (to avoid
+``TypeError`` on Python 3.x). You may also find it useful to specify
+``re.MULTILINE`` in the pattern flags, so that you can match using ``^`` and
+``$`` at line boundaries.
+
+.. versionadded:: 0.1.1
+   The ``expect`` method was added.
+
+To illustrate usage of :meth:`Capture.expect`, consider the program
+``lister.py`` (which is provided as part of the source distribution). This
+prints ``line 1``, ``line 2`` etc. indefinitely with a configurable delay,
+flushing its output stream after each line. We can capture the output from a
+run of ``lister.py``, ensuring that we use line-buffering::
+
+    >>> from sarge import Capture, run
+    >>> c = Capture(buffer_size=-1)
+    >>> p = run('python lister.py -d 0.01', async=True, stdout=c)
+    >>> m = c.expect('^line 1$')
+    >>> m.span()
+    (0, 6)
+    >>> m = c.expect('^line 5$')
+    >>> m.span()
+    (28, 34)
+    >>> m = c.expect('^line 1.*$')
+    >>> m.span()
+    (63, 70)
+    >>> c.close(True)           # close immediately, discard any unread input
+    >>> p.commands[0].kill()    # kill the subprocess
+    >>> c.bytes[63:70]
+    'line 10'
+    >>> m = c.expect(r'^line 1\d\d$')
+    >>> m.span()
+    (783, 791)
+    >>> c.bytes[783:791]
+    'line 100'
+
 
 Direct terminal usage
 ^^^^^^^^^^^^^^^^^^^^^

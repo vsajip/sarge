@@ -303,6 +303,39 @@ Classes
      :param block: As for the :meth:`~Capture.read` method.
      :param timeout: As for the :meth:`~Capture.read` method.
 
+   .. method:: expect(string_or_pattern,  timeout=None)
+
+      This looks for a pattern in the captured output stream. If found, it
+      returns immediately; otherwise, it will block until the timeout expires,
+      waiting for a match as bytes from the captured stream continue to be read.
+
+      :param string_or_pattern: A string or pattern representing a regular
+                                expression to match. Note that this needs to
+                                be a bytestring pattern if you pass a pattern
+                                in; if you pass in text, it is converted to
+                                bytes using the ``utf-8`` codec and then to
+                                a pattern used for matching (using ``search``).
+                                If you pass in a pattern, you may want to
+                                ensure that its flags include ``re/MULTILINE``
+                                so that you can make use of ``^`` and ``$`` in
+                                matching line boundaries.
+      :param timeout: If not specified, the module's ``default_expect_timeout``
+                      is used.
+      :returns: A regular expression match instance, if a match was found
+                within the specified timeout, or ``None`` if no match was
+                found.
+
+   .. method:: close(stop_threads=False):
+
+      Close the capture object. By default, this waits for the threads which
+      read the captured streams to terminate (which may not happen unless the
+      child process is killed, and the streams read to exhaustion). To ensure
+      that the threads are stopped immediately, specify ``True`` for the
+      ``stop_threads`` parameter, which will asks the threads to terminate
+      immediately. This may lead to losing data from the captured streams
+      which has not yet been read.
+
+
 .. class:: Popen
 
    This is a subclass of :class:`subprocess.Popen` which is provided mainly

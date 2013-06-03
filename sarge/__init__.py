@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2013 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
@@ -25,7 +25,7 @@ __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'shell_formatter', 'shell_format', 'run', 'parse_command_line',
            'capture_stdout', 'capture_stderr', 'capture_both')
 
-__version__ = '0.1.1dev'
+__version__ = '0.1.1'
 
 logger = logging.getLogger(__name__)
 
@@ -228,7 +228,7 @@ class Capture(WithMixin):
                 logger.debug('queued chunk of length %d: %r', len(chunk),
                              chunk[:30])
                 if self.pattern and not self.matched.is_set():
-                    self.try_match()
+                    self._try_match()
             if chunk_size > 0:
                 if len(chunk) < chunk_size:
                     break
@@ -336,7 +336,7 @@ class Capture(WithMixin):
         self.current = None
         return data.splitlines(True)
 
-    def try_match(self):
+    def _try_match(self):
         data = self.bytes
         if data and self.pattern:
             m = self.pattern.search(data, self.match_index)
@@ -357,7 +357,7 @@ class Capture(WithMixin):
         self.pattern = as_pattern(pattern)
         self.matched.clear()
         self.match = None
-        self.try_match()
+        self._try_match()
         if not self.match:
             if timeout is None:
                 timeout = default_expect_timeout
