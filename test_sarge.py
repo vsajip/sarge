@@ -266,6 +266,15 @@ class SargeTest(unittest.TestCase):
         s = shell_shlex('"abc')
         self.assertRaises(ValueError, s.get_token)
 
+    def test_shlex_with_misc_chars(self):
+        TESTS = (
+            ('rsync user.name@host.domain.tld:path dest',
+             ('rsync', 'user.name@host.domain.tld:path', 'dest')),
+        )
+        for s, t in TESTS:
+            sh = shell_shlex(s)
+            self.assertEqual(tuple(sh), t)
+
     def test_parsing(self):
         parse_command_line('abc')
         parse_command_line('abc " " # comment')
