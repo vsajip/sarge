@@ -270,6 +270,8 @@ class SargeTest(unittest.TestCase):
         TESTS = (
             ('rsync user.name@host.domain.tld:path dest',
              ('rsync', 'user.name@host.domain.tld:path', 'dest')),
+            (r'c:\Python26\Python lister.py -d 0.01',
+             (r'c:\Python26\Python', 'lister.py', '-d', '0.01')),
         )
         for s, t in TESTS:
             sh = shell_shlex(s)

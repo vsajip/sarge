@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Sarge'
-copyright = u'2012, Vinay Sajip'
+copyright = u'2012-2013, Vinay Sajip'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -222,7 +222,7 @@ man_pages = [
 epub_title = u'Sarge'
 epub_author = u'Vinay Sajip'
 epub_publisher = u'Vinay Sajip'
-epub_copyright = u'2012, Vinay Sajip'
+epub_copyright = u'2012-2013, Vinay Sajip'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
