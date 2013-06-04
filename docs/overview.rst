@@ -219,10 +219,15 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.1
+0.1.2
 ~~~~~
 
 Released: Not yet.
+
+0.1.1
+~~~~~
+
+Released: 2013-06-04
 
 - ``expect`` method added to ``Capture`` class, to allow searching
   for specific patterns in subprocess output streams.
