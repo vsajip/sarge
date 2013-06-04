@@ -318,7 +318,11 @@ Classes
                                 If you pass in a pattern, you may want to
                                 ensure that its flags include ``re/MULTILINE``
                                 so that you can make use of ``^`` and ``$`` in
-                                matching line boundaries.
+                                matching line boundaries. Note that on Windows,
+                                you may need to use ``\r?$`` to match ends of
+                                lines, as ``$`` matches Unix newlines (LF) and
+                                not Windows newlines (CRLF).
+
       :param timeout: If not specified, the module's ``default_expect_timeout``
                       is used.
       :returns: A regular expression match instance, if a match was found

@@ -428,7 +428,9 @@ used to look for a match (using ``search``). If you pass in a regular
 expression pattern, make sure it is meant for bytes rather than text (to avoid
 ``TypeError`` on Python 3.x). You may also find it useful to specify
 ``re.MULTILINE`` in the pattern flags, so that you can match using ``^`` and
-``$`` at line boundaries.
+``$`` at line boundaries. Note that on Windows, you may need to use ``\r?$``
+to match ends of lines, as ``$`` matches Unix newlines (LF) and not Windows
+newlines (CRLF).
 
 .. versionadded:: 0.1.1
    The ``expect`` method was added.
