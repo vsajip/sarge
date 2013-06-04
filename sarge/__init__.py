@@ -650,7 +650,7 @@ class CommandLineParser(object):
 
     def next_token(self):
         t = self.lex.get_token()
-        if t is None:
+        if not t:
             tt = None
         else:
             tt = self.lex.token_type
@@ -711,9 +711,11 @@ class CommandLineParser(object):
         if self.token[0] != tt:
             raise ValueError('consume: expected %r', tt)
 
-    def parse(self, source, posix=True):
+    def parse(self, source, posix=None):
         self.source = source
         parse_logger.debug('starting parse of %r', source)
+        if posix is None:
+            posix = os.name == 'posix'
         self.lex = shell_shlex(source, posix=posix, control=True)
         self.token = None
         self.peek = None
@@ -1309,7 +1311,7 @@ def get_both(cmd, **kwargs):
     return p.stdout.text, p.stderr.text
 
 
-def parse_command_line(source, posix=True):
+def parse_command_line(source, posix=None):
     """
     Parse a command line into an AST.
 
@@ -1318,4 +1320,6 @@ def parse_command_line(source, posix=True):
     :param posix: Whether Posix conventions are used in the lexer.
     :type posix: bool
     """
+    if posix is None:
+        posix = os.name == 'posix'
     return command_line_parser.parse(source, posix=posix)

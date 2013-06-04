@@ -22,7 +22,7 @@ from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
-TRACE_THREADS = True    # debugging only
+TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
 
 PY3 = sys.version_info[0] >= 3
 
@@ -291,8 +291,8 @@ class SargeTest(unittest.TestCase):
 
     def test_parsing_special(self):
         for cmd in ('ls -l --color=auto', 'sleep 0.5', 'ls /tmp/abc.def',
-                    'ls *.py?'):
-            node = parse_command_line(cmd)
+                    'ls *.py?', r'c:\Python26\Python lister.py -d 0.01'):
+            node = parse_command_line(cmd, posix=False)
             self.assertEqual(node.command, cmd.split())
 
     def test_parsing_controls(self):
