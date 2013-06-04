@@ -551,18 +551,18 @@ class SargeTest(unittest.TestCase):
         p = run('%s lister.py -d 0.01' % sys.executable,
                 async=True, stdout=cap)
         timeout = 1.0
-        m1 = cap.expect('^line 1$', 1.0)
+        m1 = cap.expect('^line 1\r?$', timeout)
         self.assertTrue(m1)
-        m2 = cap.expect('^line 5$', 1.0)
+        m2 = cap.expect('^line 5\r?$', timeout)
         self.assertTrue(m2)
-        m3 = cap.expect('^line 1.*$', 1.0)
+        m3 = cap.expect('^line 1.*\r?$', timeout)
         self.assertTrue(m3)
         cap.close(True)
         p.commands[0].kill()
         data = cap.bytes
-        self.assertTrue(data[m1.start():m1.end()], 'line 1')
-        self.assertTrue(data[m2.start():m2.end()], 'line 5')
-        self.assertTrue(data[m3.start():m3.end()], 'line 10')
+        self.assertEqual(data[m1.start():m1.end()].rstrip(), b'line 1')
+        self.assertEqual(data[m2.start():m2.end()].rstrip(), b'line 5')
+        self.assertEqual(data[m3.start():m3.end()].rstrip(), b'line 10')
 
 
 if __name__ == '__main__':  #pragma: no cover

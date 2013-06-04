@@ -654,7 +654,10 @@ class CommandLineParser(object):
             tt = None
         else:
             tt = self.lex.token_type
-            if tt == 'a':
+            if tt in ('"', "'"):
+                tt = 'word'
+                t = t[1:-1]
+            elif tt == 'a':
                 try:
                     int(t)
                     tt = 'number'
@@ -855,7 +858,9 @@ class Pipeline(WithMixin):
     :type posix: bool
     :param kwargs: Whatever you might pass to :class:`subprocess.Popen'.
     """
-    def __init__(self, source, posix=True, **kwargs):
+    def __init__(self, source, posix=None, **kwargs):
+        if posix is None:
+            posix = os.name == 'posix'
         if isinstance(source, (list, tuple)):
             self.source = ' '.join(source)
             t = Node(kind='command', command=source, redirects={})
