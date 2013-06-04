@@ -546,7 +546,8 @@ class SargeTest(unittest.TestCase):
 
     def test_expect(self):
         cap = Capture(buffer_size=-1)   # line buffered
-        p = run('python lister.py -d 0.01', async=True, stdout=cap)
+        p = run('%s lister.py -d 0.01' % sys.executable,
+                async=True, stdout=cap)
         timeout = 1.0
         m1 = cap.expect('^line 1$', 1.0)
         self.assertTrue(m1)

@@ -395,7 +395,8 @@ the above example to work:
   which would depend on how many bytes the Capture reads at a time. You can
   also pass a ``buffer_size=-1`` to indicate that you want to use line-
   buffering, i.e. read a line at a time from the child process. (This may only
-  work if the child process flushes its outbut buffers after every line.)
+  work as expected if the child process flushes its outbut buffers after every
+  line.)
 * We make a ``flush`` call in the ``receiver`` script, to ensure that the pipe
   is flushed to the capture queue. You could avoid the  ``flush`` call in the
   above example if you used ``python -u receiver`` as the command (which runs
@@ -433,13 +434,14 @@ expression pattern, make sure it is meant for bytes rather than text (to avoid
    The ``expect`` method was added.
 
 To illustrate usage of :meth:`Capture.expect`, consider the program
-``lister.py`` (which is provided as part of the source distribution). This
-prints ``line 1``, ``line 2`` etc. indefinitely with a configurable delay,
-flushing its output stream after each line. We can capture the output from a
-run of ``lister.py``, ensuring that we use line-buffering::
+``lister.py`` (which is provided as part of the source distribution, as it's
+used in the tests). This prints ``line 1``, ``line 2`` etc. indefinitely with
+a configurable delay, flushing its output stream after each line. We can
+capture the output from a run of ``lister.py``, ensuring that we use
+line-buffering in the parent process::
 
     >>> from sarge import Capture, run
-    >>> c = Capture(buffer_size=-1)
+    >>> c = Capture(buffer_size=-1)     # line-buffering
     >>> p = run('python lister.py -d 0.01', async=True, stdout=c)
     >>> m = c.expect('^line 1$')
     >>> m.span()
@@ -469,9 +471,8 @@ streams, instead opting to work directly with their controlling terminal. In
 such cases, you can't work with these programs using ``sarge``; you need to use
 a pseudo-terminal approach, such as is provided by (for example)
 `pexpect <http://noah.org/wiki/pexpect>`_. ``Sarge`` works within the limits
-of the
-:mod:`subprocess` module, which means sticking to ``stdin``, ``stdout`` and
-``stderr`` as ordinary streams or pipes (but not pseudo-terminals).
+of the :mod:`subprocess` module, which means sticking to ``stdin``, ``stdout``
+and ``stderr`` as ordinary streams or pipes (but not pseudo-terminals).
 
 Examples of programs which work directly through their controlling terminal
 are ``ftp`` and ``ssh`` - the password prompts for these programs are
@@ -613,11 +614,11 @@ On Posix, :mod:`subprocess` uses :func:`os.fork` to create the child process,
 and you may see dire warnings on the Internet about mixing threads, processes
 and ``fork()``. It *is* a heady mix, to be sure: you need to understand what's
 going on in order to avoid nasty surprises. If you run into any such, it may be
-hard to get help because others can't reproduce the problems. However, that's no
-reason to shy away from providing the functionality altogether. Such issues
-do not occur on Windows, for example: because Windows doesn't have a ``fork()
-`` system call, child processes are created in a different way which doesn't
-give rise to the issues which sometimes crop up in a Posix environment.
+hard to get help because others can't reproduce the problems. However, that's
+no reason to shy away from providing the functionality altogether. Such issues
+do not occur on Windows, for example: because Windows doesn't have a
+``fork()`` system call, child processes are created in a different way which
+doesn't give rise to the issues which sometimes crop up in a Posix environment.
 
 For an exposition of the sort of things which might bite you if you are using
 locks, threading and ``fork()`` on Posix, see `this post
@@ -625,7 +626,6 @@ locks, threading and ``fork()`` on Posix, see `this post
 
 Other resources on this topic:
 
-* https://www.lsgalilei.org/glibc-doc/Threads-and-Fork.html#Threads-and-Fork
 * http://bugs.python.org/issue6721
 
 Please report any problems you find in this area (or any other) either via the

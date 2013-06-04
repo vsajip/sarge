@@ -67,7 +67,7 @@ def main(args=None):
             time.sleep(options.delay)
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, filename='slow_lister.log',
+    logging.basicConfig(level=logging.INFO, filename='lister.log',
                         filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     try:
         rc = main()
