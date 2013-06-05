@@ -167,11 +167,12 @@ class Capture(WithMixin):
     seekable = readable
     closed = False
 
-    def __init__(self, timeout=None, buffer_size=0):
+    def __init__(self, timeout=None, buffer_size=0, encoding='utf-8'):
         self.timeout = timeout or default_capture_timeout
         self.streams = []
         self.buffer = queue.Queue()
         self.buffer_size = buffer_size or 4096
+        self.encoding = encoding
         self.current = None
         self._bytes = None
         self.threads = []
@@ -252,9 +253,9 @@ class Capture(WithMixin):
     @property
     def text(self):
         """
-        All the bytes in the capture queue, decoded as text using UTF-8.
+        All the bytes in the capture queue, decoded as text.
         """
-        return self.bytes.decode('utf-8')
+        return self.bytes.decode(self.encoding)
 
     def streams_open(self):
         result = False
@@ -385,12 +386,12 @@ class Capture(WithMixin):
         return '%s-%d' % (self.__class__.__name__, self.counter)
 
 
-def ensure_stream(input):
+def ensure_stream(input, encoding='utf-8'):
     """
     Convert a possible text value into a binary file-like object.
     """
     if isinstance(input, text_type):
-        input = input.encode('utf-8')   # need to be explicit for 2.x!
+        input = input.encode(encoding)   # need to be explicit for 2.x!
     if isinstance(input, binary_type):
         input = BytesIO(input)
         logger.debug('returning %s', input)
@@ -519,10 +520,10 @@ class Command(object):
         asynchronously.
 
         :param input: The input to pass to the command subprocess.
-        :type input:  If this is text, it is encoded to bytes using the
-                      default encoding. If it is a byte string, it is used as
-                      is. Otherwise, a file-like object containing bytes should
-                      be passed: this will be read to the end, but not closed.
+        :type input:  If this is text, it is encoded to bytes using UTF-8.
+                      If it is a byte string, it is used as is. Otherwise, a
+                      file-like object containing bytes should be passed: this
+                      will be read to the end, but not closed.
         :param async: If ``True``, this method returns without waiting for the
                       subprocess to complete. Otherwise, it awaits completion
                       by calling the :meth:`subprocess.Popen.wait` method.
@@ -1044,7 +1045,8 @@ class Pipeline(WithMixin):
         :param node: The node to run.
         :type node: An AST node from the parser.
         :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes.
+        :type input: Bytes, text or a file-like object of bytes. Text will be
+                     encoded using UTF-8.
         :param async: If True, don't wait for the pipeline to complete
                       before returning.
         :type async: bool
@@ -1144,7 +1146,8 @@ class Pipeline(WithMixin):
         :param node: The node to run.
         :type node: An AST node from the parser.
         :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes.
+        :type input: Bytes, text or a file-like object of bytes. Text will be
+                     encoded using UTF-8.
         :param async: If True, don't wait for the pipeline to complete
                       before returning.
         :type async: bool
@@ -1186,7 +1189,8 @@ class Pipeline(WithMixin):
         :param node: The node to run.
         :type node: An AST node from the parser.
         :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes.
+        :type input: Bytes, text or a file-like object of bytes. Text will be
+                     encoded using UTF-8.
         :param async: If True, don't wait for the pipeline to complete
                       before returning.
         :type async: bool
