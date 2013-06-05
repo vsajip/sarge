@@ -19,7 +19,7 @@ import subprocess
 import sys
 import threading
 
-from sarge.shlext import shell_shlex
+from .shlext import shell_shlex
 
 __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'shell_formatter', 'shell_format', 'run', 'parse_command_line',
@@ -308,7 +308,7 @@ class Capture(WithMixin):
             try:
                 self.current = self.buffer.get(block, timeout)
             except queue.Empty:
-                self.current = ''
+                self.current = b''
         while b'\n' not in self.current:
             try:
                 self.current += self.buffer.get(block, timeout)
