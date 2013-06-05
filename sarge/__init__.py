@@ -573,7 +573,6 @@ class Command(object):
         self.process_ready.wait()
         p = self.process
         if not p:   #pragma: no cover
-            import pdb; pdb.set_trace()
             logger.warning('No process found for %s', self)
             result = None
         else:

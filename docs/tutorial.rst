@@ -59,6 +59,19 @@ you have to do::
 If that's as simple as you want to get, then of course you don't need
 ``sarge``. Let's look at more demanding uses next.
 
+Finding commands under Windows
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Like ``subprocess``, ``sarge`` does do anything special to find the actual
+executable to run -- it is expected to be found in the current directory or
+the path. Specifically, ``PATHEXT`` is not supported: where you might type
+``yada`` in a command shell and have it run ``python yada.py`` because ``.py``
+is in the ``PATHEXT`` environment variable and Python is registered to handle
+files with that extension, neither ``subprocess`` (with ``shell=False``)nor
+``sarge`` do this. You will need to specify the executable name explicitly in
+the command passed to ``sarge``, at least for now.
+
+
 Chaining commands
 ^^^^^^^^^^^^^^^^^
 
