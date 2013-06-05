@@ -20,6 +20,7 @@ import sys
 import threading
 
 from .shlext import shell_shlex
+from .utils import which
 
 __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'shell_formatter', 'shell_format', 'run', 'parse_command_line',
