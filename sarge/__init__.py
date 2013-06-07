@@ -282,13 +282,16 @@ class Capture(WithMixin):
             result = b''.join(b)
         else:
             if self.current is None:
-                self.current = self.buffer.get(block, timeout)
-            while len(self.current) < size:
+                try:
+                    self.current = self.buffer.get(block, timeout)
+                except queue.Empty:
+                    self.current = b''
+            while not self.current:
                 try:
                     self.current += self.buffer.get(block, timeout)
                 except queue.Empty:
                     break
-            if len(self.current) == size:
+            if len(self.current) <= size:
                 result = self.current
                 self.current = None
             else:
@@ -297,7 +300,7 @@ class Capture(WithMixin):
         return result
 
     def read1(self, n):
-        return self.read(n, block=False)
+        return self.read(n)
 
     def readline(self, size=-1, block=True, timeout=None):
         if not self.streams_open():
