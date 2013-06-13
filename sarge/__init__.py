@@ -680,7 +680,7 @@ class CommandLineParser(object):
                         for other in reversed(valid):
                             self.lex.push_token(other)
                 tt = t
-        return tt, t
+        return tt, t, self.lex.preceding
 
     def get_valid_controls(self, t):
         if len(t) == 1:
@@ -713,7 +713,7 @@ class CommandLineParser(object):
 
     def consume(self, tt):
         self.token = self.peek
-        self.peek = None
+        #self.peek = None
         self.peek = self.next_token()
         if self.token[0] != tt:
             raise ValueError('consume: expected %r', tt)
@@ -799,30 +799,43 @@ class CommandLineParser(object):
     def parse_command(self):
         node = self.parse_command_part()
         tt = self.peek_token()
-        while tt == 'word':
+        while tt in ('word', 'number'):
             part = self.parse_command_part()
             node.command.extend(part.command)
             for fd, v in part.redirects.items():
                 self.add_redirection(node, fd, v[0], v[1])
             tt = self.peek_token()
         parse_logger.debug('returning %r', node)
+        if node.redirects != SWAP_OUTPUTS:
+            d = dict(node.redirects)
+            d.pop(1, None)
+            d.pop(2, None)
+            if d:
+                raise ValueError('semantics: can only redirect stdout and '
+                                 'stderr, not %s' % list(d.keys()))
         return node
 
     def parse_command_part(self):
         node = Node(kind='command', command=[self.peek[1]], redirects={})
-        self.consume('word')
+        if self.peek[0] == 'word':
+            self.consume('word')
+        else:
+            self.consume('number')
         tt = self.peek_token()
-        while tt in ('>', '>>', 'number'):
-            if tt != 'number':
-                num = 1
-            else:
-                num = int(self.peek[1])
-                self.consume(tt)
-                tt = self.peek_token()
-                if tt not in ('>', '>>'):
-                    # A number not followed by >, >> is treated as an argument
-                    node.command.append(str(num))
-                    break
+        while tt in ('>', '>>'):
+            num = 1 # default value
+            if self.peek[2] == '':
+                # > or >> seen without preceding whitespace. So see if the
+                # last token is a positive integer. If it is, assume it's
+                # an fd to redirect and pop it, else leave it in as part of
+                # the command line.
+                try:
+                    try_num = int(node.command[-1])
+                    if try_num > 0:
+                        num = try_num
+                        node.command.pop()
+                except ValueError:
+                    pass
             redirect_kind = tt
             self.consume(tt)
             tt = self.peek_token()
@@ -840,13 +853,6 @@ class CommandLineParser(object):
                 self.consume('number')
             self.add_redirection(node, num, redirect_kind, redirect_target)
             tt = self.peek_token()
-        if node.redirects != SWAP_OUTPUTS:
-            d = dict(node.redirects)
-            d.pop(1, None)
-            d.pop(2, None)
-            if d:
-                raise ValueError('semantics: can only redirect stdout and '
-                                 'stderr, not %s' % list(d.keys()))
         parse_logger.debug('returning %r', node)
         return node
 

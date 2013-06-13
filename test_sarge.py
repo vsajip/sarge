@@ -564,6 +564,19 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(data[m2.start():m2.end()].rstrip(), b'line 5')
         self.assertEqual(data[m3.start():m3.end()].rstrip(), b'line 10')
 
+    def test_redirection_with_whitespace(self):
+        node = parse_command_line('a 2 > b')
+        self.assertEqual(node.command, ['a', '2'])
+        self.assertEqual(node.redirects, {1: ('>', 'b')})
+        node = parse_command_line('a 2> b')
+        self.assertEqual(node.command, ['a'])
+        self.assertEqual(node.redirects, {2: ('>', 'b')})
+        node = parse_command_line('a 2 >> b')
+        self.assertEqual(node.command, ['a', '2'])
+        self.assertEqual(node.redirects, {1: ('>>', 'b')})
+        node = parse_command_line('a 2>> b')
+        self.assertEqual(node.command, ['a'])
+        self.assertEqual(node.redirects, {2: ('>>', 'b')})
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.

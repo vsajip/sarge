@@ -39,6 +39,7 @@ class shell_shlex(shlex.shlex):
     def read_token(self):
         quoted = False
         escapedstate = ' '
+        self.preceding = ''
         while True:
             if self.control and self.pbchars:
                 nextchar = self.pbchars.pop()
@@ -47,8 +48,7 @@ class shell_shlex(shlex.shlex):
             if nextchar == '\n':
                 self.lineno += 1
             if self.debug >= 3: # pragma: no cover
-                print("shlex: in state %r I see character: %r" % (self.state,
-                                                                  nextchar))
+                print("shlex: in state %r saw %r" % (self.state, nextchar))
             if self.state is None:
                 self.token = ''        # past end of file
                 break
@@ -58,8 +58,9 @@ class shell_shlex(shlex.shlex):
                     self.state = None  # end of file
                     break
                 elif nextchar in self.whitespace:
+                    self.preceding = nextchar
                     if self.debug >= 2: # pragma: no cover
-                        print("shlex: I see whitespace in whitespace state")
+                        print("shlex: whitespace in whitespace state")
                     if self.token or (self.posix and quoted):
                         break   # emit current token
                     else:
@@ -67,6 +68,7 @@ class shell_shlex(shlex.shlex):
                 elif nextchar in self.commenters:
                     self.instream.readline()
                     self.lineno += 1
+                    self.preceding = '\n'
                 elif self.posix and nextchar in self.escape:
                     escapedstate = 'a'
                     self.token_type = self.state
@@ -141,6 +143,10 @@ class shell_shlex(shlex.shlex):
                     self.token_type = self.state
                     self.state = ' '
                     if self.token or (self.posix and quoted):
+                        # push back so that preceding is set
+                        # correctly for the next token
+                        if self.control:
+                            self.pbchars.append(nextchar)
                         break   # emit current token
                     else:
                         continue
@@ -167,6 +173,8 @@ class shell_shlex(shlex.shlex):
                     else:
                         if nextchar not in self.whitespace:
                             self.pbchars.append(nextchar)
+                        else:
+                            self.preceding = nextchar
                         self.token_type = self.state
                         self.state = ' '
                         break
