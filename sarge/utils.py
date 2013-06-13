@@ -1,4 +1,11 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2012-2013 Vinay M. Sajip. See LICENSE for licensing information.
+#
+# sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
+#
 import os
+import re
 import sys
 
 try:
@@ -66,3 +73,26 @@ except ImportError:
                     if _access_check(name, mode):
                         return name
         return None
+
+if sys.platform == 'win32':
+    import _winreg
+
+    COMMAND_RE = re.compile(r'^"([^"]*)" "%1" %\*$')
+
+    def find_command(cmd):
+        result = None
+        cmd = which(cmd)
+        if cmd.startswith(r'.\'):
+            cmd = cmd[2:]
+        _, extn = os.path.splitext(cmd)
+        HKCR = _winreg.HKEY_CLASSES_ROOT
+        try:
+            ftype = _winreg.QueryValue(HKCR, extn)
+            path = os.path.join(ftype, 'shell', 'open', 'command')
+            s = _winreg.QueryValue(HKCR, path)
+            m = COMMAND_RE.match(s)
+            if m:
+                result = m.groups()[0]
+        except OSError:
+            pass
+        return result

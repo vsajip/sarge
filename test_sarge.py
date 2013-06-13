@@ -578,6 +578,19 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(node.command, ['a'])
         self.assertEqual(node.redirects, {2: ('>>', 'b')})
 
+    if sys.platform == 'win32':
+        import re
+        from sarge.utils import find_command
+
+        pyrunner_re = re.compile(r'.*py.*\.exe', re.I)
+        pywrunner_re = re.compile(r'.*py.*w\.exe', re.I)
+
+        def test_find_command(self):
+            cmd = find_command('dummy.py')
+            self.assertTrue(cmd is None or pyrunner_re.match(cmd))
+            cmd = find_command('dummy.pyw')
+            self.assertTrue(cmd is None or pywrunner_re.match(cmd))
+
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
     fn = 'test_sarge-%d.%d.log' % sys.version_info[:2]

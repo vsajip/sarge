@@ -20,7 +20,6 @@ import sys
 import threading
 
 from .shlext import shell_shlex
-from .utils import which
 
 __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'shell_formatter', 'shell_format', 'run', 'parse_command_line',
@@ -812,6 +811,12 @@ class CommandLineParser(object):
             if d:
                 raise ValueError('semantics: can only redirect stdout and '
                                  'stderr, not %s' % list(d.keys()))
+        if sys.platform == 'win32':
+            from .utils import find_command
+
+            cmd = find_command(node.command[0])
+            if cmd:
+                node.command.insert(0, cmd)
         return node
 
     def parse_command_part(self):
