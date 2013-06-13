@@ -82,17 +82,18 @@ if sys.platform == 'win32':
     def find_command(cmd):
         result = None
         cmd = which(cmd)
-        if cmd.startswith(r'.\'):
-            cmd = cmd[2:]
-        _, extn = os.path.splitext(cmd)
-        HKCR = _winreg.HKEY_CLASSES_ROOT
-        try:
-            ftype = _winreg.QueryValue(HKCR, extn)
-            path = os.path.join(ftype, 'shell', 'open', 'command')
-            s = _winreg.QueryValue(HKCR, path)
-            m = COMMAND_RE.match(s)
-            if m:
-                result = m.groups()[0]
-        except OSError:
-            pass
+        if cmd:
+            if cmd.startswith('.\\'):
+                cmd = cmd[2:]
+            _, extn = os.path.splitext(cmd)
+            HKCR = _winreg.HKEY_CLASSES_ROOT
+            try:
+                ftype = _winreg.QueryValue(HKCR, extn)
+                path = os.path.join(ftype, 'shell', 'open', 'command')
+                s = _winreg.QueryValue(HKCR, path)
+                m = COMMAND_RE.match(s)
+                if m:
+                    result = m.groups()[0]
+            except OSError:
+                pass
         return result

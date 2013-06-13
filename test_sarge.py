@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 from io import TextIOWrapper
 import logging
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -21,6 +22,9 @@ from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
                    get_both, Popen)
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
+
+if sys.platform == 'win32':
+    from sarge.utils import find_command
 
 TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
 
@@ -579,9 +583,6 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(node.redirects, {2: ('>>', 'b')})
 
     if sys.platform == 'win32':
-        import re
-        from sarge.utils import find_command
-
         pyrunner_re = re.compile(r'.*py.*\.exe', re.I)
         pywrunner_re = re.compile(r'.*py.*w\.exe', re.I)
 
