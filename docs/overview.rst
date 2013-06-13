@@ -224,6 +224,21 @@ Change log
 
 Released: Not yet.
 
+- Fixed issue #7: Corrected handling of whitespace and redirections.
+
+- Fixed issue #8: Added a missing import.
+
+- Added Travis integration.
+
+- Added encoding parameter to the ``Capture`` class.
+
+- Fixed bugs in Capture logic.
+
+- Tests added to cover added functionality and reported issues.
+
+- Numerous documentation updates.
+
+
 0.1.1
 ~~~~~
 

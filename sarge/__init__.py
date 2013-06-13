@@ -713,7 +713,6 @@ class CommandLineParser(object):
 
     def consume(self, tt):
         self.token = self.peek
-        #self.peek = None
         self.peek = self.next_token()
         if self.token[0] != tt:
             raise ValueError('consume: expected %r', tt)
@@ -823,7 +822,7 @@ class CommandLineParser(object):
             self.consume('number')
         tt = self.peek_token()
         while tt in ('>', '>>'):
-            num = 1 # default value
+            num = 1     # default value
             if self.peek[2] == '':
                 # > or >> seen without preceding whitespace. So see if the
                 # last token is a positive integer. If it is, assume it's
