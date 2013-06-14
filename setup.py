@@ -28,7 +28,7 @@ def description():
     f = open(join(dirname(__file__), 'README'))
     read_me = f.read()
     f.close()
-    regexp = r'^sarge\s*[\d.]*\s*\n=======+\s*\n(.*)Requirements '
+    regexp = r'^Overview\n========\n(.*)Requirements '
     requires, = re.findall(regexp, read_me, re.DOTALL)
     regexp = r'Availability & Documentation\s*\n-----+\s*\n(.*)'
     avail, = re.findall(regexp, read_me, re.DOTALL)
