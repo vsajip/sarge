@@ -1,5 +1,5 @@
-sarge 0.1
-=========
+Overview
+========
 The sarge package provides a wrapper for subprocess which provides command
 pipeline functionality.
 
@@ -17,7 +17,7 @@ installed with the standard Python installation procedure:
 There is a set of unit tests which you can invoke with
 
   python setup.py test
-  
+
 before running the installation.
 
 Availability & Documentation
