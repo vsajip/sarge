@@ -297,7 +297,11 @@ class SargeTest(unittest.TestCase):
         for cmd in ('ls -l --color=auto', 'sleep 0.5', 'ls /tmp/abc.def',
                     'ls *.py?', r'c:\Python26\Python lister.py -d 0.01'):
             node = parse_command_line(cmd, posix=False)
-            self.assertEqual(node.command, cmd.split())
+            if sys.platform != 'win32':
+                self.assertEqual(node.command, cmd.split())
+            else:
+                split = cmd.split()[1:]
+                self.assertEqual(node.command[1:], split)
 
     def test_parsing_controls(self):
         clp = CommandLineParser()
