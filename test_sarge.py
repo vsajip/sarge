@@ -592,6 +592,15 @@ class SargeTest(unittest.TestCase):
             cmd = find_command('dummy.pyw')
             self.assertTrue(cmd is None or pywrunner_re.match(cmd))
 
+        def test_run_found_command(self):
+            with open('hello.py', 'w') as f:
+                f.write('print("Hello, world!")')
+            cmd = find_command('hello')
+            if not cmd:
+                raise unittest.SkipTest('.py not in PATHEXT or not registered')
+            p = capture_stdout('hello')
+            self.assertEqual(p.stdout, 'Hello, world!')
+
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
     fn = 'test_sarge-%d.%d.log' % sys.version_info[:2]

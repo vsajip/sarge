@@ -224,15 +224,19 @@ Change log
 
 Released: Not yet.
 
+- Added functionality under Windows to use PATH, PATHEXT and the
+  registry to find appropriate commands.
+
 - Fixed issue #7: Corrected handling of whitespace and redirections.
 
 - Fixed issue #8: Added a missing import.
 
 - Added Travis integration.
 
-- Added encoding parameter to the ``Capture`` class.
+- Added encoding parameter to the ``Capture`` initializer.
 
-- Fixed bugs in Capture logic.
+- Fixed bugs in Capture logic so that iterating over captures is
+  closer to ``subprocess`` behaviour.
 
 - Tests added to cover added functionality and reported issues.
 
