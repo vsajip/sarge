@@ -62,14 +62,31 @@ If that's as simple as you want to get, then of course you don't need
 Finding commands under Windows
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Like ``subprocess``, ``sarge`` does do anything special to find the actual
-executable to run -- it is expected to be found in the current directory or
-the path. Specifically, ``PATHEXT`` is not supported: where you might type
-``yada`` in a command shell and have it run ``python yada.py`` because ``.py``
-is in the ``PATHEXT`` environment variable and Python is registered to handle
-files with that extension, neither ``subprocess`` (with ``shell=False``)nor
-``sarge`` do this. You will need to specify the executable name explicitly in
-the command passed to ``sarge``, at least for now.
+In versions 0.1.1 and earlier, ``sarge``, like ``subprocess``, did not do
+anything special to find the actual executable to run -- it was expected to be
+found in the current directory or the path. Specifically, ``PATHEXT`` was not
+supported: where you might type ``yada`` in a command shell and have it run
+``python yada.py`` because ``.py`` is in the ``PATHEXT`` environment variable
+and Python is registered to handle files with that extension, neither
+``subprocess`` (with ``shell=False``) nor ``sarge`` did this. You needed to
+specify the executable name explicitly in the command passed to ``sarge``.
+
+In 0.1.2 and later versions, ``sarge`` has improved command-line handling. The
+"which" functionality has been backported from Python 3.3, which takes care of
+using ``PATHEXT`` to resolve a command ``yada`` as ``c:\Tools\yada.py`` where
+``c:\Tools`` is on the PATH and ``yada.py`` is in there. In addition, ``sarge``
+queries the registry to see which programs are associated with the extension,
+and updates the command line accordingly. Thus, a command line ``foo bar``
+passed to ``sarge`` may actually result in ``c:\Windows\py.exe c:\Tools\foo.py
+bar`` being passed to ``subprocess`` (assuming the Python Launcher for Windows,
+``py.exe``, is associated with ``.py`` files).
+
+This new functionality is not limited to Python scripts - it should
+work for any extensions which are in ``PATHEXT`` and have an ftype/assoc
+binding them to an executable through ``shell``, ``open`` and ``command``
+subkeys in the registry, and where the command line is of the form
+``"<path_to_executable>" "%1" %*`` (this is the standard form used by several
+languages).
 
 
 Chaining commands

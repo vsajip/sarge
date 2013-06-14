@@ -40,6 +40,7 @@ setup(
                  'pipeline functionality.'),
     long_description=description(),
     version=sarge.__version__,
+    license='BSD',
     author='Vinay Sajip',
     author_email='vinay_sajip@yahoo.co.uk',
     maintainer='Vinay Sajip',
