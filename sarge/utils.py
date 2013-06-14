@@ -83,6 +83,16 @@ if sys.platform == 'win32':
     COMMAND_RE = re.compile(r'^"([^"]*)" "%1" %\*$')
 
     def find_command(cmd):
+        """
+        Convert a command into a script name, if possible, and find
+        any associated executable.
+        :param cmd: The command (e.g. 'hello')
+        :returns: A 2-tuple. The first element is an executable associated
+                  with the extension of the command script. The second
+                  element is the script name, including the extension and
+                  pathname if found on the path. Example for 'hello' might be
+                  (r'c:\Python\python.exe', r'c:\MyTools\hello.py').
+        """
         result = None
         cmd = which(cmd)
         if cmd:
@@ -94,9 +104,11 @@ if sys.platform == 'win32':
                 ftype = winreg.QueryValue(HKCR, extn)
                 path = os.path.join(ftype, 'shell', 'open', 'command')
                 s = winreg.QueryValue(HKCR, path)
+                exe = None
                 m = COMMAND_RE.match(s)
                 if m:
-                    result = m.groups()[0]
+                    exe = m.groups()[0]
             except OSError:
                 pass
+            result = exe, cmd
         return result

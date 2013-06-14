@@ -599,7 +599,7 @@ class SargeTest(unittest.TestCase):
             if not cmd:
                 raise unittest.SkipTest('.py not in PATHEXT or not registered')
             p = capture_stdout('hello')
-            self.assertEqual(p.stdout, 'Hello, world!')
+            self.assertEqual(p.stdout.text.rstrip(), 'Hello, world!')
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.

@@ -816,7 +816,10 @@ class CommandLineParser(object):
 
             cmd = find_command(node.command[0])
             if cmd:
-                node.command.insert(0, cmd)
+                exe, cmd = cmd
+                node.command[0] = cmd
+                if exe:
+                    node.command.insert(0, exe)
         return node
 
     def parse_command_part(self):
