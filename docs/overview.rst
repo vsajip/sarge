@@ -225,7 +225,10 @@ Change log
 Released: Not yet.
 
 - Added functionality under Windows to use PATH, PATHEXT and the
-  registry to find appropriate commands.
+  registry to find appropriate commands. This can e.g. convert a
+  command ``'foo bar'``, if ``'foo.py'`` is a Python script in the
+  ``c:\Tools`` directory which is on the path,  to the equivalent
+  ``'c:\Python26\Python.exe c:\Tools\foo.py bar'``.
 
 - Fixed issue #7: Corrected handling of whitespace and redirections.
 
