@@ -228,7 +228,8 @@ Released: Not yet.
   registry to find appropriate commands. This can e.g. convert a
   command ``'foo bar'``, if ``'foo.py'`` is a Python script in the
   ``c:\Tools`` directory which is on the path,  to the equivalent
-  ``'c:\Python26\Python.exe c:\Tools\foo.py bar'``.
+  ``'c:\Python26\Python.exe c:\Tools\foo.py bar'``. This is done internally
+  when a command is parsed, before it is passed to ``subprocess``.
 
 - Fixed issue #7: Corrected handling of whitespace and redirections.
 
