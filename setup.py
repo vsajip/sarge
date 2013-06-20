@@ -49,6 +49,8 @@ setup(
     download_url=('http://pypi.python.org/packages/source/s/sarge/'
                   'sarge-%s.tar.gz' % sarge.__version__),
     packages=['sarge'],
+    keywords=['subprocess', 'wrapper', 'external', 'command'],
+    platforms=['Any'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
