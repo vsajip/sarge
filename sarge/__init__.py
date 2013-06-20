@@ -167,7 +167,7 @@ class Capture(WithMixin):
     seekable = readable
     closed = False
 
-    def __init__(self, timeout=None, buffer_size=0, encoding='utf-8'):
+    def __init__(self, timeout=None, buffer_size=-1, encoding='utf-8'):
         self.timeout = timeout or default_capture_timeout
         self.streams = []
         self.buffer = queue.Queue()
@@ -494,13 +494,13 @@ class Command(object):
         # check for input specified
         if kwargs.get('stdin'):
             raise ValueError('Inputs need to be specified via the run method.')
-            # special handling of Capture instances in stdout, stderr
+        # special handling of Capture instances in stdout, stderr
         for attr in ('stdout', 'stderr'):
             s = kwargs.get(attr)
             if isinstance(s, Capture):
                 kwargs[attr] = subprocess.PIPE
                 setattr(self, attr, s)
-                # special handling: env is added to os.environ
+        # special handling: env is added to os.environ
         e = kwargs.get('env')
         if e:
             env = dict(os.environ)
@@ -539,6 +539,8 @@ class Command(object):
             else:
                 input = ensure_stream(input)
                 if not isinstance(input, BytesIO):
+                    if hasattr(input, 'fileno'):
+                        input = input.fileno()
                     self.kwargs['stdin'] = input
                 else:
                     self.kwargs['stdin'] = subprocess.PIPE
