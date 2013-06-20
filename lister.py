@@ -35,6 +35,8 @@ def main(args=None):
                                                'internally and printed.')
     parser.add_option('-d', '--delay', default=None, type=float,
                       help='Delay between lines (seconds)')
+    parser.add_option('-c', '--count', default=0, type=int,
+                      help='Maximum number of lines to output')
     parser.add_option('-i', '--interest', default=None,
                       help='Indicate patterns of interest for logging')
     if args is None:
@@ -52,9 +54,11 @@ def main(args=None):
     pattern = options.interest
     if pattern:
         pattern = re.compile(pattern)
+    nlines = 0
     for line in liner:
         sys.stdout.write(line)
         sys.stdout.flush()
+        nlines += 1
         bytes_written += len(line)
         if pattern and pattern.search(line):
             s = ': %r' % line
@@ -63,6 +67,8 @@ def main(args=None):
             s = ''
             level = logging.DEBUG
         logger.log(level, 'Wrote out %d bytes%s', bytes_written, s)
+        if options.count and nlines >= options.count:
+            break
         if options.delay:
             time.sleep(options.delay)
 
