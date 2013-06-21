@@ -201,7 +201,7 @@ Here's how the value passed as ``input`` is processed:
   that will be called as a method and the resulting value will be  passed to
   the ``subprocess`` layer. This would normally be a readable file descriptor.
 * Other values (such as integers representing OS-level file descriptors, or
-  special values like ``subprocess.PIPE``, are passed to the ``subprocess``
+  special values like ``subprocess.PIPE``) are passed to the ``subprocess``
   layer as-is.
 
 If the result of the above process is a ``BytesIO`` instance (or if you passed
@@ -285,7 +285,8 @@ Here's a complete working example::
             rc = 9
         sys.exit(rc)
 
-In the above example, the ``echoer.py`` script just reads lines from its
+In the above example, the ``echoer.py`` script (included in the ``sarge``
+source distribution, as it's part of the test suite) just reads lines from its
 ``stdin``, duplicates and prints to its ``stdout``. Since we passed in the
 strings ``hello`` and ``goodbye``, the output from the script should be::
 

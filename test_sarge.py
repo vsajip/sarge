@@ -624,7 +624,8 @@ class SargeTest(unittest.TestCase):
         finally:
             p.commands[0].terminate()
             feeder.close()
-        self.assertEqual(p.stdout.text, 'hello hello\ngoodbye goodbye\n')
+        self.assertEqual(p.stdout.text.splitlines(),
+                         ['hello hello', 'goodbye goodbye'])
 
 
 if __name__ == '__main__':  #pragma: no cover
