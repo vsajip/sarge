@@ -14,12 +14,13 @@ import re
 import shutil
 import sys
 import tempfile
+import time
 import unittest
 
 from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
                    shell_format, run, parse_command_line, capture_stdout,
                    get_stdout, capture_stderr, get_stderr, capture_both,
-                   get_both, Popen)
+                   get_both, Popen, Feeder)
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
@@ -604,6 +605,27 @@ class SargeTest(unittest.TestCase):
                 raise unittest.SkipTest('.py not in PATHEXT or not registered')
             p = capture_stdout('hello')
             self.assertEqual(p.stdout.text.rstrip(), 'Hello, world!')
+
+    def test_feeder(self):
+        feeder = Feeder()
+        p = capture_stdout([sys.executable, 'echoer.py'], input=feeder,
+                           async=True)
+        try:
+            lines = ('hello', 'goodbye')
+            gen = iter(lines)
+            while p.commands[0].returncode is None:
+                try:
+                    data = next(gen)
+                except StopIteration:
+                    break
+                feeder.feed(data + '\n')
+                p.commands[0].poll()
+                time.sleep(0.05)    # wait for child to return echo
+        finally:
+            p.commands[0].terminate()
+            feeder.close()
+        self.assertEqual(p.stdout.text, 'hello hello\ngoodbye goodbye\n')
+
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.

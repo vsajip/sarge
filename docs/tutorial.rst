@@ -192,12 +192,105 @@ to :func:`run`::
     >>> p = run('cat|cat', input='foo')
     foo>>>
 
-You can pass a string, bytes or a file-like object of bytes. If it's a string
-or bytes, what you pass in is converted to a file-like object of bytes,
-which is sent to the child process' ``stdin`` stream in a separate thread.
+Here's how the value passed as ``input`` is processed:
 
-You can also pass in special values like ``subprocess.PIPE`` -- these are
-passed to the ``subprocess`` layer as-is.
+* Text is encoded to bytes using UTF-8, which is then wrapped in a ``BytesIO``
+  object.
+* Bytes are wrapped in a ``BytesIO`` object.
+* Starting with 0.1.2, if you pass an object with a ``fileno`` attribute,
+  that will be called as a method and the resulting value will be  passed to
+  the ``subprocess`` layer. This would normally be a readable file descriptor.
+* Other values (such as integers representing OS-level file descriptors, or
+  special values like ``subprocess.PIPE``, are passed to the ``subprocess``
+  layer as-is.
+
+If the result of the above process is a ``BytesIO`` instance (or if you passed
+in a ``BytesIO`` instance), then ``sarge`` will spin up an internal thread to
+write the data to the child process when it is spawned. The reason for a
+separate thread is that if the child process consumes data slowly, or the size
+of data is large, then the calling thread would block for potentially long
+periods of time.
+
+Passing input data to commands dynamically
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes, you may want to pass quite a lot of data to a child process which
+is not conveniently available as a string, byte-string or a file, but which
+is generated in the parent process (the one using ``sarge``) by some other
+means. Starting with 0.1.2, ``sarge`` facilitates this by supporting objects
+with ``fileno()`` attributes as described above, and includes a ``Feeder``
+class which has a suitable ``fileno()`` implementation.
+
+Creating and using a feeder is simple::
+
+    import sys
+    from sarge import Feeder, run
+
+    feeder = Feeder()
+    run([sys.executable, 'echoer.py'], input=feeder, async=True)
+
+After this, you can feed data to the child process' ``stdin`` by calling the
+``feed()`` method of the ``Feeder`` instance::
+
+    feeder.feed('Hello')
+    feeder.feed(b'Goodbye')
+
+If you pass in text, it will be encoded to bytes using UTF-8.
+
+Once you've finished with the feeder, you can close it::
+
+    feeder.close()
+
+Depending on how quickly the child process consumes data, the thread calling
+``feed()`` might block on I/O. If this is a problem, you can spawn a separate
+thread which does the feeding.
+
+Here's a complete working example::
+
+    import os
+    import subprocess
+    import sys
+    import time
+
+    import sarge
+
+    try:
+        text_type = unicode
+    except NameError:
+        text_type = str
+
+    def main(args=None):
+        feeder = sarge.Feeder()
+        p = sarge.run([sys.executable, 'echoer.py'], input=feeder, async=True)
+        try:
+            lines = ('hello', 'goodbye')
+            gen = iter(lines)
+            while p.commands[0].returncode is None:
+                try:
+                    data = next(gen)
+                except StopIteration:
+                    break
+                feeder.feed(data + '\n')
+                p.commands[0].poll()
+                time.sleep(0.05)    # wait for child to return echo
+        finally:
+            p.commands[0].terminate()
+            feeder.close()
+
+    if __name__ == '__main__':
+        try:
+            rc = main()
+        except Exception as e:
+            print(e)
+            rc = 9
+        sys.exit(rc)
+
+In the above example, the ``echoer.py`` script just reads lines from its
+``stdin``, duplicates and prints to its ``stdout``. Since we passed in the
+strings ``hello`` and ``goodbye``, the output from the script should be::
+
+    hello hello
+    goodbye goodbye
 
 
 Chaining commands conditionally

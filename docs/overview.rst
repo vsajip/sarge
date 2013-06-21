@@ -224,6 +224,11 @@ Change log
 
 Released: Not yet.
 
+- Added the ability to pass objects with ``fileno()`` methods as values
+  to the ``input`` argument of ``run()``, and a ``Feeder`` class which
+  facilitates passing data to child processes dynamically over time (rather
+  than just an initial string, byte-string or file).
+
 - Added functionality under Windows to use PATH, PATHEXT and the
   registry to find appropriate commands. This can e.g. convert a
   command ``'foo bar'``, if ``'foo.py'`` is a Python script in the

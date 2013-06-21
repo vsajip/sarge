@@ -15,34 +15,19 @@ try:
     text_type = unicode
 except NameError:
     text_type = str
-    raw_input = input
 
-class Feeder(object):
-    def __init__(self):
-        self._r, self._w = os.pipe()
-
-    def fileno(self):
-        return self._r
-
-    def feed(self, data):
-        if isinstance(data, text_type):
-            data = data.encode('utf-8')
-        if not isinstance(data, bytes):
-            raise TypeError('Bytes expected, got %s' % type(data))
-        os.write(self._w, data)
-
-    def close(self):
-        os.close(self._r)
-        os.close(self._w)
 
 def main(args=None):
-    feeder = Feeder()
+    feeder = sarge.Feeder()
     p = sarge.run([sys.executable, 'echoer.py'], input=feeder, async=True)
     try:
         lines = ('hello', 'goodbye')
         gen = iter(lines)
         while p.commands[0].returncode is None:
-            data = next(gen)
+            try:
+                data = next(gen)
+            except StopIteration:
+                break
             feeder.feed(data + '\n')
             p.commands[0].poll()
             time.sleep(0.05)    # wait for child to return echo

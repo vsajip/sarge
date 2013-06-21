@@ -389,6 +389,33 @@ class Capture(WithMixin):
         return '%s-%d' % (self.__class__.__name__, self.counter)
 
 
+class Feeder(object):
+    """
+    Facilitate sending data to a child process over time rather than
+    just when the child is spawned.
+    """
+    def __init__(self):
+        self._r, self._w = os.pipe()
+
+    def fileno(self):
+        return self._r
+
+    def feed(self, data):
+        if isinstance(data, text_type):
+            data = data.encode('utf-8')
+        if not isinstance(data, bytes):
+            raise TypeError('Bytes expected, got %s' % type(data))
+        os.write(self._w, data)
+
+    def close(self):
+        if self._r:
+            os.close(self._r)
+            self._r = None
+        if self._w:
+            os.close(self._w)
+            self._w = None
+
+
 def ensure_stream(input, encoding='utf-8'):
     """
     Convert a possible text value into a binary file-like object.
