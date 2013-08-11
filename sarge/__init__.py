@@ -7,6 +7,8 @@
 from io import BytesIO
 import logging
 import os
+import signal
+import sys
 
 try:
     import queue
@@ -487,6 +489,17 @@ class Popen(subprocess.Popen):
                 c2pread = dup(errread)
                 c2pwrite = dup(errwrite)
             return p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite
+
+    if os.name == 'posix' and sys.version_info[0] < 3:
+        # Issue 12: add restore_signals support to avoid spurious
+        # output on broken pipes
+        def _execute_child(self, args, executable, preexec_fn, *rest):
+            def preexec():
+                signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+                if preexec_fn:
+                    preexec_fn()
+            super(Popen, self)._execute_child(args, executable, preexec, *rest)
+
 
     def __repr__(self):
         values = []
@@ -1118,7 +1131,12 @@ class Pipeline(WithMixin):
                 stdout = STDERR
                 stderr = subprocess.STDOUT
             else:
-                stdout, stderr = self.get_redirects(curr)
+                try:
+                    stdout, stderr = self.get_redirects(curr)
+                except IOError:
+                    if prev and stdin == prev.process.stdout:
+                        stdin.close()
+                    raise
             if i < last:
                 pipe = parts[i + 1].pipe
                 if pipe == '|':
@@ -1139,6 +1157,9 @@ class Pipeline(WithMixin):
                                         stderr=stderr or self.stderr,
                                         **self.kwargs)
             curr.cmd.run(input=stdin, async=use_async)
+            # Issue 12: close stdin after spawning the child that uses it
+            if prev and stdin == prev.process.stdout:
+                stdin.close()
             prev = curr.cmd
             i += 2
 
