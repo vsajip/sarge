@@ -224,6 +224,17 @@ Change log
 
 Released: Not yet.
 
+- Fixed issue #13: Removed module globals to improve thread safety.
+
+- Fixed issue #12: Fixed a hang which occurred when a redirection failed.
+
+- Fixed issue #11: Added ``+`` to the characters allowed in parameters.
+
+- Fixed issue #10: Removed a spurious debugger breakpoint.
+
+- Fixed issue #9: Relative pathnames in redirections are now relative to the
+  current working directory for the redirected process.
+
 - Added the ability to pass objects with ``fileno()`` methods as values
   to the ``input`` argument of ``run()``, and a ``Feeder`` class which
   facilitates passing data to child processes dynamically over time (rather
