@@ -9,6 +9,7 @@ import logging
 import os
 import signal
 import sys
+import threading
 
 try:
     import queue
@@ -494,10 +495,14 @@ class Popen(subprocess.Popen):
         # Issue 12: add restore_signals support to avoid spurious
         # output on broken pipes
         def _execute_child(self, args, executable, preexec_fn, *rest):
-            def preexec():
-                signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-                if preexec_fn:
-                    preexec_fn()
+            # can only call signal.signal in the main thread
+            if threading.current_thread().name != 'MainThread':
+                preexec = preexec_fn
+            else:
+                def preexec():
+                    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+                    if preexec_fn:
+                        preexec_fn()
             super(Popen, self)._execute_child(args, executable, preexec, *rest)
 
     def __repr__(self):
