@@ -25,7 +25,7 @@ import threading
 from .shlext import shell_shlex
 
 __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
-           'shell_formatter', 'shell_format', 'run', 'parse_command_line',
+           'shell_format', 'run', 'parse_command_line',
            'capture_stdout', 'capture_stderr', 'capture_both')
 
 __version__ = '0.1.2.dev0'
@@ -108,9 +108,6 @@ class ShellFormatter(string.Formatter):
                                                                conversion)
         return result
 
-# This instance is used by :func:`shell_format` to do its formatting.
-shell_formatter = ShellFormatter()
-
 def shell_format(fmt, *args, **kwargs):
     """
     Format a shell command with format placeholders and variables to fill
@@ -132,7 +129,7 @@ def shell_format(fmt, *args, **kwargs):
              shells from the point of view of shell injection.
     :rtype: The type of ``fmt``.
     """
-    return shell_formatter.vformat(fmt, args, kwargs)
+    return ShellFormatter().vformat(fmt, args, kwargs)
 
 
 class WithMixin(object):
@@ -909,8 +906,6 @@ class CommandLineParser(object):
         parse_logger.debug('returning %r', node)
         return node
 
-command_line_parser = CommandLineParser()
-
 class Pipeline(WithMixin):
     """
     This class represents a pipeline of commands.
@@ -929,7 +924,7 @@ class Pipeline(WithMixin):
             t = Node(kind='command', command=source, redirects={})
         else:
             self.source = source
-            t = command_line_parser.parse(source, posix=posix)
+            t = CommandLineParser().parse(source, posix=posix)
         self.tree = t
         self.last = self.find_last_command(t)
         self.events = []
@@ -1404,4 +1399,4 @@ def parse_command_line(source, posix=None):
     """
     if posix is None:
         posix = os.name == 'posix'
-    return command_line_parser.parse(source, posix=posix)
+    return CommandLineParser().parse(source, posix=posix)
