@@ -500,7 +500,6 @@ class Popen(subprocess.Popen):
                     preexec_fn()
             super(Popen, self)._execute_child(args, executable, preexec, *rest)
 
-
     def __repr__(self):
         values = []
         for attr in ('returncode', 'stdin', 'stdout', 'stderr'):
@@ -1081,6 +1080,9 @@ class Pipeline(WithMixin):
             else:
                 mode = 'ab'
             if isinstance(fn, string_types):
+                # Issue 9: open redirection outputs relative to cwd
+                if 'cwd' in self.kwargs:
+                    fn = os.path.join(self.kwargs['cwd'], fn)
                 stream = open(fn, mode)
                 with self.lock:
                     self.opened.append(stream)

@@ -587,6 +587,17 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(node.command, ['a'])
         self.assertEqual(node.redirects, {2: ('>>', 'b')})
 
+    def test_redirection_with_cwd(self):
+        workdir = tempfile.mkdtemp()
+        try:
+            run('echo hello > world', cwd=workdir)
+            p = os.path.join(workdir, 'world')
+            self.assertTrue(os.path.exists(p))
+            with open(p) as f:
+                self.assertEqual(f.read().strip(), 'hello')
+        finally:
+            shutil.rmtree(workdir)
+
     if sys.platform == 'win32':
         pyrunner_re = re.compile(r'.*py.*\.exe', re.I)
         pywrunner_re = re.compile(r'.*py.*w\.exe', re.I)
