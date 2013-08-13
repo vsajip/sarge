@@ -255,8 +255,8 @@ Released: Not yet.
 
 - Added encoding parameter to the ``Capture`` initializer.
 
-- Fixed bugs in Capture logic so that iterating over captures is
-  closer to ``subprocess`` behaviour.
+- Fixed issue #6: addressed bugs in Capture logic so that iterating over
+  captures is closer to ``subprocess`` behaviour.
 
 - Tests added to cover added functionality and reported issues.
 

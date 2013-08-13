@@ -7,16 +7,14 @@
 from io import BytesIO
 import logging
 import os
-import signal
-import sys
-import threading
 
 try:
     import queue
-except ImportError: #pragma: no cover
+except ImportError:     #pragma: no cover
     import Queue as queue
 import re
 import shutil
+import signal
 import string
 import subprocess
 import sys
@@ -145,6 +143,7 @@ class WithMixin(object):
 
 default_capture_timeout = 0.02
 default_expect_timeout = 5.0
+
 
 class Capture(WithMixin):
     """
@@ -381,7 +380,7 @@ class Capture(WithMixin):
         for t in self.threads:
             try:
                 t.join()
-            except RuntimeError: #pragma: no cover
+            except RuntimeError:    #pragma: no cover
                 logger.debug('failed to join thread: %s', t)
                 #raise
 
