@@ -492,7 +492,13 @@ class Popen(subprocess.Popen):
         # output on broken pipes
         def _execute_child(self, args, executable, preexec_fn, *rest):
             # can only call signal.signal in the main thread
-            if threading.current_thread().name != 'MainThread':
+            # note that this test may give the wrong answer if
+            # called from a child process which was fork()ed
+            # from a non-main thread, as that becomes the main
+            # thread in the child process and will not be a _MainThread
+            # instance.
+            if not isinstance(threading.current_thread(),
+                              threading._MainThread):
                 preexec = preexec_fn
             else:
                 def preexec():
