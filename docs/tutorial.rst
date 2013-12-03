@@ -483,7 +483,7 @@ We can now show how to interact with this program from a parent process::
 
     >>> from sarge import Command, Capture
     >>> from subprocess import PIPE
-    >>> p = Command('/.receiver', stdout=Capture(buffer_size=1))
+    >>> p = Command('./receiver', stdout=Capture(buffer_size=1))
     >>> p.run(input=PIPE, async=True)
     Command('./receiver')
     >>> p.stdin.write('Fred\n')
