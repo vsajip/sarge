@@ -219,10 +219,15 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.2
+0.1.3
 ~~~~~
 
 Released: Not yet.
+
+0.1.2
+~~~~~
+
+Released: 2013-12-17
 
 - Fixed issue #13: Removed module globals to improve thread safety.
 
