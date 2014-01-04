@@ -10,25 +10,25 @@ pipes using | and |&, and redirection.
 Requirements & Installation
 ---------------------------
 The sarge package requires Python 2.6 or greater, and can be
-installed with the standard Python installation procedure:
+installed with the standard Python installation procedure::
 
-  python setup.py install
+    python setup.py install
 
-There is a set of unit tests which you can invoke with
+There is a set of unit tests which you can invoke with::
 
-  python setup.py test
+    python setup.py test
 
 before running the installation.
 
 Availability & Documentation
 ----------------------------
-The latest version of sarge can be found at:
+The latest version of sarge can be found at::
 
-  https://bitbucket.org/vinay.sajip/sarge/
+    https://bitbucket.org/vinay.sajip/sarge/
 
-The latest documentation (kept updated between releases) is at
+The latest documentation (kept updated between releases) is at::
 
-  http://sarge.readthedocs.org/
+    http://sarge.readthedocs.org/
 
 Please report any problems or suggestions for improvement either via the
 `mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
