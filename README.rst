@@ -30,3 +30,7 @@ The latest documentation (kept updated between releases) is at
 
   http://sarge.readthedocs.org/
 
+Please report any problems or suggestions for improvement either via the
+`mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
+tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
+

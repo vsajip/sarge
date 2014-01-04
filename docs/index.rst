@@ -21,3 +21,8 @@ applications from their Python code.
    tutorial
    internals
    reference
+
+Please report any problems or suggestions for improvement either via the
+`mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
+tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
+
