@@ -25,7 +25,7 @@ class TestCommand(Command):
         pass
 
 def description():
-    f = open(join(dirname(__file__), 'README'))
+    f = open(join(dirname(__file__), 'README.rst'))
     read_me = f.read()
     f.close()
     regexp = r'^Overview\n========\n(.*)Requirements '
