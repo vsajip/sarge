@@ -22,11 +22,11 @@ before running the installation.
 
 Availability & Documentation
 ----------------------------
-The latest version of sarge can be found at::
+The latest version of sarge can be found `here <https://bitbucket.org/vinay.sajip/sarge/>`_::
 
     https://bitbucket.org/vinay.sajip/sarge/
 
-The latest documentation (kept updated between releases) is at::
+The latest documentation (kept updated between releases) is `here <http://sarge.readthedocs.org/>`_::
 
     http://sarge.readthedocs.org/
 
