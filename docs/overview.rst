@@ -224,6 +224,10 @@ Change log
 
 Released: Not yet.
 
+- Fixed issue #15: Handled subprocess internal changes in Python 2.7.6.
+
+- Improved logging support.
+
 0.1.2
 ~~~~~
 
