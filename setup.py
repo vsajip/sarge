@@ -1,5 +1,9 @@
-#!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2012-2014 Vinay M. Sajip. See LICENSE for licensing information.
+#
+# sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
+#
 from distutils.core import setup, Command
 from os.path import join, dirname, abspath
 import re

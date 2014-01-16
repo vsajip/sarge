@@ -216,6 +216,8 @@ when you specify ``&`` in a command pipeline) can be considered experimental,
 and there may be changes in this area. However, you aren't forced to use this
 feature, and ``sarge`` should be useful without it.
 
+.. _changelog:
+
 Change log
 ----------
 
@@ -227,7 +229,7 @@ Released: Not yet.
 0.1.3
 ~~~~~
 
-Released: 2014-01-16
+Released: 2014-01-17
 
 - Fixed issue #15: Handled subprocess internal changes in Python 2.7.6.
 
