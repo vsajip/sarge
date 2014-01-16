@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2013 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2014 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
@@ -34,7 +34,7 @@ __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'shell_format', 'run', 'parse_command_line',
            'capture_stdout', 'capture_stderr', 'capture_both')
 
-__version__ = '0.1.3.dev0'
+__version__ = '0.1.3'
 
 logger = logging.getLogger(__name__)
 logger.addHandler(NullHandler())

@@ -219,14 +219,21 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.3
+0.1.4
 ~~~~~
 
 Released: Not yet.
 
+0.1.3
+~~~~~
+
+Released: 2014-01-16
+
 - Fixed issue #15: Handled subprocess internal changes in Python 2.7.6.
 
 - Improved logging support.
+
+- Minor documentation updates.
 
 0.1.2
 ~~~~~
