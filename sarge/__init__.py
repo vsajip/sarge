@@ -78,12 +78,10 @@ def shell_quote(s):
     assert isinstance(s, string_types)
     if not s:
         result = "''"
-    elif len(s) >= 2 and (s[0], s[-1]) == ("'", "'"):
-        result = '"%s"' % s.replace('"', r'\"')
     elif not UNSAFE.search(s):
         result = s
     else:
-        result = "'{0}'".format(s.replace("'", "'\"'\"'"))
+        result = "'%s'" % s.replace("'", "'\"'\"'")
     return result
 
 

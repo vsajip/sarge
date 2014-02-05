@@ -66,11 +66,35 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(shell_quote('a'), 'a')
         self.assertEqual(shell_quote('*'), "'*'")
         self.assertEqual(shell_quote('foo'), 'foo')
-        self.assertEqual(shell_quote("'*.py'"), '"\'*.py\'"')
+        self.assertEqual(shell_quote("'*.py'"), '\'\'"\'"\'*.py\'"\'"\'\'')
         self.assertEqual(shell_quote("'a'; rm -f b; true 'c'"),
-                                     '"\'a\'; rm -f b; true \'c\'"')
+                                     '\'\'"\'"\'a\'"\'"\'; rm -f b; '
+                                     'true \'"\'"\'c\'"\'"\'\'')
         self.assertEqual(shell_quote("*.py"), "'*.py'")
         self.assertEqual(shell_quote("'*.py"), "''\"'\"'*.py'")
+
+    @unittest.skipIf(os.name != 'posix', 'This test works only on POSIX')
+    def test_quote_with_shell(self):
+        from subprocess import PIPE, Popen
+
+        workdir = tempfile.mkdtemp()
+        try:
+            s = "'\\\"; touch %s/foo #'" % workdir
+            cmd = 'echo %s' % shell_quote(s)
+            p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+            p.communicate()
+            self.assertEqual(p.returncode, 0)
+            files = os.listdir(workdir)
+            self.assertEqual(files, [])
+            fn = "'ab?'"
+            cmd = 'touch %s/%s' % (workdir, shell_quote(fn))
+            p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+            p.communicate()
+            self.assertEqual(p.returncode, 0)
+            files = os.listdir(workdir)
+            self.assertEqual(files, ["'ab?'"])
+        finally:
+            shutil.rmtree(workdir)
 
     def test_formatter(self):
         self.assertEqual(shell_format('ls {0}', '*.py'), "ls '*.py'")
