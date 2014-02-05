@@ -81,7 +81,7 @@ def shell_quote(s):
     elif not UNSAFE.search(s):
         result = s
     else:
-        result = "'%s'" % s.replace("'", "'\"'\"'")
+        result = "'%s'" % s.replace("'", r"'\''")
     return result
 
 
