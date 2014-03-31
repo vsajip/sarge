@@ -555,8 +555,8 @@ class Command(object):
                    :class:`subprocess.Popen'.
     :param kwargs: The same as you would pass to :class:`subprocess.Popen'.
                    However, the ``env`` parameter is handled differently: it
-                   is treated as *additional* environment variables to be
-                   added to the values in ``os.environ``.
+                   is treated as a set of *additional* environment variables to
+                   be added to the values in ``os.environ``.
     """
 
     def __init__(self, args, **kwargs):
@@ -1340,6 +1340,13 @@ def run(cmd, **kwargs):
     """
     Run a command with optional input and either synchronously or
     asynchronously.
+
+    Apart from the ``input`` and ``async`` keyword arguments described below,
+    other keyword arguments are passed to the created :class:`Pipeline`
+    instance, and thence to :class:`subprocess.Popen` via a :class:`Command`
+    instance. Note that the ``env`` kwarg is treated differently to how it is
+    in :class:`~subprocess.Popen`: it is treated as a set of *additional*
+    environment variables to be added to the values in ``os.environ``.
 
     :param cmd:    The command string or array or command/args to be run.
     :type cmd:     This is the same as the first argument to the constructor of
