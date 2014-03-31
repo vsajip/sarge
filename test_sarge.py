@@ -72,9 +72,11 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(shell_quote("*.py"), "'*.py'")
         self.assertEqual(shell_quote("'*.py"), "''\\''*.py'")
 
-    @unittest.skipIf(os.name != 'posix', 'This test works only on POSIX')
     def test_quote_with_shell(self):
         from subprocess import PIPE, Popen
+
+        if os.name != 'posix':
+            raise unittest.SkipTest('This test works only on POSIX')
 
         workdir = tempfile.mkdtemp()
         try:
