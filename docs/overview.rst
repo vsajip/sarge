@@ -226,6 +226,14 @@ Change log
 
 Released: Not yet.
 
+- Fixed issue #21: Don't parse if shell=True.
+
+- Improved logging.
+
+- Minor documentation updates.
+
+- Minor additions to tests.
+
 0.1.3
 ~~~~~
 
