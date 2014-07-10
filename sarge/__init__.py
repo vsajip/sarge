@@ -954,8 +954,12 @@ class Pipeline(WithMixin):
     def __init__(self, source, posix=None, **kwargs):
         if posix is None:
             posix = os.name == 'posix'
-        if isinstance(source, (list, tuple)) or kwargs.get('shell', False):
-            self.source = ' '.join(source)
+        is_shell = kwargs.get('shell', False)
+        if isinstance(source, (list, tuple)) or is_shell:
+            if is_shell:
+                self.source = source
+            else:
+                self.source = ' '.join(source)
             t = Node(kind='command', command=source, redirects={})
         else:
             self.source = source
