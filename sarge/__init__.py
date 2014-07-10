@@ -618,6 +618,7 @@ class Command(object):
                     self.kwargs['stdin'] = input
                 else:
                     self.kwargs['stdin'] = subprocess.PIPE
+            logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
             self.process = p = Popen(self.args, **self.kwargs)
             self.stdin = p.stdin
             logger.debug('Popen: %s, %s -> %s', self, self.kwargs, p.__dict__)
@@ -625,6 +626,7 @@ class Command(object):
                 t = threading.Thread(target=copier, args=(input, p.stdin))
                 t.daemon = True
                 t.start()
+                logger.debug('copier thread started: %s', t.name)
                 # The thread may take a while to finish, but we want to wait
                 # until it's on its way; otherwise, any pipeline dependent on
                 # this input could be dead-locked.
@@ -1033,7 +1035,7 @@ class Pipeline(WithMixin):
         for e in self.events:
             e.wait()
         for cmd in self.commands:
-            logger.debug('waiting for command')
+            logger.debug('waiting for command %s', cmd)
             cmd.wait()
 
     def close(self):
@@ -1329,6 +1331,7 @@ class Pipeline(WithMixin):
                 t = threading.Thread(target=self.run_node, args=(curr, input,
                                      False, e))
                 t.daemon = True
+                logger.debug('thread %s started to run node: %s', t.name, curr)
                 t.start()
             prev = curr
             i += 2
