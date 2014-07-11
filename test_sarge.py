@@ -493,7 +493,7 @@ class SargeTest(unittest.TestCase):
     def test_pipeline_async(self):
         logger.debug('starting')
         with Capture() as out:
-            p = run('echo foo & (sleep 2; echo bar) &  (sleep 1; echo baz)',
+            p = run('echo foo & (sleep 2; echo bar) & (sleep 1; echo baz)',
                     stdout=out)
             self.assertEqual(p.returncode, 0)
         items = out.bytes.split()

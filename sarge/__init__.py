@@ -1318,7 +1318,7 @@ class Pipeline(WithMixin):
                 use_async = parts[i + 1].sync == '&'
             else:
                 use_async = async
-                # run the current command
+            # run the current command
             if not use_async:
                 self.run_node(curr, input, async=use_async)
             else:
