@@ -57,9 +57,13 @@ sys.stdout.write('foo\\n')
 sys.stderr.write('bar\\n')
 '''
 
+SEP = '=' * 60
+
 class SargeTest(unittest.TestCase):
-    def tearDown(self):
-        logger.debug('=' * 60)
+    def setUp(self):
+        logger.debug(SEP)
+        logger.debug(self.id().rsplit('.', 1)[-1])
+        logger.debug(SEP)
 
     def test_quote(self):
         self.assertEqual(shell_quote(''), "''")
