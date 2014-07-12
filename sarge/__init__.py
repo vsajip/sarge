@@ -203,6 +203,7 @@ class Capture(WithMixin):
 
         ready = threading.Event()
         t = threading.Thread(target=self.reader, args=(stream, ready))
+        logger.debug('Created thread %s as reader for %r', t.name, self)
         self.threads.append(t)
         t.daemon = True
         t.start()
@@ -516,7 +517,7 @@ class Popen(subprocess.Popen):
                 return p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite
 
     if os.name == 'posix' and sys.version_info[0] < 3:
-        # Issue 12: add restore_signals support to avoid spurious
+        # Issue #12: add restore_signals support to avoid spurious
         # output on broken pipes
         def _execute_child(self, args, executable, preexec_fn, *rest):
             # can only call signal.signal in the main thread
@@ -998,7 +999,27 @@ class Pipeline(WithMixin):
         """
         self.commands = []
         self.opened = []
-        self.run_node(self.tree, input=input, async=async)
+        node = self.tree
+        # Issue #20: run in thread if async
+        # TODO this code is similar to that in run_list_node - refactor
+        if not async:
+            self.run_node(node, input=input, async=async)
+        else:
+            # When the node is run in a separate thread, we need
+            # a sync point for when all the commands have been created
+            # for that node - even when there are delays because of e.g.
+            # sleep commands or other time-consuming commands. That's
+            # what these events are for - they're set at the end of
+            # run_node, and waited on int the pipeline's wait and run
+            # methods.
+            e = threading.Event()
+            with self.lock:
+                self.events.append(e)
+            t = threading.Thread(target=self.run_node, args=(node, input,
+                                 True, e))  # run async
+            t.daemon = True
+            logger.debug('thread %s started to run node: %s', t.name, node)
+            t.start()
         return self
 
     @property
@@ -1031,13 +1052,19 @@ class Pipeline(WithMixin):
             result = [c.process.returncode for c in self.commands]
         return result
 
+    def wait_events(self):
+        """
+        Wait for all the events in the pipeline to be set
+        """
+        for e in self.events:
+            e.wait()
+
     def wait(self):
         """
         Wait for all the commands in the pipeline to complete.
         """
         logger.debug('pipeline waiting')
-        for e in self.events:
-            e.wait()
+        self.wait_events()
         for cmd in self.commands:
             logger.debug('waiting for command %s', cmd)
             cmd.wait()
@@ -1319,6 +1346,7 @@ class Pipeline(WithMixin):
             else:
                 use_async = async
             # run the current command
+            # TODO this code is similar to that in run - refactor
             if not use_async:
                 self.run_node(curr, input, async=use_async)
             else:

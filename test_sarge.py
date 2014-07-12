@@ -189,8 +189,11 @@ class SargeTest(unittest.TestCase):
                     async=True)
             # Do some other work in parallel, including reading from the
             # concurrently running child process
-            out.readline()
-            out.readline()
+            read_count = 0
+            if out.readline():
+                read_count += 1
+            if out.readline():
+                read_count += 1
             # kill some time ...
             for i in range(10):
                 with open('testfile.txt') as f:
@@ -198,7 +201,7 @@ class SargeTest(unittest.TestCase):
             p.wait()
             self.assertEqual(p.returncode, 0)
             lines = out.readlines()
-            self.assertEqual(len(lines), len(content) * 2 - 2)
+            self.assertEqual(len(lines), len(content) * 2 - read_count)
 
     def test_env(self):
         e = os.environ
@@ -653,16 +656,21 @@ class SargeTest(unittest.TestCase):
         try:
             lines = ('hello', 'goodbye')
             gen = iter(lines)
-            while p.commands[0].returncode is None:
+            # p.commands may not be set yet (separate thread)
+            while not p.commands or p.commands[0].returncode is None:
+                logger.debug('commands: %s', p.commands)
                 try:
                     data = next(gen)
                 except StopIteration:
                     break
                 feeder.feed(data + '\n')
-                p.commands[0].poll()
+                if p.commands:
+                    p.commands[0].poll()
                 time.sleep(0.05)    # wait for child to return echo
         finally:
-            p.commands[0].terminate()
+            # p.commands may not be set yet (separate thread)
+            if p.commands:
+                p.commands[0].terminate()
             feeder.close()
         self.assertEqual(p.stdout.text.splitlines(),
                          ['hello hello', 'goodbye goodbye'])
