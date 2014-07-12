@@ -228,6 +228,8 @@ Released: Not yet.
 
 - Fixed issue #21: Don't parse if shell=True.
 
+- Fixed issue #20: Run pipeline in separate thread if async.
+
 - Improved logging.
 
 - Minor documentation updates.
