@@ -987,6 +987,29 @@ class Pipeline(WithMixin):
         assert result.kind == 'command'
         return result
 
+    def run_node_in_thread(self, node, input, async):
+        """
+        Run a node in a separate thread.
+
+        A thread is created and the run_node method is run with the
+        specified arguments in that thread.
+        """
+        # When the node is run in a separate thread, we need
+        # a sync point for when all the commands have been created
+        # for that node - even when there are delays because of e.g.
+        # sleep commands or other time-consuming commands. That's
+        # what these events are for - they're set at the end of
+        # run_node, and waited on int the pipeline's wait and run
+        # methods.
+        e = threading.Event()
+        with self.lock:
+            self.events.append(e)
+        t = threading.Thread(target=self.run_node, args=(node, input,
+                             async, e))
+        t.daemon = True
+        logger.debug('thread %s started to run node: %s', t.name, node)
+        t.start()
+
     def run(self, input=None, async=False):
         """
         Run the commands in the pipeline.
@@ -1001,25 +1024,10 @@ class Pipeline(WithMixin):
         self.opened = []
         node = self.tree
         # Issue #20: run in thread if async
-        # TODO this code is similar to that in run_list_node - refactor
         if not async:
             self.run_node(node, input=input, async=async)
         else:
-            # When the node is run in a separate thread, we need
-            # a sync point for when all the commands have been created
-            # for that node - even when there are delays because of e.g.
-            # sleep commands or other time-consuming commands. That's
-            # what these events are for - they're set at the end of
-            # run_node, and waited on int the pipeline's wait and run
-            # methods.
-            e = threading.Event()
-            with self.lock:
-                self.events.append(e)
-            t = threading.Thread(target=self.run_node, args=(node, input,
-                                 True, e))  # run async
-            t.daemon = True
-            logger.debug('thread %s started to run node: %s', t.name, node)
-            t.start()
+            self.run_node_in_thread(node, input, async=True)
         return self
 
     @property
@@ -1346,25 +1354,10 @@ class Pipeline(WithMixin):
             else:
                 use_async = async
             # run the current command
-            # TODO this code is similar to that in run - refactor
             if not use_async:
                 self.run_node(curr, input, async=use_async)
             else:
-                # When the node is run in a separate thread, we need
-                # a sync point for when all the commands have been created
-                # for that node - even when there are delays because of e.g.
-                # sleep commands or other time-consuming commands. That's
-                # what these events are for - they're set at the end of
-                # run_node, and waited on int the pipeline's wait and run
-                # methods.
-                e = threading.Event()
-                with self.lock:
-                    self.events.append(e)
-                t = threading.Thread(target=self.run_node, args=(curr, input,
-                                     False, e))
-                t.daemon = True
-                logger.debug('thread %s started to run node: %s', t.name, curr)
-                t.start()
+                self.run_node_in_thread(curr, input, async=False)
             prev = curr
             i += 2
 
