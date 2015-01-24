@@ -4,8 +4,8 @@ The sarge package provides a wrapper for subprocess which provides command
 pipeline functionality.
 
 This package leverages subprocess to provide easy-to-use cross-platform command
-pipelines with a Posix flavour: you can have chains of commands using ;, &,
-pipes using \| and \|&, and redirection.
+pipelines with a Posix flavour: you can have chains of commands using ``;``, ``&``,
+pipes using ``|`` and ``|&``, and redirection.
 
 Requirements & Installation
 ---------------------------
