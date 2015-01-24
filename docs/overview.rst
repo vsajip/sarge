@@ -221,10 +221,15 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
+0.1.5 (future)
+~~~~~~~~~~~~~~
+
+Released: Not yet.
+
 0.1.4
 ~~~~~
 
-Released: Not yet.
+Released: 2015-01-24
 
 - Fixed issue #21: Don't parse if shell=True.
 
