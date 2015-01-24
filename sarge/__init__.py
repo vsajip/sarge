@@ -10,7 +10,7 @@ import os
 
 try:
     import queue
-except ImportError:     #pragma: no cover
+except ImportError:  # pragma: no cover
     import Queue as queue
 import re
 import shutil
@@ -25,7 +25,9 @@ try:
 except ImportError:
     class NullHandler(logging.Handler):
         def handle(self, record): pass
+
         emit = handle
+
         def createLock(self): self.lock = None
 
 from .shlext import shell_shlex
@@ -61,6 +63,7 @@ else:
 # This regex determines which shell input needs quoting
 # because it may be unsafe
 UNSAFE = re.compile(r'[^\w%+,./:=@-]')
+
 
 def shell_quote(s):
     """
@@ -114,6 +117,7 @@ class ShellFormatter(string.Formatter):
                                                                conversion)
         return result
 
+
 def shell_format(fmt, *args, **kwargs):
     """
     Format a shell command with format placeholders and variables to fill
@@ -143,11 +147,13 @@ class WithMixin(object):
     This class provides a very simple mixin for objects which can be used
     in a ``with`` statement.
     """
+
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+
 
 default_capture_timeout = 0.02
 default_expect_timeout = 5.0
@@ -385,11 +391,11 @@ class Capture(WithMixin):
 
     def close(self, stop_threads=False):
         if stop_threads:
-            self._done = True   # may lose some data sent from subprocess
+            self._done = True  # may lose some data sent from subprocess
         for t in self.threads:
             try:
                 t.join()
-            except RuntimeError:    #pragma: no cover
+            except RuntimeError:  # pragma: no cover
                 logger.debug('failed to join thread: %s', t)
                 #raise
 
@@ -402,6 +408,7 @@ class Feeder(object):
     Facilitate sending data to a child process over time rather than
     just when the child is spawned.
     """
+
     def __init__(self):
         self._r, self._w = os.pipe()
 
@@ -429,7 +436,7 @@ def ensure_stream(input, encoding='utf-8'):
     Convert a possible text value into a binary file-like object.
     """
     if isinstance(input, text_type):
-        input = input.encode(encoding)   # need to be explicit for 2.x!
+        input = input.encode(encoding)  # need to be explicit for 2.x!
     if isinstance(input, binary_type):
         input = BytesIO(input)
         logger.debug('returning %s', input)
@@ -447,7 +454,8 @@ SWAP_OUTPUTS = {
     1: ('>', ('&', 2)),
     2: ('>', ('&', 3)),
     3: ('>', ('&', 1)),
-    }
+}
+
 
 class Popen(subprocess.Popen):
     """
@@ -542,6 +550,7 @@ class Popen(subprocess.Popen):
             values.append('%s=%s' % (attr, getattr(self, attr, None)))
         return '%s(%s)' % (self.__class__.__name__, ' '.join(values))
 
+
 def copier(src, dest):
     shutil.copyfileobj(src, dest)
     dest.close()
@@ -607,7 +616,7 @@ class Command(object):
                       by calling the :meth:`subprocess.Popen.wait` method.
         :type async:  bool
         """
-        #noinspection PyBroadException
+        # noinspection PyBroadException
         try:
             if input is None:
                 self.kwargs['stdin'] = None
@@ -654,7 +663,7 @@ class Command(object):
         """
         self.process_ready.wait()
         p = self.process
-        if not p:   #pragma: no cover
+        if not p:  # pragma: no cover
             logger.warning('No process found for %s', self)
             result = None
         else:
@@ -669,7 +678,7 @@ class Command(object):
         """
         self.process_ready.wait()
         p = self.process
-        if not p: #pragma: no cover
+        if not p:  # pragma: no cover
             raise ValueError('There is no subprocess')
         p.terminate()
 
@@ -681,7 +690,7 @@ class Command(object):
         """
         self.process_ready.wait()
         p = self.process
-        if not p: #pragma: no cover
+        if not p:  # pragma: no cover
             raise ValueError('There is no subprocess')
         p.kill()
 
@@ -693,7 +702,7 @@ class Command(object):
         """
         self.process_ready.wait()
         p = self.process
-        if not p: #pragma: no cover
+        if not p:  # pragma: no cover
             raise ValueError('There is no subprocess')
         return p.poll()
 
@@ -701,6 +710,7 @@ class Command(object):
     def returncode(self):
         self.process_ready.wait()
         return self.process.returncode
+
 
 class Node(object):
     """
@@ -781,7 +791,7 @@ class CommandLineParser(object):
                     last = c
             if last:
                 result.append(last)
-                #logger.debug('%s -> %s', t, result)
+                # logger.debug('%s -> %s', t, result)
         return result
 
     def peek_token(self):
@@ -851,7 +861,7 @@ class CommandLineParser(object):
             while tt in ('|', '|&'):
                 last_part = parts[-1]
                 if ((tt == '|' and 1 in last_part.redirects) or
-                    (tt == '|&' and 2 in last_part.redirects)):
+                        (tt == '|&' and 2 in last_part.redirects)):
                     if last_part.redirects != SWAP_OUTPUTS:
                         raise ValueError(
                             'semantics: cannot redirect and pipe the '
@@ -909,7 +919,7 @@ class CommandLineParser(object):
             self.consume('number')
         tt = self.peek_token()
         while tt in ('>', '>>'):
-            num = 1     # default value
+            num = 1  # default value
             if self.peek[2] == '':
                 # > or >> seen without preceding whitespace. So see if the
                 # last token is a positive integer. If it is, assume it's
@@ -942,6 +952,7 @@ class CommandLineParser(object):
         parse_logger.debug('returning %r', node)
         return node
 
+
 class Pipeline(WithMixin):
     """
     This class represents a pipeline of commands.
@@ -952,6 +963,7 @@ class Pipeline(WithMixin):
     :type posix: bool
     :param kwargs: Whatever you might pass to :class:`subprocess.Popen'.
     """
+
     def __init__(self, source, posix=None, **kwargs):
         if posix is None:
             posix = os.name == 'posix'
@@ -1005,7 +1017,7 @@ class Pipeline(WithMixin):
         with self.lock:
             self.events.append(e)
         t = threading.Thread(target=self.run_node, args=(node, input,
-                             async, e))
+                                                         async, e))
         t.daemon = True
         logger.debug('thread %s started to run node: %s', t.name, node)
         t.start()
@@ -1091,7 +1103,7 @@ class Pipeline(WithMixin):
         for cmd in self.commands:
             cmd.wait()
             p = cmd.process
-            if p is None:   # pragma: no cover
+            if p is None:  # pragma: no cover
                 continue
             for attr in ('stdout', 'stderr'):
                 s = getattr(self, attr)
@@ -1399,6 +1411,7 @@ def run(cmd, **kwargs):
             p.run(input=input, async=async)
     return p
 
+
 def capture_stdout(cmd, **kwargs):
     """
     This is the same as :func:`run`, but the ``stdout`` is captured. You can
@@ -1408,6 +1421,7 @@ def capture_stdout(cmd, **kwargs):
     kwargs['stdout'] = Capture()
     return run(cmd, **kwargs)
 
+
 def capture_stderr(cmd, **kwargs):
     """
     This is the same as :func:`run`, but the ``stderr`` is captured. You can
@@ -1416,6 +1430,7 @@ def capture_stderr(cmd, **kwargs):
     """
     kwargs['stderr'] = Capture()
     return run(cmd, **kwargs)
+
 
 def capture_both(cmd, **kwargs):
     """
@@ -1427,6 +1442,7 @@ def capture_both(cmd, **kwargs):
     kwargs['stderr'] = Capture()
     return run(cmd, **kwargs)
 
+
 def get_stdout(cmd, **kwargs):
     """
     This is the same as :func:`capture_stdout`, but it returns the captured
@@ -1436,6 +1452,7 @@ def get_stdout(cmd, **kwargs):
     p = capture_stdout(cmd, **kwargs)
     return p.stdout.text
 
+
 def get_stderr(cmd, **kwargs):
     """
     This is the same as :func:`capture_stderr`, but it returns the captured
@@ -1444,6 +1461,7 @@ def get_stderr(cmd, **kwargs):
     """
     p = capture_stderr(cmd, **kwargs)
     return p.stderr.text
+
 
 def get_both(cmd, **kwargs):
     """

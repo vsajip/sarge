@@ -19,6 +19,7 @@ else:
     PY3 = True
     text_type = str
 
+
 class shell_shlex(shlex.shlex):
     def __init__(self, instream=None, **kwargs):
         if 'control' not in kwargs:
@@ -32,7 +33,7 @@ class shell_shlex(shlex.shlex):
             instream = instream.encode('utf-8')
         shlex.shlex.__init__(self, instream, **kwargs)
         self.control = control
-        self.wordchars += '+-./*?=$%:@\\'   # these chars allowed in params
+        self.wordchars += '+-./*?=$%:@\\'  # these chars allowed in params
         if self.control:
             self.pbchars = deque()
 
@@ -47,10 +48,10 @@ class shell_shlex(shlex.shlex):
                 nextchar = self.instream.read(1)
             if nextchar == '\n':
                 self.lineno += 1
-            if self.debug >= 3: # pragma: no cover
+            if self.debug >= 3:  # pragma: no cover
                 print("shlex: in state %r saw %r" % (self.state, nextchar))
             if self.state is None:
-                self.token = ''        # past end of file
+                self.token = ''  # past end of file
                 break
             elif self.state == ' ':
                 if not nextchar:
@@ -59,10 +60,10 @@ class shell_shlex(shlex.shlex):
                     break
                 elif nextchar in self.whitespace:
                     self.preceding = nextchar
-                    if self.debug >= 2: # pragma: no cover
+                    if self.debug >= 2:  # pragma: no cover
                         print("shlex: whitespace in whitespace state")
                     if self.token or (self.posix and quoted):
-                        break   # emit current token
+                        break  # emit current token
                     else:
                         continue
                 elif nextchar in self.commenters:
@@ -93,13 +94,13 @@ class shell_shlex(shlex.shlex):
                 else:
                     self.token = nextchar
                     if self.token or (self.posix and quoted):
-                        break   # emit current token
+                        break  # emit current token
                     else:
                         continue
             elif self.state in self.quotes:
                 quoted = True
-                if not nextchar:      # end of file
-                    if self.debug >= 2: # pragma: no cover
+                if not nextchar:  # end of file
+                    if self.debug >= 2:  # pragma: no cover
                         print("shlex: I see EOF in quotes state")
                     # XXX what error should be raised here?
                     raise ValueError("No closing quotation")
@@ -112,15 +113,15 @@ class shell_shlex(shlex.shlex):
                     else:
                         self.state = 'a'
                 elif (self.posix and nextchar in self.escape and self.state
-                      in self.escapedquotes):
+                in self.escapedquotes):
                     escapedstate = self.state
                     self.token_type = self.state
                     self.state = nextchar
                 else:
                     self.token += nextchar
             elif self.state in self.escape:
-                if not nextchar:      # end of file
-                    if self.debug >= 2: # pragma: no cover
+                if not nextchar:  # end of file
+                    if self.debug >= 2:  # pragma: no cover
                         print("shlex: I see EOF in escape state")
                     # XXX what error should be raised here?
                     raise ValueError("No escaped character")
@@ -135,10 +136,10 @@ class shell_shlex(shlex.shlex):
             elif self.state in ('a', 'c'):
                 if not nextchar:
                     self.token_type = self.state
-                    self.state = None   # end of file
+                    self.state = None  # end of file
                     break
                 elif nextchar in self.whitespace:
-                    if self.debug >= 2: # pragma: no cover
+                    if self.debug >= 2:  # pragma: no cover
                         print("shlex: I see whitespace in word state")
                     self.token_type = self.state
                     self.state = ' '
@@ -147,7 +148,7 @@ class shell_shlex(shlex.shlex):
                         # correctly for the next token
                         if self.control:
                             self.pbchars.append(nextchar)
-                        break   # emit current token
+                        break  # emit current token
                     else:
                         continue
                 elif nextchar in self.commenters:
@@ -157,7 +158,7 @@ class shell_shlex(shlex.shlex):
                         self.token_type = self.state
                         self.state = ' '
                         if self.token or (self.posix and quoted):
-                            break   # emit current token
+                            break  # emit current token
                         else:
                             continue
                 elif self.posix and nextchar in self.quotes:
@@ -186,12 +187,12 @@ class shell_shlex(shlex.shlex):
                         self.pbchars.append(nextchar)
                     else:
                         self.pushback.appendleft(nextchar)
-                    if self.debug >= 2: # pragma: no cover
+                    if self.debug >= 2:  # pragma: no cover
                         print("shlex: I see punctuation in word state")
                     self.token_type = self.state
                     self.state = ' '
                     if self.token:
-                        break   # emit current token
+                        break  # emit current token
                     else:
                         continue
         result = self.token
