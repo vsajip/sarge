@@ -5,7 +5,7 @@ pipeline functionality.
 
 This package leverages subprocess to provide easy-to-use cross-platform command
 pipelines with a Posix flavour: you can have chains of commands using ;, &,
-pipes using | and |&, and redirection.
+pipes using \| and \|&, and redirection.
 
 Requirements & Installation
 ---------------------------
@@ -22,11 +22,11 @@ before running the installation.
 
 Availability & Documentation
 ----------------------------
-The latest version of sarge can be found `here <https://bitbucket.org/vinay.sajip/sarge/>`_::
+The latest version of sarge can be found on `BitBucket <https://bitbucket.org/vinay.sajip/sarge/>`_::
 
     https://bitbucket.org/vinay.sajip/sarge/
 
-The latest documentation (kept updated between releases) is `here <http://sarge.readthedocs.org/>`_::
+The latest documentation (kept updated between releases) is on `Read The Docs <http://sarge.readthedocs.org/>`_::
 
     http://sarge.readthedocs.org/
 
