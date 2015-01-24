@@ -235,6 +235,8 @@ Released: 2015-01-24
 
 - Fixed issue #20: Run pipeline in separate thread if async.
 
+- Fixed issue #23: Return the correct return code when shell=True.
+
 - Improved logging.
 
 - Minor documentation updates.
