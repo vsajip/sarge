@@ -373,6 +373,8 @@ class SargeTest(unittest.TestCase):
         self.assertRaises(ValueError, parse_command_line, 'a 3> b')
 
     def test_pipeline_no_input_stdout(self):
+        if os.name != 'posix':
+            raise unittest.SkipTest('This test works only on POSIX')
         with Capture() as out:
             with Pipeline('echo foo 2> %s | cat | cat' % os.devnull,
                           stdout=out) as pl:
@@ -380,6 +382,8 @@ class SargeTest(unittest.TestCase):
             self.assertEqual(out.read().strip(), b'foo')
 
     def test_pipeline_no_input_stderr(self):
+        if os.name != 'posix':
+            raise unittest.SkipTest('This test works only on POSIX')
         with Capture() as err:
             with Pipeline('echo foo 2> %s | cat | cat >&2' % os.devnull,
                           stderr=err) as pl:
@@ -387,6 +391,8 @@ class SargeTest(unittest.TestCase):
             self.assertEqual(err.read().strip(), b'foo')
 
     def test_pipeline_no_input_pipe_stderr(self):
+        if os.name != 'posix':
+            raise unittest.SkipTest('This test works only on POSIX')
         with Capture() as err:
             with Pipeline('echo foo 2> %s | cat >&2 |& cat >&2' %
                           os.devnull, stderr=err) as pl:
