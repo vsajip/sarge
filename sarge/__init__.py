@@ -1036,10 +1036,10 @@ class Pipeline(WithMixin):
         self.opened = []
         node = self.tree
         # Issue #20: run in thread if async
-        if not async:
-            self.run_node(node, input=input, async=async)
-        else:
+        if async:
             self.run_node_in_thread(node, input, async=True)
+        else:
+            self.run_node(node, input=input, async=False)
         return self
 
     @property
