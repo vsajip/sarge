@@ -22,7 +22,7 @@ import threading
 
 try:
     from logging import NullHandler
-except ImportError:
+except ImportError:  # pragma: no cover
     class NullHandler(logging.Handler):
         def handle(self, record): pass
 
@@ -48,12 +48,12 @@ parse_logger = logging.getLogger('%s.parse' % __name__)
 #
 # This runs on Python 2.x and 3.x from the same code base - no need for 2to3.
 #
-if sys.version_info[0] < 3:
+if sys.version_info[0] < 3:  # pragma: no cover
     PY3 = False
     text_type = unicode
     binary_type = str
     string_types = basestring,
-else:
+else:  # pragma: no cover
     PY3 = True
     text_type = str
     binary_type = bytes
@@ -399,7 +399,7 @@ class Capture(WithMixin):
                 logger.debug('failed to join thread: %s', t)
                 #raise
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '%s-%d' % (self.__class__.__name__, self.counter)
 
 
@@ -544,7 +544,7 @@ class Popen(subprocess.Popen):
                         preexec_fn()
             super(Popen, self)._execute_child(args, executable, preexec, *rest)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         values = []
         for attr in ('returncode', 'stdin', 'stdout', 'stderr'):
             values.append('%s=%s' % (attr, getattr(self, attr, None)))
@@ -594,7 +594,7 @@ class Command(object):
         self.process = None
         logger.debug('%r created', self)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         if isinstance(self.args, basestring):
             s = self.args
         else:
@@ -722,7 +722,7 @@ class Node(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         chunks = []
         d = dict(self.__dict__)
         kind = d.pop('kind')
