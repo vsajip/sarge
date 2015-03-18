@@ -1011,7 +1011,7 @@ class Pipeline(WithMixin):
         # for that node - even when there are delays because of e.g.
         # sleep commands or other time-consuming commands. That's
         # what these events are for - they're set at the end of
-        # run_node, and waited on int the pipeline's wait and run
+        # run_node, and waited on in the pipeline's wait and run
         # methods.
         e = threading.Event()
         with self.lock:
