@@ -1,0 +1,9 @@
+[run]
+branch = True
+omit =
+    /home/travis/virtualenvs/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
