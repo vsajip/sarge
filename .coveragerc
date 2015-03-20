@@ -3,7 +3,7 @@ branch = True
 omit =
     /home/travis/virtualenv/*
     /opt/python/*
-    stack_tracer.py
+    /stack_tracer.py
 
 [report]
 exclude_lines =
