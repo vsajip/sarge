@@ -1098,8 +1098,7 @@ class Pipeline(WithMixin):
         have completed.
         """
         logger.debug('pipeline closing')
-        for e in self.events:
-            e.wait()
+        self.wait_events()
         for cmd in self.commands:
             cmd.wait()
             p = cmd.process
@@ -1115,6 +1114,24 @@ class Pipeline(WithMixin):
                 p.stderr.close()
         for stream in self.opened:
             stream.close()
+
+    def poll_last(self):
+        """
+        Check if the last command to run has terminated, and return its exit
+        code, if available.
+        """
+        if self.commands:
+            return self.commands[-1].poll()
+
+    def poll_all(self):
+        """
+        Check if all commands to run have terminated. Return a list of exit
+        codes, where available.
+        """
+        result = []
+        if self.commands:
+            result = [c.poll() for c in self.commands]
+        return result
 
     def run_node(self, node, input, async, event=None):
         """
