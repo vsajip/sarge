@@ -314,6 +314,12 @@ class SargeTest(unittest.TestCase):
             sh = shell_shlex(s)
             self.assertEqual(tuple(sh), t)
 
+    def test_shlex_issue_31(self):
+        cmd = "python -c 'print('\''ok'\'')'"
+        shell_shlex(cmd)
+        shell_format("python -c {0}", "print('ok')")
+        shell_shlex(cmd)
+
     def test_parsing(self):
         parse_command_line('abc')
         parse_command_line('abc " " # comment')
