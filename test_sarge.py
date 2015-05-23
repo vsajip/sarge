@@ -316,9 +316,14 @@ class SargeTest(unittest.TestCase):
 
     def test_shlex_issue_31(self):
         cmd = "python -c 'print('\''ok'\'')'"
-        shell_shlex(cmd, control='();>|&')
+        list(shell_shlex(cmd, control='();>|&', posix=True))
         shell_format("python -c {0}", "print('ok')")
-        shell_shlex(cmd, control='();>|&')
+        list(shell_shlex(cmd, control='();>|&', posix=True))
+
+    def test_shlex_issue_34(self):
+        cmd = "ls foo,bar"
+        actual = list(shell_shlex(cmd))
+        self.assertEqual(actual, ['ls', 'foo,bar'])
 
     def test_parsing(self):
         parse_command_line('abc')
