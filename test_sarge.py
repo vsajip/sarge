@@ -316,9 +316,9 @@ class SargeTest(unittest.TestCase):
 
     def test_shlex_issue_31(self):
         cmd = "python -c 'print('\''ok'\'')'"
-        shell_shlex(cmd)
+        shell_shlex(cmd, control='();>|&')
         shell_format("python -c {0}", "print('ok')")
-        shell_shlex(cmd)
+        shell_shlex(cmd, control='();>|&')
 
     def test_parsing(self):
         parse_command_line('abc')
