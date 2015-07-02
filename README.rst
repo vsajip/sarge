@@ -1,3 +1,7 @@
+.. image:: https://img.shields.io/travis/vsajip/sarge.svg
+
+.. image:: https://img.shields.io/coveralls/vsajip/sarge.svg
+
 Overview
 ========
 The sarge package provides a wrapper for subprocess which provides command
