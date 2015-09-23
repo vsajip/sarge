@@ -1,6 +1,6 @@
-.. image:: https://img.shields.io/travis/vsajip/sarge.svg
+.. image:: https://travis-ci.org/vsajip/sarge.svg
 
-.. image:: https://img.shields.io/coveralls/vsajip/sarge.svg
+.. image:: https://coveralls.io/repos/vsajip/sarge/badge.svg
 
 Overview
 ========
