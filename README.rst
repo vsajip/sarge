@@ -1,6 +1,8 @@
 .. image:: https://travis-ci.org/vsajip/sarge.svg
+   :target: https://travis-ci.org/vsajip/sarge
 
 .. image:: https://coveralls.io/repos/vsajip/sarge/badge.svg
+   :target: https://coveralls.io/github/vsajip/sarge
 
 Overview
 ========
