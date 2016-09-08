@@ -2,5 +2,7 @@
 (\.idea|build|dist)/
 docs/_build/
 MANIFEST
-test\d+\.py
+testfile.txt
+random.bin
+(test\d+|emitter|hello)\.py
 
