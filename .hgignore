@@ -4,5 +4,6 @@ docs/_build/
 MANIFEST
 testfile.txt
 random.bin
+.dict-validwords
 (test\d+|emitter|hello)\.py
 
