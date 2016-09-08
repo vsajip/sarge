@@ -24,23 +24,23 @@ from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
-if sys.platform == 'win32':
+if sys.platform == 'win32':  #pragma: no cover
     from sarge.utils import find_command
 
 TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
 
 PY3 = sys.version_info[0] >= 3
 
-def found_file(fn):
-    if os.path.exists(fn):
-        return True
-    for d in os.environ['PATH'].split(os.pathsep):
-        p = os.path.join(d, fn)
-        if os.path.exists(p):
+if os.name == 'nt':  #pragma: no cover
+    def found_file(fn):
+        if os.path.exists(fn):
             return True
-    return False
+        for d in os.environ['PATH'].split(os.pathsep):
+            p = os.path.join(d, fn)
+            if os.path.exists(p):
+                return True
+        return False
 
-if os.name == 'nt': #pragma: no cover
     FILES = ('libiconv2.dll', 'libintl3.dll', 'cat.exe', 'echo.exe',
              'tee.exe', 'false.exe', 'true.exe', 'sleep.exe', 'touch.exe')
     for fn in FILES:
@@ -88,7 +88,7 @@ class SargeTest(unittest.TestCase):
     def test_quote_with_shell(self):
         from subprocess import PIPE, Popen
 
-        if os.name != 'posix':
+        if os.name != 'posix':  #pragma: no cover
             raise unittest.SkipTest('This test works only on POSIX')
 
         workdir = tempfile.mkdtemp()
@@ -656,7 +656,7 @@ class SargeTest(unittest.TestCase):
         finally:
             shutil.rmtree(workdir)
 
-    if sys.platform == 'win32':
+    if sys.platform == 'win32':  #pragma: no cover
         pyrunner_re = re.compile(r'.*py.*\.exe', re.I)
         pywrunner_re = re.compile(r'.*py.*w\.exe', re.I)
 

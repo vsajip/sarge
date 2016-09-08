@@ -652,7 +652,7 @@ class Command(object):
             logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
             try:
                 self.process = p = Popen(self.args, **self.kwargs)
-            except Exception as e:
+            except Exception as e:  #pragma: no cover
                 logger.exception('Popen call failed: %s: %s', type(e), e)
                 raise
             self.stdin = p.stdin
@@ -925,7 +925,7 @@ class CommandLineParser(object):
             if d:
                 raise ValueError('semantics: can only redirect stdout and '
                                  'stderr, not %s' % list(d.keys()))
-        if sys.platform == 'win32':
+        if sys.platform == 'win32':  #pragma: no cover
             from .utils import find_command
 
             cmd = find_command(node.command[0])
@@ -1263,7 +1263,7 @@ class Pipeline(WithMixin):
             else:
                 try:
                     stdout, stderr = self.get_redirects(curr)
-                except IOError:
+                except IOError:  #pragma: no cover
                     if prev and stdin == prev.process.stdout:
                         stdin.close()
                     raise
