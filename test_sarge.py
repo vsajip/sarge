@@ -31,11 +31,20 @@ TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
 
 PY3 = sys.version_info[0] >= 3
 
+def found_file(fn):
+    if os.path.exists(fn):
+        return True
+    for d in os.environ['PATH'].split(os.pathsep):
+        p = os.path.join(d, fn)
+        if os.path.exists(p):
+            return True
+    return False
+
 if os.name == 'nt': #pragma: no cover
     FILES = ('libiconv2.dll', 'libintl3.dll', 'cat.exe', 'echo.exe',
              'tee.exe', 'false.exe', 'true.exe', 'sleep.exe', 'touch.exe')
     for fn in FILES:
-        if not os.path.exists(fn):
+        if not found_file(fn):
             list = '%s and %s' % (', '.join(FILES[:-1]), FILES[-1])
             raise ImportError('To run these tests on Windows, '
                               'you need the GnuWin32 coreutils package. This '
