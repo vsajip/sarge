@@ -489,6 +489,7 @@ class Popen(subprocess.Popen):
             # To handle, we check for a 2-tuple return and act accordingly.
             PIPE = subprocess.PIPE
             t = super(Popen, self)._get_handles(stdin, PIPE, PIPE)
+            # logger.debug('Base _get_handles returned %s', t)
             nreturned = len(t)
             if nreturned == 2:
                 p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite = t[0]
@@ -497,15 +498,25 @@ class Popen(subprocess.Popen):
                 p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite = t
             logger.debug('swapping stdout and stderr')
             if nreturned == 2:
-                return (p2cread, p2cwrite, errread,
-                        errwrite, c2pread, c2pwrite), to_close
+                # p2cread, c2pwrite and errwrite are closed in the parent.
+                # So we should add them to to_close, as subprocess will
+                # expect that.
+                for h in (p2cread, c2pwrite, errwrite):
+                    if h is not None:
+                        to_close.add(h)
+                result = (p2cread, p2cwrite, errread,
+                          errwrite, c2pread, c2pwrite), to_close
             else:
-                return p2cread, p2cwrite, errread, errwrite, c2pread, c2pwrite
+                result = p2cread, p2cwrite, errread, errwrite, c2pread, c2pwrite
+            # logger.debug('Our _get_handles returned %s', result)
+            return result
+
         else:
             orig_stdout = stdout
             if stdout == STDERR:
                 stdout = None
             t = super(Popen, self)._get_handles(stdin, stdout, stderr)
+            # logger.debug('Base _get_handles returned %s', t)
             nreturned = len(t)
             if nreturned == 2:
                 p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite = t[0]
@@ -519,10 +530,18 @@ class Popen(subprocess.Popen):
                 c2pread = dup(errread)
                 c2pwrite = dup(errwrite)
             if nreturned == 2:
-                return (p2cread, p2cwrite, c2pread,
-                        c2pwrite, errread, errwrite), to_close
+                # p2cread, c2pwrite and errwrite are closed in the parent.
+                # So we should add them to to_close, as subprocess will
+                # expect that.
+                for h in (p2cread, c2pwrite, errwrite):
+                    if h is not None:
+                        to_close.add(h)
+                result = (p2cread, p2cwrite, c2pread,
+                          c2pwrite, errread, errwrite), to_close
             else:
-                return p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite
+                result = p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite
+            # logger.debug('Our _get_handles returned %s', result)
+            return result
 
     if os.name == 'posix' and sys.version_info[0] < 3:
         # Issue #12: add restore_signals support to avoid spurious
@@ -542,6 +561,8 @@ class Popen(subprocess.Popen):
                     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
                     if preexec_fn:
                         preexec_fn()
+            # logger.debug('Calling Base _execute_child: %s', ((args, executable,
+                                                              # preexec, rest),))
             super(Popen, self)._execute_child(args, executable, preexec, *rest)
 
     def __repr__(self):  # pragma: no cover
@@ -629,7 +650,11 @@ class Command(object):
                 else:
                     self.kwargs['stdin'] = subprocess.PIPE
             logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
-            self.process = p = Popen(self.args, **self.kwargs)
+            try:
+                self.process = p = Popen(self.args, **self.kwargs)
+            except Exception as e:
+                logger.exception('Popen call failed: %s: %s', type(e), e)
+                raise
             self.stdin = p.stdin
             logger.debug('Popen: %s, %s -> %s', self, self.kwargs, p.__dict__)
             if isinstance(input, BytesIO):
