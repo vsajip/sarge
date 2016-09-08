@@ -467,13 +467,13 @@ class Popen(subprocess.Popen):
     def _get_handles(self, stdin, stdout, stderr):
         def close(h):
             if h not in (-1, None):
-                if subprocess.mswindows:
+                if hasattr(h, 'Close'):
                     h.Close()
                 else:
                     os.close(h)
 
         def dup(h):
-            if subprocess.mswindows:
+            if hasattr(self, '_make_inheritable'):
                 result = self._make_inheritable(h)
             else:
                 result = os.dup(h)
