@@ -19,7 +19,7 @@ except NameError:
 
 def main(args=None):
     feeder = sarge.Feeder()
-    p = sarge.run([sys.executable, 'echoer.py'], input=feeder, async=True)
+    p = sarge.run([sys.executable, 'echoer.py'], input=feeder, async_=True)
     try:
         lines = ('hello', 'goodbye')
         gen = iter(lines)

@@ -227,7 +227,7 @@ Creating and using a feeder is simple::
     from sarge import Feeder, run
 
     feeder = Feeder()
-    run([sys.executable, 'echoer.py'], input=feeder, async=True)
+    run([sys.executable, 'echoer.py'], input=feeder, async_=True)
 
 After this, you can feed data to the child process' ``stdin`` by calling the
 ``feed()`` method of the ``Feeder`` instance::
@@ -261,7 +261,7 @@ Here's a complete working example::
 
     def main(args=None):
         feeder = sarge.Feeder()
-        p = sarge.run([sys.executable, 'echoer.py'], input=feeder, async=True)
+        p = sarge.run([sys.executable, 'echoer.py'], input=feeder, async_=True)
         try:
             lines = ('hello', 'goodbye')
             gen = iter(lines)
@@ -484,7 +484,7 @@ We can now show how to interact with this program from a parent process::
     >>> from sarge import Command, Capture
     >>> from subprocess import PIPE
     >>> p = Command('./receiver', stdout=Capture(buffer_size=1))
-    >>> p.run(input=PIPE, async=True)
+    >>> p.run(input=PIPE, async_=True)
     Command('./receiver')
     >>> p.stdin.write('Fred\n')
     >>> p.stdout.readline()
@@ -568,7 +568,7 @@ line-buffering in the parent process::
 
     >>> from sarge import Capture, run
     >>> c = Capture(buffer_size=-1)     # line-buffering
-    >>> p = run('python lister.py -d 0.01', async=True, stdout=c)
+    >>> p = run('python lister.py -d 0.01', async_=True, stdout=c)
     >>> m = c.expect('^line 1$')
     >>> m.span()
     (0, 6)
@@ -630,7 +630,7 @@ allows you to track that progress. Consider the following script,
         parser.add_option('-n', '--no-dots', dest='dots', default=True,
                           action='store_false', help='Show dots for progress')
         options, args = parser.parse_args()
-        p = capture_stdout('python lister.py -d 0.1 -c 100', async=True)
+        p = capture_stdout('python lister.py -d 0.1 -c 100', async_=True)
         t = threading.Thread(target=progress, args=(p.stdout, options))
         t.start()
         while(p.returncodes[0] is None):
@@ -756,7 +756,7 @@ Synchronous and asynchronous execution of commands
 
 By default. commands passed to :func:`run` run synchronously,
 i.e. all commands run to completion before the call returns. However, you can
-pass ``async=True`` to run, in which case the call returns a :class:`Pipeline`
+pass ``async_=True`` to run, in which case the call returns a :class:`Pipeline`
 instance before all the commands in it have run. You will need to call
 :meth:`~Pipeline.wait` or :meth:`~Pipeline.close` on this instance when you
 are ready to synchronise with it; this is needed so that the sub processes
@@ -764,7 +764,7 @@ can be properly disposed of (otherwise, you will leave zombie processes
 hanging around, which show up, for example, as ``<defunct>`` on Linux systems
 when you run ``ps -ef``). Here's an example::
 
-    >>> p = run('echo foo|cat|cat|cat|cat', async=True)
+    >>> p = run('echo foo|cat|cat|cat|cat', async_=True)
     >>> foo
 
 Here, ``foo`` is printed to the terminal by the last ``cat`` command, but all

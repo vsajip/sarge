@@ -159,7 +159,7 @@ Sarge offers the following features:
 
    >>> from sarge import run, Capture
    >>> cmd = 'echo foo & (sleep 2; echo bar) & (sleep 1; echo baz)'
-   >>> p = run(cmd, stdout=Capture(), async=True) # returns immediately
+   >>> p = run(cmd, stdout=Capture(), async_=True) # returns immediately
    >>> p.close() # wait for completion
    >>> p.stdout.readline()
    'foo\n'
@@ -225,6 +225,9 @@ Change log
 ~~~~~~~~~~~~~~
 
 Released: Not yet.
+
+- Fixed #38: Replaced ``async`` keyword argument with ``async_``, as ``async``
+  has become a keyword in Python 3.7.
 
 0.1.4
 ~~~~~

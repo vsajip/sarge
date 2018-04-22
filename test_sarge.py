@@ -195,7 +195,7 @@ class SargeTest(unittest.TestCase):
             content = f.read().splitlines(True)
         with Capture(timeout=1) as out:
             p = run('cat testfile.txt testfile.txt', stdout=out,
-                    async=True)
+                    async_=True)
             # Do some other work in parallel, including reading from the
             # concurrently running child process
             read_count = 0
@@ -616,7 +616,7 @@ class SargeTest(unittest.TestCase):
     def test_expect(self):
         cap = Capture(buffer_size=-1)   # line buffered
         p = run('%s lister.py -d 0.01' % sys.executable,
-                async=True, stdout=cap)
+                async_=True, stdout=cap)
         timeout = 1.0
         m1 = cap.expect('^line 1\r?$', timeout)
         self.assertTrue(m1)
@@ -678,7 +678,7 @@ class SargeTest(unittest.TestCase):
     def test_feeder(self):
         feeder = Feeder()
         p = capture_stdout([sys.executable, 'echoer.py'], input=feeder,
-                           async=True)
+                           async_=True)
         try:
             lines = ('hello', 'goodbye')
             gen = iter(lines)

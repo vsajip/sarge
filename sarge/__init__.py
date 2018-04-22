@@ -622,7 +622,7 @@ class Command(object):
             s = ' '.join(self.args)
         return '%s(%r)' % (self.__class__.__name__, s)
 
-    def run(self, input=None, async=False):
+    def run(self, input=None, async_=False):
         """
         Run the command with optional input and either synchronously or
         asynchronously.
@@ -632,10 +632,10 @@ class Command(object):
                       If it is a byte string, it is used as is. Otherwise, a
                       file-like object containing bytes should be passed: this
                       will be read to the end, but not closed.
-        :param async: If ``True``, this method returns without waiting for the
-                      subprocess to complete. Otherwise, it awaits completion
-                      by calling the :meth:`subprocess.Popen.wait` method.
-        :type async:  bool
+        :param async_: If ``True``, this method returns without waiting for the
+                       subprocess to complete. Otherwise, it awaits completion
+                       by calling the :meth:`subprocess.Popen.wait` method.
+        :type async_:  bool
         """
         # noinspection PyBroadException
         try:
@@ -674,7 +674,7 @@ class Command(object):
                 s = getattr(self, attr, None)
                 if isinstance(s, Capture):
                     s.add_stream(getattr(p, attr))
-            if not async:
+            if not async_:
                 logger.debug('about to wait for process')
                 p.wait()
         finally:
@@ -1024,7 +1024,7 @@ class Pipeline(WithMixin):
         assert result.kind == 'command'
         return result
 
-    def run_node_in_thread(self, node, input, async):
+    def run_node_in_thread(self, node, input, async_):
         """
         Run a node in a separate thread.
 
@@ -1042,29 +1042,29 @@ class Pipeline(WithMixin):
         with self.lock:
             self.events.append(e)
         t = threading.Thread(target=self.run_node, args=(node, input,
-                                                         async, e))
+                                                         async_, e))
         t.daemon = True
         logger.debug('thread %s started to run node: %s', t.name, node)
         t.start()
 
-    def run(self, input=None, async=False):
+    def run(self, input=None, async_=False):
         """
         Run the commands in the pipeline.
 
         :param input: The data to pass to the command.
         :type input: Bytes, text or a file-like object of bytes.
-        :param async: If True, don't wait for the pipeline to complete
-                      before returning.
-        :type async: bool
+        :param async_: If True, don't wait for the pipeline to complete
+                       before returning.
+        :type async_: bool
         """
         self.commands = []
         self.opened = []
         node = self.tree
         # Issue #20: run in thread if async
-        if async:
-            self.run_node_in_thread(node, input, async=True)
+        if async_:
+            self.run_node_in_thread(node, input, async_=True)
         else:
-            self.run_node(node, input=input, async=False)
+            self.run_node(node, input=input, async_=False)
         return self
 
     @property
@@ -1158,7 +1158,7 @@ class Pipeline(WithMixin):
             result = [c.poll() for c in self.commands]
         return result
 
-    def run_node(self, node, input, async, event=None):
+    def run_node(self, node, input, async_, event=None):
         """
         This runs a single node in the parse tree.
 
@@ -1166,16 +1166,16 @@ class Pipeline(WithMixin):
         :type node: An AST node from the parser.
         :param input: The data to pass to the command.
         :type input: Bytes, text or a file-like object of bytes.
-        :param async: If True, don't wait for the pipeline to complete
-                      before returning.
-        :type async: bool
+        :param async_: If True, don't wait for the pipeline to complete
+                       before returning.
+        :type async_: bool
         :param event: If specified, call :meth:`threading.Event.set` on the
                       event.
         :type event: :class:`threading.Event' or ``None``.
         """
         kind = node.kind
         method = 'run_%s_node' % kind
-        result = getattr(self, method)(node, input, async)
+        result = getattr(self, method)(node, input, async_)
         if event:
             event.set()
         return result
@@ -1226,7 +1226,7 @@ class Pipeline(WithMixin):
                 stderr = stream
         return stdout, stderr
 
-    def run_logical_node(self, node, input, async):
+    def run_logical_node(self, node, input, async_):
         """
         This runs a 'logical' node in the parse tree.
 
@@ -1235,11 +1235,11 @@ class Pipeline(WithMixin):
         :param input: The data to pass to the command.
         :type input: Bytes, text or a file-like object of bytes. Text will be
                      encoded using UTF-8.
-        :param async: If True, don't wait for the pipeline to complete
-                      before returning.
-        :type async: bool
+        :param async_: If True, don't wait for the pipeline to complete
+                       before returning.
+        :type async_: bool
         """
-        logger.debug('started: %s, %s, %s', node, input, async)
+        logger.debug('started: %s, %s, %s', node, input, async_)
         parts = node.parts
         last = len(parts) - 1
         assert last > 1
@@ -1281,19 +1281,19 @@ class Pipeline(WithMixin):
             else:
                 if stdout == STDERR:
                     assert self.stdout is None
-                use_async = async
+                use_async = async_
             curr.cmd = self.new_command(curr.command,
                                         stdout=stdout or self.stdout,
                                         stderr=stderr or self.stderr,
                                         **self.kwargs)
-            curr.cmd.run(input=stdin, async=use_async)
+            curr.cmd.run(input=stdin, async_=use_async)
             # Issue 12: close stdin after spawning the child that uses it
             if prev and stdin == prev.process.stdout:
                 stdin.close()
             prev = curr.cmd
             i += 2
 
-    def run_command_node(self, node, input, async):
+    def run_command_node(self, node, input, async_):
         """
         This runs a 'command' node in the parse tree.
 
@@ -1301,11 +1301,11 @@ class Pipeline(WithMixin):
         :type node: An AST node from the parser.
         :param input: The data to pass to the command.
         :type input: Bytes, text or a file-like object of bytes.
-        :param async: If True, don't wait for the pipeline to complete
-                      before returning.
-        :type async: bool
+        :param async_: If True, don't wait for the pipeline to complete
+                       before returning.
+        :type async_: bool
         """
-        logger.debug('started: %s, %s, %s', node, input, async)
+        logger.debug('started: %s, %s, %s', node, input, async_)
         kwargs = dict(self.kwargs)
         stdout, stderr = self.get_redirects(node)
         if node != self.last:
@@ -1321,7 +1321,7 @@ class Pipeline(WithMixin):
                                  'places')
             kwargs['stderr'] = self.stderr or stderr
         node.cmd = self.new_command(node.command, **kwargs)
-        node.cmd.run(input=input, async=async)
+        node.cmd.run(input=input, async_=async_)
 
     def get_status(self, node):
         """
@@ -1335,7 +1335,7 @@ class Pipeline(WithMixin):
             last = self.find_last_command(node)
         return last.cmd.process.returncode
 
-    def run_pipeline_node(self, node, input, async):
+    def run_pipeline_node(self, node, input, async_):
         """
         This runs a 'pipeline' node in the parse tree.
 
@@ -1344,11 +1344,11 @@ class Pipeline(WithMixin):
         :param input: The data to pass to the command.
         :type input: Bytes, text or a file-like object of bytes. Text will be
                      encoded using UTF-8.
-        :param async: If True, don't wait for the pipeline to complete
-                      before returning.
-        :type async: bool
+        :param async_: If True, don't wait for the pipeline to complete
+                       before returning.
+        :type async_: bool
         """
-        logger.debug('started: %s, %s, %s', node, input, async)
+        logger.debug('started: %s, %s, %s', node, input, async_)
         parts = node.parts
         last = len(parts) - 1
         assert last > 1
@@ -1362,11 +1362,11 @@ class Pipeline(WithMixin):
                 input = ensure_stream(input)
                 # run the current command
             if i < last:
-                # need to know status, so run with async=False
+                # need to know status, so run with async_=False
                 use_async = False
             else:
-                use_async = async
-            self.run_node(curr, input, async=use_async)
+                use_async = async_
+            self.run_node(curr, input, async_=use_async)
             if i < last:
                 check = parts[i + 1].check
                 if check == '&&':
@@ -1378,7 +1378,7 @@ class Pipeline(WithMixin):
             prev = curr
             i += 2
 
-    def run_list_node(self, node, input, async):
+    def run_list_node(self, node, input, async_):
         """
         This runs a 'list' node in the parse tree.
 
@@ -1387,11 +1387,11 @@ class Pipeline(WithMixin):
         :param input: The data to pass to the command.
         :type input: Bytes, text or a file-like object of bytes. Text will be
                      encoded using UTF-8.
-        :param async: If True, don't wait for the pipeline to complete
-                      before returning.
-        :type async: bool
+        :param async_: If True, don't wait for the pipeline to complete
+                       before returning.
+        :type async_: bool
         """
-        logger.debug('started: %s, %s, %s', node, input, async)
+        logger.debug('started: %s, %s, %s', node, input, async_)
         parts = node.parts
         last = len(parts) - 1
         assert last > 1
@@ -1406,12 +1406,12 @@ class Pipeline(WithMixin):
             if i < last:
                 use_async = parts[i + 1].sync == '&'
             else:
-                use_async = async
+                use_async = async_
             # run the current command
             if not use_async:
-                self.run_node(curr, input, async=use_async)
+                self.run_node(curr, input, async_=use_async)
             else:
-                self.run_node_in_thread(curr, input, async=False)
+                self.run_node_in_thread(curr, input, async_=False)
             prev = curr
             i += 2
 
@@ -1423,7 +1423,7 @@ def run(cmd, **kwargs):
     Run a command with optional input and either synchronously or
     asynchronously.
 
-    Apart from the ``input`` and ``async`` keyword arguments described below,
+    Apart from the ``input`` and ``async_`` keyword arguments described below,
     other keyword arguments are passed to the created :class:`Pipeline`
     instance, and thence to :class:`subprocess.Popen` via a :class:`Command`
     instance. Note that the ``env`` kwarg is treated differently to how it is
@@ -1438,19 +1438,19 @@ def run(cmd, **kwargs):
                   it is a byte string, it is used as is. Otherwise, a
                   file-like object containing bytes should be passed: this
                   will be read to the end, but not closed.
-    :param async: If ``True``, this method returns without waiting for the
-                  subprocess to complete. Otherwise, it awaits completion
-                  by calling the :meth:`subprocess.Popen.wait` method.
-    :type async:  bool
+    :param async_: If ``True``, this method returns without waiting for the
+                   subprocess to complete. Otherwise, it awaits completion
+                   by calling the :meth:`subprocess.Popen.wait` method.
+    :type async_:  bool
     """
     input = kwargs.pop('input', None)
-    async = kwargs.pop('async', False)
-    if async:
+    async_ = kwargs.pop('async_', False)
+    if async_:
         p = Pipeline(cmd, **kwargs)
-        p.run(input=input, async=True)
+        p.run(input=input, async_=True)
     else:
         with Pipeline(cmd, **kwargs) as p:
-            p.run(input=input, async=async)
+            p.run(input=input, async_=async_)
     return p
 
 

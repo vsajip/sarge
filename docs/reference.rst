@@ -18,7 +18,7 @@ Attributes
 Functions
 ---------
 
-.. function:: run(command, input=None, async=False, **kwargs)
+.. function:: run(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which constructs a
    :class:`Pipeline` instance from the passed parameters, and then invokes
@@ -36,7 +36,7 @@ Functions
    :type input: Text, bytes or a file-like object containing bytes (not text).
    :param kwargs: Any keyword parameters which you might want to pass to the
                   wrapped :class:`Pipeline` instance. Apart from the ``input``
-                  and ``async`` keyword arguments described above, other keyword
+                  and ``async_`` keyword arguments described above, other keyword
                   arguments are passed to the wrapped :class:`Pipeline`
                   instance, and thence to :class:`subprocess.Popen` via a
                   :class:`Command` instance. Note that the ``env`` kwarg is
@@ -47,7 +47,11 @@ Functions
 
    :return: The created :class:`Pipeline` instance.
 
-.. function:: capture_stdout(command, input=None, async=False, **kwargs)
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
+
+.. function:: capture_stdout(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which does the same as :func:`run`
    while capturing the ``stdout`` of the subprocess(es). This captured output
@@ -59,7 +63,11 @@ Functions
    :param kwargs: As for :func:`run`.
    :return: As for :func:`run`.
 
-.. function:: get_stdout(command, input=None, async=False, **kwargs)
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
+
+.. function:: get_stdout(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which does the same as
    :func:`capture_stdout` but also returns the text captured. Use this when
@@ -73,7 +81,11 @@ Functions
 
    .. versionadded:: 0.1.1
 
-.. function:: capture_stderr(command, input=None, async=False, **kwargs)
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
+
+.. function:: capture_stderr(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which does the same as :func:`run`
    while capturing the ``stderr`` of the subprocess(es). This captured output
@@ -85,7 +97,11 @@ Functions
    :param kwargs: As for :func:`run`.
    :return: As for :func:`run`.
 
-.. function:: get_stderr(command, input=None, async=False, **kwargs)
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
+
+.. function:: get_stderr(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which does the same as
    :func:`capture_stderr` but also returns the text captured. Use this when
@@ -99,7 +115,11 @@ Functions
 
    .. versionadded:: 0.1.1
 
-.. function:: capture_both(command, input=None, async=False, **kwargs)
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
+
+.. function:: capture_both(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which does the same as :func:`run`
    while capturing the ``stdout`` and the ``stderr`` of the subprocess(es).
@@ -111,7 +131,11 @@ Functions
    :param kwargs: As for :func:`run`.
    :return: As for :func:`run`.
 
-.. function:: get_both(command, input=None, async=False, **kwargs)
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
+
+.. function:: get_both(command, input=None, async_=False, **kwargs)
 
    This function is a convenience wrapper which does the same as
    :func:`capture_both` but also returns the text captured. Use this when
@@ -126,6 +150,10 @@ Functions
 
    .. versionadded:: 0.1.1
 
+
+   .. versionchanged:: 0.1.5
+      The ``async`` keyword parameter was changed to ``async_``, as ``async``
+      is a keyword in Python 3.7 and later.
 
 .. function:: shell_quote(s)
 
@@ -176,7 +204,7 @@ Classes
                   :meth:`~Command.run`).
 
 
-   .. method:: run(input=None, async=False)
+   .. method:: run(input=None, async_=False)
 
       Run the command.
 
@@ -187,10 +215,14 @@ Classes
                     file-like object are written to the ``stdin``
                     stream of the sub-process.
       :type input:  Text, bytes or a file-like object containing bytes.
-      :param async: If ``True``, the command is run asynchronously -- that is
+      :param async_: If ``True``, the command is run asynchronously -- that is
                     to say, :meth:`wait` is not called on the underlying
                     :class:`~subprocess.Popen` instance.
-      :type async: bool
+      :type async_: bool
+
+      .. versionchanged:: 0.1.5
+         The ``async`` keyword parameter was changed to ``async_``, as ``async``
+         is a keyword in Python 3.7 and later.
 
    .. method:: wait()
 
@@ -234,15 +266,19 @@ Classes
                   keyword arguments, which will cause those streams to be
                   captured to those instances.
 
-   .. method:: run(input=None, async=False)
+   .. method:: run(input=None, async_=False)
 
       Run the pipeline.
 
       :param input: The same as for the :meth:`Command.run` method.
-      :param async: The same as for the :meth:`Command.run` method. Note that
+      :param async_: The same as for the :meth:`Command.run` method. Note that
                     parts of the pipeline may specify synchronous or
                     asynchronous running -- this flag refers to the pipeline
                     as a whole.
+
+      .. versionchanged:: 0.1.5
+         The ``async`` keyword parameter was changed to ``async_``, as ``async``
+         is a keyword in Python 3.7 and later.
 
    .. method:: wait()
 

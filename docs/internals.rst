@@ -55,7 +55,7 @@ capture across several process boundaries::
     $ python
     [snip]
     >>> from sarge import run, Capture
-    >>> p = run('cat random.bin|cat|cat|cat|cat|cat', stdout=Capture(), async=True)
+    >>> p = run('cat random.bin|cat|cat|cat|cat|cat', stdout=Capture(), async_=True)
     >>> for i in range(8):
     ...     data = p.stdout.read(2621440)
     ...     print('Read chunk %d: %d bytes' % (i, len(data)))
