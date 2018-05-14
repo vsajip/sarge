@@ -240,8 +240,8 @@ class Capture(WithMixin):
                 chunk = stream.read(chunk_size)
             if chunk:
                 self.buffer.put_nowait(chunk)
-                logger.debug('queued chunk of length %d: %r', len(chunk),
-                             chunk[:30])
+                logger.debug('queued chunk of length %d to %s: %r', len(chunk),
+                             self.buffer, chunk[:30])
                 if self.pattern and not self.matched.is_set():
                     self._try_match()
             if chunk_size > 0:
@@ -1094,7 +1094,12 @@ class Pipeline(WithMixin):
         """
         result = []
         if self.commands:
-            result = [c.process.returncode for c in self.commands]
+            for c in self.commands:
+                rc = None
+                if c.process:
+                    rc = c.process.returncode
+                result.append(rc)
+            # result = [c.process.returncode for c in self.commands]
         return result
 
     def wait_events(self):
