@@ -631,6 +631,7 @@ allows you to track that progress. Consider the following script,
                           action='store_false', help='Show dots for progress')
         options, args = parser.parse_args()
         p = capture_stdout('python lister.py -d 0.1 -c 100', async_=True)
+        time.sleep(0.01)  # Give the subprocess a chance to get going
         t = threading.Thread(target=progress, args=(p.stdout, options))
         t.start()
         while(p.returncodes[0] is None):
