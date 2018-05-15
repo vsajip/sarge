@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 def progress(capture, options):
     lines_seen = 0
     messages = {
-        'line 25\n': 'Getting going ...\n',
-        'line 50\n': 'Well on the way ...\n',
-        'line 75\n': 'Almost there ...\n',
+        b'line 25\n': 'Getting going ...\n',
+        b'line 50\n': 'Well on the way ...\n',
+        b'line 75\n': 'Almost there ...\n',
     }
     while True:
         s = capture.readline(timeout=1.0)
@@ -22,6 +22,7 @@ def progress(capture, options):
             break
         if options.dots:
             sys.stderr.write('.')
+            sys.stderr.flush()  # needed for Python 3.x
         else:
             msg = messages.get(s)
             if msg:
