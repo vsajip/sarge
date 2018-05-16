@@ -604,6 +604,14 @@ class SargeTest(unittest.TestCase):
         c.run()
         self.assertEqual(c.returncode, 0)
 
+    def test_command_nonexistent(self):
+        c = Command('nonesuch foo'.split(), stdout=Capture())
+        if PY3:
+            ARR = self.assertRaisesRegex
+        else:
+            ARR = self.assertRaisesRegexp
+        ARR(ValueError, 'Command not found: nonesuch', c.run)
+
     def test_working_dir(self):
         d = tempfile.mkdtemp()
         try:

@@ -4,6 +4,7 @@
 #
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
+import errno
 from io import BytesIO
 import logging
 import os
@@ -652,6 +653,9 @@ class Command(object):
             logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
             try:
                 self.process = p = Popen(self.args, **self.kwargs)
+            except OSError as e:
+                if e.errno == errno.ENOENT:
+                    raise ValueError('Command not found: %s' % self.args[0])
             except Exception as e:  #pragma: no cover
                 logger.exception('Popen call failed: %s: %s', type(e), e)
                 raise
