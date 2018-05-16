@@ -226,8 +226,13 @@ Change log
 
 Released: Not yet.
 
+- Fixed #37: Instead of an OSError with a "no such file or directory" message,
+  a ValueError is raised with a more informative "Command not found" message.
+
 - Fixed #38: Replaced ``async`` keyword argument with ``async_``, as ``async``
   has become a keyword in Python 3.7.
+
+- Fixed #39: Updated tutorial example on progress monitoring.
 
 0.1.4
 ~~~~~
