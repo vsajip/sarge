@@ -594,28 +594,33 @@ Displaying progress as a child process runs
 
 You can display progress as a child process runs, assuming that its output
 allows you to track that progress. Consider the following script,
-``progress.py``::
+``test_progress.py`` (which is included in the source distribution)::
 
     import optparse # because of 2.6 support
     import sys
     import threading
     import time
+    import logging
 
-    from sarge import capture_stdout
+    from sarge import capture_stdout, run, Capture
+
+    logger = logging.getLogger(__name__)
 
     def progress(capture, options):
         lines_seen = 0
         messages = {
-            'line 25\n': 'Getting going ...\n',
-            'line 50\n': 'Well on the way ...\n',
-            'line 75\n': 'Almost there ...\n',
+            b'line 25\n': 'Getting going ...\n',
+            b'line 50\n': 'Well on the way ...\n',
+            b'line 75\n': 'Almost there ...\n',
         }
         while True:
-            s = capture.readline()
-            if not s and lines_seen:
+            s = capture.readline(timeout=1.0)
+            if not s:
+                logger.debug('No more data, breaking out')
                 break
             if options.dots:
                 sys.stderr.write('.')
+                sys.stderr.flush()  # needed for Python 3.x
             else:
                 msg = messages.get(s)
                 if msg:
@@ -630,10 +635,14 @@ allows you to track that progress. Consider the following script,
         parser.add_option('-n', '--no-dots', dest='dots', default=True,
                           action='store_false', help='Show dots for progress')
         options, args = parser.parse_args()
+
+        #~ p = capture_stdout('ncat -k -l -p 42421', async_=True)
         p = capture_stdout('python lister.py -d 0.1 -c 100', async_=True)
-        time.sleep(0.01)  # Give the subprocess a chance to get going
+
+        time.sleep(0.01)
         t = threading.Thread(target=progress, args=(p.stdout, options))
         t.start()
+
         while(p.returncodes[0] is None):
             # We could do other useful work here. If we have no useful
             # work to do here, we can call readline() and process it
@@ -643,6 +652,8 @@ allows you to track that progress. Consider the following script,
         t.join()
 
     if __name__ == '__main__':
+        logging.basicConfig(level=logging.DEBUG, filename='test_progress.log',
+                            filemode='w', format='%(asctime)s %(threadName)-10s %(name)-15s %(lineno)4d %(message)s')
         sys.exit(main())
 
 When this is run without the ``--no-dots`` argument, you should see the
@@ -652,7 +663,7 @@ following::
     ....................................................... (100 dots printed)
     Done - 100 lines seen.
 
-If run with the ``--no-dots`` argument, you should see::
+If run *with* the ``--no-dots`` argument, you should see::
 
     $ python progress.py --no-dots
     Getting going ...
