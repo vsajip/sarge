@@ -1,0 +1,65 @@
+{
+  "index-metadata": {
+    "extensions": {
+      "python.details": {
+        "classifiers": [
+          "Development Status :: 5 - Production/Stable",
+          "Intended Audience :: Developers",
+          "License :: OSI Approved :: BSD License",
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 2",
+          "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 2.6",
+          "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3.3",
+          "Programming Language :: Python :: 3.4",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "Operating System :: OS Independent",
+          "Topic :: Software Development :: Libraries :: Python Modules"
+        ],
+        "license": "Copyright (C) 2008-2018 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
+      },
+      "python.project": {
+        "contacts": [
+          {
+            "email": "vinay_sajip@red-dove.com",
+            "name": "Vinay Sajip",
+            "role": "author"
+          },
+          {
+            "email": "vinay_sajip@red-dove.com",
+            "name": "Vinay Sajip",
+            "role": "maintainer"
+          }
+        ],
+        "project_urls": {
+          "Home": "http://packages.python.org/sarge/index.html"
+        }
+      }
+    },
+    "metadata_version": "2.0",
+    "name": "sarge",
+    "python.exports": {
+      "packages": [
+        "sarge"
+      ]
+    },
+    "source_url": "https://pypi.io/packages/source/p/sarge/sarge-0.1.5.tar.gz",
+    "summary": "A wrapper for subprocess which provides command pipeline functionality.",
+    "version": "0.1.5"
+  },
+  "metadata": {
+    "description": "The sarge package provides a wrapper for subprocess which provides command pipeline functionality. This package leverages subprocess to provide easy-to-use cross-platform command pipelines with a Posix flavour: you can have chains of commands using ;, &, pipes using ``|`` and ``|&``, and redirection.",
+    "name": "sarge",
+    "platform": "No particular restrictions",
+    "version": "0.1.5"
+  },
+  "source": {
+    "packages": [
+      "sarge"
+    ]
+  },
+  "version": 1
+}
