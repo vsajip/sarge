@@ -108,7 +108,7 @@ if sys.platform == 'win32':
                 m = COMMAND_RE.match(s)
                 if m:
                     exe = m.groups()[0]
+                    result = exe, cmd
             except OSError:
                 pass
-            result = exe, cmd
         return result
