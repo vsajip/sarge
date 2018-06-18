@@ -221,10 +221,16 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.5 (future)
+0.1.6 (future)
 ~~~~~~~~~~~~~~
 
 Released: Not yet.
+
+
+0.1.5
+~~~~~
+
+Released: 2018-06-18
 
 - Fixed #37: Instead of an OSError with a "no such file or directory" message,
   a ValueError is raised with a more informative "Command not found" message.
