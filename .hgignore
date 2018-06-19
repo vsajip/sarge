@@ -1,7 +1,7 @@
 \.(pyc|log)$
-(\.idea|build|dist)/
+(\.(idea|tox)|build|dist)/
 docs/_build/
-MANIFEST
+^MANIFEST$
 testfile.txt
 random.bin
 .dict-validwords
