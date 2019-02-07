@@ -1,5 +1,8 @@
 include LICENSE
 include README.rst
-setup.py
-sarge/*.py
-
+include setup.py
+include sarge/*.py
+include test_sarge.py
+include stack_tracer.py
+include lister.py
+include echoer.py
