@@ -502,6 +502,19 @@ We can now show how to interact with this program from a parent process::
     >>> p.wait()
     0
 
+Note that the above code is for Python 2.x. If you're using Python 3.x, you need
+to do some things slightly differently:
+
+* Pass byte-strings to the streams, because interprocess communication occurs
+  in bytes rather than text. In other words, use for example
+  ``p.stdin.write(b'Fred\n')`` to send bytes to the child (otherwise you will
+  get a ``TypeError``). Note that you'll also get byte-strings back.
+* Add explicit ``p.stdin.flush()`` calls following ``p.stdin.write()`` calls, to
+  ensure that the child process sees your output. You should do this even if
+  you are running Python unbuffered (``-u``) in both parent and child processes
+  (see https://bitbucket.org/vinay.sajip/sarge/issues/43 and
+  https://bugs.python.org/issue21332 for more information).
+
 The ``p.returncode`` didn't print anything, indicating that the return code
 was ``None``. This means that although the child process has exited,
 it's still a zombie because we haven't "reaped" it by making a call to
