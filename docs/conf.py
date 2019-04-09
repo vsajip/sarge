@@ -96,7 +96,7 @@ html_theme = os.environ.get('SARGE_DOCS_THEME', 'default')
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {'collapsiblesidebar': True}
+# html_theme_options = {'collapsiblesidebar': True}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = ['themes']
