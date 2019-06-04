@@ -25,7 +25,7 @@ from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
 if sys.platform == 'win32':  #pragma: no cover
-    from sarge.utils import find_command
+    from sarge.utils import find_command, EXECUTABLE_EXTENSIONS
 
 TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
 
@@ -673,6 +673,17 @@ class SargeTest(unittest.TestCase):
             self.assertTrue(cmd is None or pyrunner_re.match(cmd))
             cmd = find_command('dummy.pyw')
             self.assertTrue(cmd is None or pywrunner_re.match(cmd))
+
+            candidates = set('dummy%s' % e for e in EXECUTABLE_EXTENSIONS)
+            cmd = find_command('dummy')
+            if cmd:
+                self.assertIn(cmd[1].lower(), candidates)
+
+            for e in EXECUTABLE_EXTENSIONS:
+                fn = 'dummy%s' % e
+                cmd = find_command(fn)
+                if cmd:  # will only find if extension is in PATHEXT
+                    self.assertEqual(cmd[1], fn)
 
         def test_run_found_command(self):
             with open('hello.py', 'w') as f:

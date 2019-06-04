@@ -80,7 +80,13 @@ if sys.platform == 'win32':
     except ImportError:
         import _winreg as winreg
 
-    COMMAND_RE = re.compile(r'^"([^"]*)" "%1" %\*$')
+    # See https://superuser.com/q/136838 for available placeholders
+    COMMAND_RE = re.compile(r'^("(?P<cmdquoted>[^"]*)"|(?P<cmdunquoted>[^ ]*))'
+                            r' (?P<pre>.*[^"])?'
+                            r'(?P<fileplaceholder>"%[01Ll]"|%[01Ll])'
+                            r'(?P<post>[^"].*)?$')
+
+    EXECUTABLE_EXTENSIONS = ('.bat', '.cmd', '.com', '.pif', '.exe')
 
     def find_command(cmd):
         """
@@ -99,11 +105,18 @@ if sys.platform == 'win32':
             if cmd.startswith('.\\'):
                 cmd = cmd[2:]
             _, extn = os.path.splitext(cmd)
+
+            # Special case extensions which have open command '"%[1L]" %*'
+            if extn and extn.lower() in EXECUTABLE_EXTENSIONS:
+                return None, cmd
+
             HKCR = winreg.HKEY_CLASSES_ROOT
             try:
                 ftype = winreg.QueryValue(HKCR, extn)
                 path = os.path.join(ftype, 'shell', 'open', 'command')
-                s = winreg.QueryValue(HKCR, path)
+                key = winreg.OpenKey(HKCR, path)
+                s, _ = winreg.QueryValueEx(key, None)
+                winreg.CloseKey(key)
                 exe = None
                 m = COMMAND_RE.match(s)
                 if m:
