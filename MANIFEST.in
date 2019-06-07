@@ -6,4 +6,3 @@ include test_sarge.py
 include stack_tracer.py
 include lister.py
 include echoer.py
-include dummy.*
