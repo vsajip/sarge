@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2013 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2019 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # Test harness for sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
@@ -30,32 +30,6 @@ if sys.platform == 'win32':  #pragma: no cover
 TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
 
 PY3 = sys.version_info[0] >= 3
-
-if os.name == 'nt':  #pragma: no cover
-    def found_file(fn):
-        if os.path.exists(fn):
-            return True
-        for d in os.environ['PATH'].split(os.pathsep):
-            p = os.path.join(d, fn)
-            if os.path.exists(p):
-                return True
-        return False
-
-    FILES = ('libiconv2.dll', 'libintl3.dll', 'cat.exe', 'echo.exe',
-             'tee.exe', 'false.exe', 'true.exe', 'sleep.exe', 'touch.exe')
-    for fn in FILES:
-        if not found_file(fn):
-            list = '%s and %s' % (', '.join(FILES[:-1]), FILES[-1])
-            raise ImportError('To run these tests on Windows, '
-                              'you need the GnuWin32 coreutils package. This '
-                              'appears not to be installed correctly, '
-                              'as the file %r does not appear to be in the '
-                              'current directory.\nSee http://gnuwin32'
-                              '.sourceforge.net/packages/coreutils.htm for '
-                              'download details. Once downloaded and '
-                              'installed, you need to copy %s to '
-                              'the test directory or have the directory they'
-                              ' were installed to on the PATH.' % (fn, list))
 
 logger = logging.getLogger(__name__)
 
