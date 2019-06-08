@@ -55,8 +55,14 @@ def missing_files():
                     return True
             return False
 
-        files = ('libiconv2.dll', 'libintl3.dll', 'cat.exe', 'echo.exe',
-                 'tee.exe', 'false.exe', 'true.exe', 'sleep.exe', 'touch.exe')
+        files = ('cat.exe', 'echo.exe', 'tee.exe', 'false.exe', 'true.exe',
+                 'sleep.exe', 'touch.exe')
+
+        # Looking for the DLLs used by the above - perhaps this check isn't
+        # needed, as if the .exes were installed properly, we should be OK. The
+        # DLL check is relevant for GnuWin32 but may not be for MSYS, MSYS2 etc.
+        if 'USE_MSYS' not in os.environ:
+            files = ('libiconv2.dll', 'libintl3.dll') + files
 
         path_dirs = os.environ['PATH'].split(os.pathsep)
 
