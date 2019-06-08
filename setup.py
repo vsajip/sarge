@@ -11,46 +11,6 @@ import re
 
 import sarge
 
-def missing_files():
-    result = []  # on POSIX, nothing missing
-    if os.name == 'nt':  #pragma: no cover
-
-        def found_file(fn):
-            if os.path.exists(fn):
-                return True
-            for d in os.environ['PATH'].split(os.pathsep):
-                p = os.path.join(d, fn)
-                if os.path.exists(p):
-                    return True
-            return False
-
-        files = ('libiconv2.dll', 'libintl3.dll', 'cat.exe', 'echo.exe',
-                 'tee.exe', 'false.exe', 'true.exe', 'sleep.exe', 'touch.exe')
-
-        path_dirs = os.environ['PATH'].split(os.pathsep)
-
-        for fn in files:
-            if os.path.exists(fn):
-                found = True  # absolute, or in current directory
-            else:
-                found = False
-                for d in path_dirs:
-                    p = os.path.join(d, fn)
-                    if os.path.exists(p):
-                        found = True
-                        break
-            if not found:
-                result.append(fn)
-
-    return result
-
-ERROR_MESSAGE = '''
-Can't find one or more of the files needed for testing:
-
-%s
-
-You may need to install the GnuWin32 coreutils package, MSYS, or an equivalent.
-'''.strip()
 
 class TestCommand(Command):
     user_options = []
@@ -58,11 +18,6 @@ class TestCommand(Command):
     def run(self):
         import sys
         import unittest
-
-        missing = missing_files()
-        if missing:
-            missing = ', '.join(missing)
-            raise ValueError(ERROR_MESSAGE % missing)
 
         import test_sarge
         loader = unittest.TestLoader()
