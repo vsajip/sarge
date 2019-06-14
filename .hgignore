@@ -1,10 +1,10 @@
 \.(pyc|log)$
-(\.(idea|tox)|build|dist)/
+(\.(idea|tox)|build|dist|htmlcov)/
 docs/_build/
 ^MANIFEST$
 testfile.txt
 random.bin
-.dict-validwords
+\.(dict-validwords|coverage)$
 watcher.conf
 (test\d+|emitter|hello)\.py
 
