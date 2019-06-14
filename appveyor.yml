@@ -1,11 +1,14 @@
 version: 1.0.{build}
 environment:
-  USE_MSYS: 1
   matrix:
   - TOXENV: py27
+    USE_MSYS: 1
   - TOXENV: py35
+    USE_MSYS: 1
   - TOXENV: py36
+    USE_MSYS: 1
   - TOXENV: py37
+    USE_MSYS: 1
 install:
 - cmd: pip install tox
 build: off
