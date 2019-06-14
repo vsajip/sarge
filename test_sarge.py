@@ -61,7 +61,7 @@ def missing_files():
         # Looking for the DLLs used by the above - perhaps this check isn't
         # needed, as if the .exes were installed properly, we should be OK. The
         # DLL check is relevant for GnuWin32 but may not be for MSYS, MSYS2 etc.
-        print(os.environ.keys())
+        print(os.environ)
         if os.environ.get('USE_MSYS', ''):
             files = ('libiconv2.dll', 'libintl3.dll') + files
 
