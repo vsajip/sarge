@@ -36,14 +36,16 @@ Functions
    :type input: Text, bytes or a file-like object containing bytes (not text).
    :param kwargs: Any keyword parameters which you might want to pass to the
                   wrapped :class:`Pipeline` instance. Apart from the ``input``
-                  and ``async_`` keyword arguments described above, other keyword
-                  arguments are passed to the wrapped :class:`Pipeline`
-                  instance, and thence to :class:`subprocess.Popen` via a
-                  :class:`Command` instance. Note that the ``env`` kwarg is
-                  treated differently to how it is in
-                  :class:`~subprocess.Popen`: it is treated as a set of
-                  *additional* environment variables to be added to the
-                  values in ``os.environ``.
+                  and ``async_`` keyword arguments described above, other
+                  keyword arguments are passed to the wrapped
+                  :class:`Pipeline` instance, and thence to
+                  :class:`subprocess.Popen` via a :class:`Command` instance.
+                  Note that the ``env`` kwarg is treated differently to how it
+                  is in :class:`~subprocess.Popen`: it is treated as a set of
+                  *additional* environment variables to be added to the values
+                  in ``os.environ``, unless ``replace_env`` is also specified
+                  as true, in which case the value of ``env`` becomes the
+                  entire child process environment.
 
    :return: The created :class:`Pipeline` instance.
 

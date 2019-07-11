@@ -255,6 +255,11 @@ class SargeTest(unittest.TestCase):
         ek.add('FOO')
         self.assertEqual(dk, ek)
         self.assertEqual(d['FOO'], 'BAR')
+        c = Command('echo foo', env=env, replace_env=True)
+        ek = set(env)
+        dk = set(c.kwargs['env'])
+        self.assertEqual(dk, ek)
+        self.assertEqual(dk, {'FOO'})
 
     def test_env_usage(self):
         if os.name == 'nt':

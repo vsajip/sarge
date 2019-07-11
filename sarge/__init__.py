@@ -587,11 +587,15 @@ class Command(object):
                    :class:`subprocess.Popen'.
     :param kwargs: The same as you would pass to :class:`subprocess.Popen'.
                    However, the ``env`` parameter is handled differently: it
-                   is treated as a set of *additional* environment variables to
-                   be added to the values in ``os.environ``.
+                   is treated as a set of *additional* environment variables
+                   to be added to the values in ``os.environ``, unless the
+                   ``replace_env`` keyword argument is present and truthy, in
+                   which case the env value is used *in place of*
+                   ``os.environ``.
     """
 
     def __init__(self, args, **kwargs):
+        replace_env = kwargs.pop('replace_env', False)
         shell = kwargs.get('shell')
         if not shell and isinstance(args, string_types):
             args = list(shell_shlex(args, control='();>|&'))
@@ -609,8 +613,11 @@ class Command(object):
         # special handling: env is added to os.environ
         e = kwargs.get('env')
         if e:
-            env = dict(os.environ)
-            env.update(e)
+            if replace_env:
+                env = e
+            else:
+                env = dict(os.environ)
+                env.update(e)
             kwargs['env'] = env
         self.process_ready = threading.Event()
         self.process = None

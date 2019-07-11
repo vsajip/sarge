@@ -712,10 +712,16 @@ In the :class:`subprocess.Popen` constructor, the ``env`` keyword argument, if
 supplied, is expected to be the *complete* environment passed to the child
 process. This can lead to problems on Windows, where if you don't pass the
 ``SYSTEMROOT`` environment variable, things can break. With ``sarge``, it's
-assumed that anything you pass in ``env`` is *added* to the contents of
-``os.environ``. This is almost always what you want -- after all,
+assumed by default that anything you pass in ``env`` is *added* to the
+contents of ``os.environ``. This is almost always what you want -- after all,
 in a Posix shell, the environment is generally inherited with certain
-additions for a specific command invocation.
+additions for a specific command invocation. However, if you want to pass a
+complete environment rather than an augmented ``os.environ``, you can do this
+by passing ``replace_env=True`` in the keyword arguments. In that case, the
+value of the ``env`` keyword argument is passed as-is to the child process.
+
+.. versionadded:: 0.1.6
+   The ``replace_env`` keyword parameter was added.
 
 .. note:: On Python 2.x on Windows, environment keys and values must be of
    type ``str`` - Unicode values will cause a ``TypeError``. Be careful of
