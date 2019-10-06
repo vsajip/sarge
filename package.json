@@ -19,7 +19,7 @@
           "Operating System :: OS Independent",
           "Topic :: Software Development :: Libraries :: Python Modules"
         ],
-        "license": "Copyright (C) 2008-2018 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
+        "license": "Copyright (C) 2008-2019 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
       },
       "python.project": {
         "contacts": [
