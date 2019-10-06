@@ -1,13 +1,14 @@
 language: python
 sudo: false
 python:
-    - "2.6"
+#    - "2.6" removed because not available on Travis
     - "2.7"
 #    - "3.2" removed because Coveralls/coverage 4.0 fails on 3.2
-    - "3.3"
+#    - "3.3" removed because not available on Travis
     - "3.4"
     - "3.5"
     - "3.6"
+    - "3.7"
     - "pypy"
 install:
     - pip install coveralls
