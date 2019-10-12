@@ -229,6 +229,8 @@ Released: Not yet.
 - Fixed #47: Added the ``replace_env`` keyword argument which allows a complete
   replacement for ``os.environ`` to be passed.
 
+- Fixed #51: Improved error handling around a Popen call.
+
 0.1.5
 ~~~~~
 

@@ -660,10 +660,9 @@ class Command(object):
             logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
             try:
                 self.process = p = Popen(self.args, **self.kwargs)
-            except OSError as e:
-                if e.errno == errno.ENOENT:
+            except (OSError, Exception) as e:  #pragma: no cover
+                if isinstance(e, OSError) and e.errno == errno.ENOENT:
                     raise ValueError('Command not found: %s' % self.args[0])
-            except Exception as e:  #pragma: no cover
                 logger.exception('Popen call failed: %s: %s', type(e), e)
                 raise
             self.stdin = p.stdin
