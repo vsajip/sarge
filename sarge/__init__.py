@@ -1019,6 +1019,7 @@ class Pipeline(WithMixin):
         self.stdout = kwargs.pop('stdout', None)
         self.stderr = kwargs.pop('stderr', None)
         self.lock = threading.RLock()
+        self.commands = []
 
     def find_last_command(self, node):
         """

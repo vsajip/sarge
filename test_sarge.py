@@ -645,6 +645,17 @@ class SargeTest(unittest.TestCase):
             ARR = self.assertRaisesRegexp
         ARR(ValueError, 'Command not found: nonesuch', c.run)
 
+    def test_pipeline_nonexistent(self):
+        p = Pipeline('nonesuch foo'.split(), stdout=Capture())
+        self.assertEqual(p.commands, [])
+        self.assertEqual(p.returncodes, [])
+        self.assertEqual(p.processes, [])
+        if PY3:
+            ARR = self.assertRaisesRegex
+        else:
+            ARR = self.assertRaisesRegexp
+        ARR(ValueError, 'Command not found: nonesuch', p.run)
+
     def test_working_dir(self):
         d = tempfile.mkdtemp()
         try:
