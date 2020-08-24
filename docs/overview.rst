@@ -221,10 +221,15 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.6 (future)
+0.1.7 (future)
 ~~~~~~~~~~~~~~
 
 Released: Not yet.
+
+0.1.6
+~~~~~
+
+Released: 2020-08-24
 
 - Fixed #44: Added an optional timeout to Command.wait() and Pipeline.wait(), which
   only takes effect on Python >= 3.3.

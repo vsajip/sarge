@@ -16,10 +16,11 @@
           "Programming Language :: Python :: 3.5",
           "Programming Language :: Python :: 3.6",
           "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
           "Operating System :: OS Independent",
           "Topic :: Software Development :: Libraries :: Python Modules"
         ],
-        "license": "Copyright (C) 2008-2019 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
+        "license": "Copyright (C) 2008-2020 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
       },
       "python.project": {
         "contacts": [
@@ -46,15 +47,15 @@
         "sarge"
       ]
     },
-    "source_url": "https://pypi.io/packages/source/p/sarge/sarge-0.1.5.tar.gz",
+    "source_url": "https://pypi.io/packages/source/p/sarge/sarge-0.1.6.tar.gz",
     "summary": "A wrapper for subprocess which provides command pipeline functionality.",
-    "version": "0.1.6.dev0"
+    "version": "0.1.6"
   },
   "metadata": {
     "description": "The sarge package provides a wrapper for subprocess which provides command pipeline functionality. This package leverages subprocess to provide easy-to-use cross-platform command pipelines with a Posix flavour: you can have chains of commands using ;, &, pipes using ``|`` and ``|&``, and redirection.",
     "name": "sarge",
     "platform": "No particular restrictions",
-    "version": "0.1.6.dev0"
+    "version": "0.1.6"
   },
   "source": {
     "packages": [

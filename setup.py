@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2019 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2020 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
