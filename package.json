@@ -43,7 +43,7 @@
     "metadata_version": "2.0",
     "name": "sarge",
     "python.exports": {
-      "packages": [
+      "modules": [
         "sarge"
       ]
     },
