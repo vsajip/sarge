@@ -8,6 +8,17 @@
 Welcome to sarge's documentation!
 =================================
 
+.. rst-class:: release-info
+
+   .. list-table::
+      :widths: auto
+      :stub-columns: 1
+
+      * - Release:
+        - |release|
+      * - Date:
+        - |today|
+
 Welcome to the documentation for ``sarge``, a wrapper for :mod:`subprocess`
 which aims to make life easier for anyone who needs to interact with external
 applications from their Python code.

@@ -38,6 +38,7 @@ __all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
            'capture_stdout', 'capture_stderr', 'capture_both')
 
 __version__ = '0.1.7.dev0'
+__date__ = '2020-08-24'
 
 logger = logging.getLogger(__name__)
 logger.addHandler(NullHandler())

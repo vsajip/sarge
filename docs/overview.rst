@@ -231,13 +231,13 @@ Released: Not yet.
 
 Released: 2020-08-24
 
-- Fixed #44: Added an optional timeout to Command.wait() and Pipeline.wait(), which
-  only takes effect on Python >= 3.3.
+- Fixed #44: Added an optional timeout to :meth:`Command.wait` and
+  :meth:`Pipeline.wait`, which only takes effect on Python >= 3.3.
 
 - Fixed #47: Added the ``replace_env`` keyword argument which allows a complete
   replacement for ``os.environ`` to be passed.
 
-- Fixed #51: Improved error handling around a Popen call.
+- Fixed #51: Improved error handling around a ``Popen`` call.
 
 0.1.5
 ~~~~~
