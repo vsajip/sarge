@@ -226,6 +226,9 @@ Change log
 
 Released: Not yet.
 
+- Fixed #44: Added an optional timeout to Command.wait() and Pipeline.wait(), which
+  only takes effect on Python >= 3.3.
+
 - Fixed #47: Added the ``replace_env`` keyword argument which allows a complete
   replacement for ``os.environ`` to be passed.
 

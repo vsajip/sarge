@@ -226,9 +226,14 @@ Classes
          The ``async`` keyword parameter was changed to ``async_``, as ``async``
          is a keyword in Python 3.7 and later.
 
-   .. method:: wait()
+   .. method:: wait(timeout=None)
 
-      Wait for the command's underlying sub-process to complete.
+      Wait for the command's underlying sub-process to complete, with a specified
+      timeout. If the timeout is reached, a ``subprocess.TimeoutExpired`` exception
+      is raised. The timeout is ignored in versions of Python < 3.3.
+
+      .. versionchanged:: 0.1.6
+         The ``timeout`` parameter was added.
 
    .. method:: terminate()
 
@@ -282,9 +287,16 @@ Classes
          The ``async`` keyword parameter was changed to ``async_``, as ``async``
          is a keyword in Python 3.7 and later.
 
-   .. method:: wait()
+   .. method:: wait(timeout=None)
 
-      Wait for all command sub-processes to finish.
+      Wait for all command sub-processes to finish, with an optional timeout. If the
+      timeout is reached, a ``subprocess.TimeoutExpired`` exception is raised. The
+      timeout is ignored in versions of Python < 3.3. If applied, it is applied to each
+      of the pipeline's commands in turn, which means that the effective timeout might
+      be cumulative.
+
+      .. versionchanged:: 0.1.6
+         The ``timeout`` parameter was added.
 
    .. method:: close()
 
