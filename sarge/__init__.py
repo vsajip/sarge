@@ -54,12 +54,14 @@ if sys.version_info[0] < 3:  # pragma: no cover
     text_type = unicode
     binary_type = str
     string_types = basestring,
+    _wait_has_timeout = False
 else:  # pragma: no cover
     PY3 = True
     text_type = str
     binary_type = bytes
     string_types = str,
     basestring = str
+    _wait_has_timeout = sys.version_info[:2] >= (3, 3)
 
 # This regex determines which shell input needs quoting
 # because it may be unsafe
@@ -592,6 +594,9 @@ class Command(object):
                    ``replace_env`` keyword argument is present and truthy, in
                    which case the env value is used *in place of*
                    ``os.environ``.
+
+                   .. versionadded:: 0.1.6
+                      The ``replace_env`` keyword argument was added.
     """
 
     def __init__(self, args, **kwargs):
@@ -692,9 +697,10 @@ class Command(object):
         logger.debug('returning %s (%s)', self, self.process)
         return self
 
-    def wait(self):
+    def wait(self, timeout=None):
         """
-        Wait for a command's underlying sub-process to complete.
+        Wait for a command's underlying sub-process to complete. The timeout
+        parameter only applies for Python >= 3.3 and has no effect otherwise.
         """
         self.process_ready.wait()
         p = self.process
@@ -702,7 +708,10 @@ class Command(object):
             logger.warning('No process found for %s', self)
             result = None
         else:
-            result = p.wait()
+            if _wait_has_timeout:
+                result = p.wait(timeout)
+            else:
+                result = p.wait()
         return result
 
     def terminate(self):
@@ -1120,15 +1129,17 @@ class Pipeline(WithMixin):
         for e in self.events:
             e.wait()
 
-    def wait(self):
+    def wait(self, timeout=None):
         """
-        Wait for all the commands in the pipeline to complete.
+        Wait for all the commands in the pipeline to complete. The timeout
+        parameter only applies for Python >= 3.3 and has no effect otherwise. It will
+        be applied to each command in turn, so the effect could be cumulative.
         """
         logger.debug('pipeline waiting')
         self.wait_events()
         for cmd in self.commands:
             logger.debug('waiting for command %s', cmd)
-            cmd.wait()
+            cmd.wait(timeout)
 
     def close(self):
         """

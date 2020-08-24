@@ -12,6 +12,7 @@ import logging
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -753,6 +754,16 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(p.stdout.text.splitlines(),
                          ['hello hello', 'goodbye goodbye'])
 
+    def test_timeout(self):
+        if sys.version_info[:2] < (3, 3):
+            raise unittest.SkipTest('test is only valid for Python >= 3.3')
+        cap = Capture(buffer_size=-1)
+        p = run('%s waiter.py 5.0' % sys.executable, async_=True, stdout=cap)
+        with self.assertRaises(subprocess.TimeoutExpired):
+            p.wait(2.5)
+        self.assertEqual(p.returncodes, [None])
+        p.wait(2.6)  # ensure the child process finishes
+        self.assertEqual(p.returncodes, [0])
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
