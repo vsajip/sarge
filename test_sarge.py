@@ -757,14 +757,15 @@ class SargeTest(unittest.TestCase):
     def test_timeout(self):
         if sys.version_info[:2] < (3, 3):
             raise unittest.SkipTest('test is only valid for Python >= 3.3')
-        cap = Capture(buffer_size=-1)
+        cap = Capture(buffer_size=1)
         p = run('%s waiter.py 5.0' % sys.executable, async_=True, stdout=cap)
         with self.assertRaises(subprocess.TimeoutExpired):
             p.wait(2.5)
         self.assertEqual(p.returncodes, [None])
+        self.assertEqual(cap.read(block=False), b'Waiting ... ')
         p.wait(2.6)  # ensure the child process finishes
         self.assertEqual(p.returncodes, [0])
-        self.assertEqual(cap.read(), b'Waiting ... done.\n')
+        self.assertEqual(cap.read(), b'done.\n')
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
