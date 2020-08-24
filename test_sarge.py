@@ -764,6 +764,7 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(p.returncodes, [None])
         p.wait(2.6)  # ensure the child process finishes
         self.assertEqual(p.returncodes, [0])
+        self.assertEqual(cap.read(), b'Waiting ... done.\n')
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
