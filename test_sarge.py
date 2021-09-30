@@ -379,7 +379,7 @@ class SargeTest(unittest.TestCase):
         parse_command_line('(abc 2>&1; def >>&2)')
         parse_command_line('(a|b;c d && e || f >ghi jkl 2> mno)')
         parse_command_line('(abc; (def)); ghi & ((((jkl & mno)))); pqr')
-        c = parse_command_line('git rev-list origin/master --since="1 hours ago"')
+        c = parse_command_line('git rev-list origin/master --since="1 hours ago"', posix=True)
         self.assertEqual(c.command, ['git', 'rev-list', 'origin/master',
                                      '--since=1 hours ago'])
 
@@ -768,7 +768,8 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(cap.read(block=False), b'Waiting ... ')
         p.wait(2.6)  # ensure the child process finishes
         self.assertEqual(p.returncodes, [0])
-        self.assertEqual(cap.read(), b'done.\n')
+        expected = b'done.\n' if os.name != 'nt' else b'done.\r\n'
+        self.assertEqual(cap.read(), expected)
 
 if __name__ == '__main__':  #pragma: no cover
     # switch the level to DEBUG for in-depth logging.
