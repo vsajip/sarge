@@ -379,6 +379,9 @@ class SargeTest(unittest.TestCase):
         parse_command_line('(abc 2>&1; def >>&2)')
         parse_command_line('(a|b;c d && e || f >ghi jkl 2> mno)')
         parse_command_line('(abc; (def)); ghi & ((((jkl & mno)))); pqr')
+        c = parse_command_line('git rev-list origin/master --since="1 hours ago"')
+        self.assertEqual(c.command, ['git', 'rev-list', 'origin/master',
+                                     '--since=1 hours ago'])
 
     def test_parsing_special(self):
         for cmd in ('ls -l --color=auto', 'sleep 0.5', 'ls /tmp/abc.def',
