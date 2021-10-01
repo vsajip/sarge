@@ -226,6 +226,12 @@ Change log
 
 Released: Not yet.
 
+- Fixed #50: Initialized `commands` attribute in a constructor.
+
+- Fixed #52: Updated documentation to show improved command line parsing under Windows.
+
+- Fixed #53: Added waiter.py to the manifest so that the test suite can be run.
+
 0.1.6
 ~~~~~
 

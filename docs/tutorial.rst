@@ -88,6 +88,22 @@ subkeys in the registry, and where the command line is of the form
 ``"<path_to_executable>" "%1" %*`` (this is the standard form used by several
 languages).
 
+Parsing commands under Windows
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes, you may find it useful to pass ``posix=True`` for parsing command lines
+under Windows (this is the default on POSIX platforms, so it doesn't need to be passed
+explicitly there). Note the differences::
+
+    >>> from sarge import parse_command_line
+    >>> parse_command_line('git rev-list origin/master --since="1 hours ago"')
+    CommandNode(command=['git', 'rev-list', 'origin/master', '--since="1', 'hours', 'ago"'] redirects={})
+    >>> parse_command_line('git rev-list origin/master --since="1 hours ago"', posix=True)
+    CommandNode(command=['git', 'rev-list', 'origin/master', '--since=1 hours ago'] redirects={})
+    >>>
+
+As you can see, passing ``posix=True`` has allowed the ``--since`` parameter to be
+correctly handled.
 
 Chaining commands
 ^^^^^^^^^^^^^^^^^

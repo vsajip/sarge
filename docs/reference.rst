@@ -47,6 +47,12 @@ Functions
                   as true, in which case the value of ``env`` becomes the
                   entire child process environment.
 
+
+                  Under Windows, you might find it useful to pass the keyword argument
+                  ``posix=True``, which will cause `command` to be parsed using POSIX
+                  conventions. This makes it easier to pass parameters with spaces in
+                  them.
+
    :return: The created :class:`Pipeline` instance.
 
    .. versionchanged:: 0.1.5
