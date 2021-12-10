@@ -190,13 +190,12 @@ suite and it has been exercised on Windows, Ubuntu and Mac OS X. However,
 because of the timing sensitivity of the functionality, testing needs to be
 performed on as wide a range of hardware and platforms as possible.
 
-The source repository for the project is on BitBucket:
+The source repository for the project is on GitHub:
 
-https://bitbucket.org/vinay.sajip/sarge/
+https://github.com/vsajip/sarge/
 
 You can leave feedback by raising a new issue on the `issue
-tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_
-(BitBucket registration not necessary, but recommended).
+tracker <https://github.com/vsajip/sarge/issues/new/choose>`_.
 
 .. note:: For testing under Windows, you need to install the `GnuWin32
    coreutils <http://gnuwin32.sourceforge.net/packages/coreutils.htm>`_

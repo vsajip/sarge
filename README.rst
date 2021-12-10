@@ -28,15 +28,11 @@ before running the installation.
 
 Availability & Documentation
 ----------------------------
-The latest version of sarge can be found on `BitBucket <https://bitbucket.org/vinay.sajip/sarge/>`_::
+The latest version of sarge can be found on `GitHub <https://github.com/vsajip/sarge/>`_.
 
-    https://bitbucket.org/vinay.sajip/sarge/
-
-The latest documentation (kept updated between releases) is on `Read The Docs <http://sarge.readthedocs.org/>`_::
-
-    http://sarge.readthedocs.org/
+The latest documentation (kept updated between releases) is on `Read The Docs <http://sarge.readthedocs.org/>`_:
 
 Please report any problems or suggestions for improvement either via the
 `mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
-tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
+tracker <https://github.com/vsajip/sarge/issues/new/choose>`_.
 

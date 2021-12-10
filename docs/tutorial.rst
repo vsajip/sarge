@@ -528,7 +528,7 @@ to do some things slightly differently:
 * Add explicit ``p.stdin.flush()`` calls following ``p.stdin.write()`` calls, to
   ensure that the child process sees your output. You should do this even if
   you are running Python unbuffered (``-u``) in both parent and child processes
-  (see https://bitbucket.org/vinay.sajip/sarge/issues/43 and
+  (see https://github.com/vsajip/sarge/issues/43 and
   https://bugs.python.org/issue21332 for more information).
 
 The ``p.returncode`` didn't print anything, indicating that the return code
@@ -876,7 +876,7 @@ Other resources on this topic:
 
 Please report any problems you find in this area (or any other) either via the
 `mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
-tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
+tracker <https://github.com/vsajip/sarge/issues/new/choose>`_.
 
 Next steps
 ----------

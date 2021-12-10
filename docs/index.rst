@@ -35,5 +35,5 @@ applications from their Python code.
 
 Please report any problems or suggestions for improvement either via the
 `mailing list <http://groups.google.com/group/python-sarge/>`_ or the `issue
-tracker <https://bitbucket.org/vinay.sajip/sarge/issues/new>`_.
+tracker <https://github.com/vsajip/sarge/issues/new/choose>`_.
 
