@@ -225,6 +225,11 @@ Change log
 
 Released: Not yet.
 
+0.1.7
+~~~~~
+
+Released: 2021-12-10
+
 - Fixed #50: Initialized `commands` attribute in a constructor.
 
 - Fixed #52: Updated documentation to show improved command line parsing under Windows.
