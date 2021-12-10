@@ -20,7 +20,7 @@
           "Operating System :: OS Independent",
           "Topic :: Software Development :: Libraries :: Python Modules"
         ],
-        "license": "Copyright (C) 2008-2020 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
+        "license": "Copyright (C) 2008-2021 by Vinay Sajip. All Rights Reserved. See LICENSE for license."
       },
       "python.project": {
         "contacts": [
@@ -36,7 +36,7 @@
           }
         ],
         "project_urls": {
-          "Home": "http://packages.python.org/sarge/index.html"
+          "Home": "https://docs.red-dove.com/sarge/"
         }
       }
     },
@@ -47,15 +47,15 @@
         "sarge"
       ]
     },
-    "source_url": "https://pypi.io/packages/source/p/sarge/sarge-0.1.6.tar.gz",
+    "source_url": "https://github.com/sarge/releases/0.1.7/sarge-0.1.7.tar.gz",
     "summary": "A wrapper for subprocess which provides command pipeline functionality.",
-    "version": "0.1.6"
+    "version": "0.1.7"
   },
   "metadata": {
     "description": "The sarge package provides a wrapper for subprocess which provides command pipeline functionality. This package leverages subprocess to provide easy-to-use cross-platform command pipelines with a Posix flavour: you can have chains of commands using ;, &, pipes using ``|`` and ``|&``, and redirection.",
     "name": "sarge",
     "platform": "No particular restrictions",
-    "version": "0.1.6"
+    "version": "0.1.7"
   },
   "source": {
     "packages": [
