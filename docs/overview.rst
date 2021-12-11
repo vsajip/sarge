@@ -220,7 +220,7 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.7 (future)
+0.1.8 (future)
 ~~~~~~~~~~~~~~
 
 Released: Not yet.

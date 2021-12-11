@@ -60,7 +60,8 @@
   "source": {
     "packages": [
       "sarge"
-    ]
+    ],
+    "license-files": ["LICENSE"]
   },
   "version": 1
 }
