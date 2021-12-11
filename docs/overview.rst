@@ -177,9 +177,8 @@ and ``bar`` (after a delay of two seconds); the capturing works as expected.
 Python version and platform compatibility
 -----------------------------------------
 
-Sarge is intended to be used on any Python version >= 2.6 and is tested on
-Python versions 2.6, 2.7, 3.1, 3.2 and 3.3 on Linux, Windows, and Mac OS X (not
-all versions are tested on all platforms, but are expected to work correctly).
+Sarge is intended to be used on and is tested on Python versions 2.7, 3.6 - 3.10, pypy
+and pypy3 on Linux, Windows, and macOS.
 
 
 Project status
