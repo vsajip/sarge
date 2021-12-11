@@ -47,15 +47,15 @@
         "sarge"
       ]
     },
-    "source_url": "https://github.com/vsajip/sarge/releases/download/0.1.7.post1/sarge-0.1.7.post1.tar.gz",
+    "source_url": "https://github.com/vsajip/sarge/releases/download/0.1.8.dev0/sarge-0.1.8.dev0.tar.gz",
     "summary": "A wrapper for subprocess which provides command pipeline functionality.",
-    "version": "0.1.7.post1"
+    "version": "0.1.8.dev0"
   },
   "metadata": {
     "description": "The sarge package provides a wrapper for subprocess which provides command pipeline functionality. This package leverages subprocess to provide easy-to-use cross-platform command pipelines with a Posix flavour: you can have chains of commands using ;, &, pipes using ``|`` and ``|&``, and redirection.",
     "name": "sarge",
     "platform": "No particular restrictions",
-    "version": "0.1.7.post1"
+    "version": "0.1.8.dev0"
   },
   "source": {
     "packages": [
