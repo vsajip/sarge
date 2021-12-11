@@ -52,8 +52,8 @@ setup(
     maintainer='Vinay Sajip',
     maintainer_email='vinay_sajip@yahoo.co.uk',
     url='http://sarge.readthedocs.org/',
-    download_url=('http://pypi.python.org/packages/source/s/sarge/'
-                  'sarge-%s.tar.gz' % sarge.__version__),
+    download_url=('https://github.com/vsajip/sarge/releases/' + sarge.__version__ +
+                  '/sarge-%s.tar.gz' % sarge.__version__),
     packages=['sarge'],
     keywords=['subprocess', 'wrapper', 'external', 'command'],
     platforms=['Any'],
