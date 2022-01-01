@@ -323,9 +323,8 @@ Classes
    .. attribute:: returncodes
 
       A list of the return codes of all sub-processes which were actually run. This
-      may contain values of ``None`` until you have called :meth:`~Pipeline.poll_all`
-      or :meth:`~Pipeline.wait` methods to get the returncodes of all commands from the
-      underlying `subprocess` layer.
+      will internally poll the commands in the pipeline to find the latest known return
+      codes.
 
    .. attribute:: returncode
 

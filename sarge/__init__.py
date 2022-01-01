@@ -1113,10 +1113,7 @@ class Pipeline(WithMixin):
     @property
     def returncodes(self):
         """
-        A list of the return codes for all the commands which have been run. This may
-        contain values of ``None`` until you have called ``poll_all()`` or ``wait()``
-        methods to get the return codes of all commands from the underlying
-        ``subprocess`` layer.
+        A list of the return codes for all the commands which have been run.
         """
         result = []
         if self.commands:
