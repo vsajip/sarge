@@ -311,7 +311,10 @@ Classes
 
    .. attribute:: returncodes
 
-      A list of the return codes of all sub-processes which were actually run.
+      A list of the return codes of all sub-processes which were actually run. This
+      may contain values of ``None`` until you have called :meth:`poll_all` or
+      :meth:`wait` methods to get the returncodes of all commands from the underlying
+      `subprocess` layer.
 
    .. attribute:: returncode
 
