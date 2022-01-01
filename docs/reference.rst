@@ -304,6 +304,17 @@ Classes
       .. versionchanged:: 0.1.6
          The ``timeout`` parameter was added.
 
+   .. method:: poll_last()
+
+      Check if the last command in the pipeline has terminated, and return its exit
+      code, if available, or else `None`. Note that :meth:~Pipeline.poll_all` should be
+      called when you want to ensure that all commands in a pipeline have completed.
+
+   .. method:: poll_all()
+
+      Check if all commands to run have terminated. Return a list of exit codes, where
+      available, or `None` values where return codes are not yet available.
+
    .. method:: close()
 
       Wait for all command sub-processes to finish, and close all opened
@@ -312,9 +323,9 @@ Classes
    .. attribute:: returncodes
 
       A list of the return codes of all sub-processes which were actually run. This
-      may contain values of ``None`` until you have called :meth:`poll_all` or
-      :meth:`wait` methods to get the returncodes of all commands from the underlying
-      `subprocess` layer.
+      may contain values of ``None`` until you have called :meth:`~Pipeline.poll_all`
+      or :meth:`~Pipeline.wait` methods to get the returncodes of all commands from the
+      underlying `subprocess` layer.
 
    .. attribute:: returncode
 
