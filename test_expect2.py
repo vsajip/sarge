@@ -4,14 +4,16 @@ import time
 
 logger = logging.getLogger(__name__)
 
-logging.basicConfig(filename='test_expect.log', filemode='w',
-                    level=logging.INFO,
-                    format='%(asctime)s %(levelname)-8s %(name)s %(threadName)s %(lineno)4d %(message)s')
-cap = Capture(buffer_size=-1)   # line buffered
-p = run('python lister.py -d 0.01', async_=True,
-        stdout=cap)
+logging.basicConfig(
+    filename='test_expect.log',
+    filemode='w',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)-8s %(name)s %(threadName)s %(lineno)4d %(message)s')
+cap = Capture(buffer_size=-1)  # line buffered
+p = run('python lister.py -d 0.01', async_=True, stdout=cap)
 
 WAIT_TIME = 1.0
+
 
 def do_expect(pattern, timeout=None):
     stime = time.time()
@@ -21,10 +23,10 @@ def do_expect(pattern, timeout=None):
         print('%r not found within time limit.' % pattern)
         result = False
     else:
-        print('%r found at %s in %.1f seconds.' % (pattern, cap.match.span(),
-                                                   elapsed))
+        print('%r found at %s in %.1f seconds.' % (pattern, cap.match.span(), elapsed))
         result = True
     return result
+
 
 if do_expect('line 1$'):
     if do_expect('line 5$'):

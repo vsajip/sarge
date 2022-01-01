@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2013 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2013-2021 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # Part of the test harness for sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
-import os
-import subprocess
 import sys
 import time
 
@@ -30,10 +28,11 @@ def main(args=None):
                 break
             feeder.feed(data + '\n')
             p.commands[0].poll()
-            time.sleep(0.05)    # wait for child to return echo
+            time.sleep(0.05)  # wait for child to return echo
     finally:
         p.commands[0].terminate()
         feeder.close()
+
 
 if __name__ == '__main__':
     try:

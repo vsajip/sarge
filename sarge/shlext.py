@@ -5,7 +5,6 @@
 # Enhancements in shlex to tokenize closer to the way real shells do
 #
 from collections import deque
-from io import StringIO
 import shlex
 import sys
 
@@ -21,6 +20,7 @@ else:
 
 
 class shell_shlex(shlex.shlex):
+
     def __init__(self, instream=None, **kwargs):
         if 'control' not in kwargs:
             control = ''
@@ -62,9 +62,9 @@ class shell_shlex(shlex.shlex):
                     self.preceding = nextchar
                     if self.debug >= 2:  # pragma: no cover
                         print("shlex: whitespace in whitespace state")
-                    if self.token or (self.posix and quoted):
+                    if self.token or (self.posix and quoted):  # pragma: no cover
                         break  # emit current token
-                    else:
+                    else:  # pragma: no cover
                         continue
                 elif nextchar in self.commenters:
                     self.instream.readline()
@@ -112,8 +112,8 @@ class shell_shlex(shlex.shlex):
                         break
                     else:
                         self.state = 'a'
-                elif (self.posix and nextchar in self.escape and self.state
-                in self.escapedquotes):
+                elif (self.posix and nextchar in self.escape
+                      and self.state in self.escapedquotes):  # pragma: no cover
                     escapedstate = self.state
                     self.token_type = self.state
                     self.state = nextchar
@@ -128,7 +128,7 @@ class shell_shlex(shlex.shlex):
                 # In posix shells, only the quote itself or the escape
                 # character may be escaped within quotes.
                 if (escapedstate in self.quotes and nextchar != self.state
-                    and nextchar != escapedstate):
+                        and nextchar != escapedstate):
                     self.token += self.state
                 self.token += nextchar
                 self.token_type = self.state

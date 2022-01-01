@@ -5,8 +5,7 @@
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
 from distutils.core import setup, Command
-import os
-from os.path import join, dirname, abspath
+from os.path import join, dirname
 import re
 
 import sarge
@@ -16,7 +15,6 @@ class TestCommand(Command):
     user_options = []
 
     def run(self):
-        import sys
         import unittest
 
         import test_sarge
@@ -30,6 +28,7 @@ class TestCommand(Command):
     def finalize_options(self):
         pass
 
+
 def description():
     f = open(join(dirname(__file__), 'README.rst'))
     read_me = f.read()
@@ -39,6 +38,7 @@ def description():
     regexp = r'Availability & Documentation\s*\n-----+\s*\n(.*)'
     avail, = re.findall(regexp, read_me, re.DOTALL)
     return requires + avail
+
 
 setup(
     name='sarge',
@@ -82,5 +82,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: System :: Shells',
     ],
-    cmdclass={ 'test': TestCommand },
+    cmdclass={'test': TestCommand},
 )

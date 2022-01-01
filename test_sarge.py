@@ -18,17 +18,16 @@ import tempfile
 import time
 import unittest
 
-from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline,
-                   shell_format, run, parse_command_line, capture_stdout,
-                   get_stdout, capture_stderr, get_stderr, capture_both,
-                   get_both, Popen, Feeder)
+from sarge import (shell_quote, Capture, Command, CommandLineParser, Pipeline, shell_format, run,
+                   parse_command_line, capture_stdout, get_stdout, capture_stderr, get_stderr,
+                   capture_both, get_both, Popen, Feeder)
 from sarge.shlext import shell_shlex
 from stack_tracer import start_trace, stop_trace
 
-if sys.platform == 'win32':  #pragma: no cover
+if sys.platform == 'win32':  # pragma: no cover
     from sarge.utils import find_command
 
-TRACE_THREADS = sys.platform not in ('cli',)    # debugging only
+TRACE_THREADS = sys.platform not in ('cli', )  # debugging only
 
 PY3 = sys.version_info[0] >= 3
 
@@ -43,9 +42,10 @@ sys.stderr.write('bar\\n')
 
 SEP = '=' * 60
 
+
 def missing_files():
     result = []  # on POSIX, nothing missing
-    if os.name == 'nt':  #pragma: no cover
+    if os.name == 'nt':  # pragma: no cover
 
         def found_file(fn):
             if os.path.exists(fn):
@@ -56,8 +56,8 @@ def missing_files():
                     return True
             return False
 
-        files = ('cat.exe', 'echo.exe', 'tee.exe', 'false.exe', 'true.exe',
-                 'sleep.exe', 'touch.exe')
+        files = ('cat.exe', 'echo.exe', 'tee.exe', 'false.exe', 'true.exe', 'sleep.exe',
+                 'touch.exe')
 
         # Looking for the DLLs used by the above - perhaps this check isn't
         # needed, as if the .exes were installed properly, we should be OK. The
@@ -82,6 +82,7 @@ def missing_files():
 
     return result
 
+
 ERROR_MESSAGE = '''
 Can't find one or more of the files needed for testing:
 
@@ -97,7 +98,9 @@ if missing:
     sys.exit(1)
 del missing
 
+
 class SargeTest(unittest.TestCase):
+
     def setUp(self):
         logger.debug(SEP)
         logger.debug(self.id().rsplit('.', 1)[-1])
@@ -110,14 +113,14 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(shell_quote('foo'), 'foo')
         self.assertEqual(shell_quote("'*.py'"), "''\\''*.py'\\'''")
         self.assertEqual(shell_quote("'a'; rm -f b; true 'c'"),
-                                     "''\\''a'\\''; rm -f b; true '\\''c'\\'''")
+                         "''\\''a'\\''; rm -f b; true '\\''c'\\'''")
         self.assertEqual(shell_quote("*.py"), "'*.py'")
         self.assertEqual(shell_quote("'*.py"), "''\\''*.py'")
 
     def test_quote_with_shell(self):
         from subprocess import PIPE, Popen
 
-        if os.name != 'posix':  #pragma: no cover
+        if os.name != 'posix':  # pragma: no cover
             raise unittest.SkipTest('This test works only on POSIX')
 
         workdir = tempfile.mkdtemp()
@@ -181,22 +184,19 @@ class SargeTest(unittest.TestCase):
 
     def test_shell_redirection(self):
         with Capture() as err:
-            self.assertEqual(run('cat >&2', stderr=err, shell=True,
-                                 input='bar').returncode, 0)
+            self.assertEqual(run('cat >&2', stderr=err, shell=True, input='bar').returncode, 0)
             self.assertEqual(err.read(), b'bar')
 
     def test_capture_bytes(self):
         with Capture() as err:
-            self.assertEqual(run('cat >&2', stderr=err, shell=True,
-                                 input='bar').returncode, 0)
+            self.assertEqual(run('cat >&2', stderr=err, shell=True, input='bar').returncode, 0)
         self.assertEqual(err.bytes, b'bar')
         with Capture() as err:
-            self.assertEqual(run('cat >&2', stderr=err, shell=True,
-                                 input='bar').returncode, 0)
+            self.assertEqual(run('cat >&2', stderr=err, shell=True, input='bar').returncode, 0)
         self.assertEqual(err.text, 'bar')
 
     def ensure_testfile(self):
-        if not os.path.exists('testfile.txt'):  #pragma: no cover
+        if not os.path.exists('testfile.txt'):  # pragma: no cover
             with open('testfile.txt', 'w') as f:
                 for i in range(10000):
                     f.write('Line %d\n' % (i + 1))
@@ -206,15 +206,13 @@ class SargeTest(unittest.TestCase):
         with open('testfile.txt') as f:
             content = f.readlines()
         with Capture() as out:
-            self.assertEqual(
-                run('cat testfile.txt testfile.txt', stdout=out).returncode, 0)
+            self.assertEqual(run('cat testfile.txt testfile.txt', stdout=out).returncode, 0)
             lines = out.readlines()
             self.assertEqual(len(lines), len(content) * 2)
         # run with a list (see Issue #3)
         with Capture() as out:
             self.assertEqual(
-                run(['cat', 'testfile.txt', 'testfile.txt'],
-                    stdout=out).returncode, 0)
+                run(['cat', 'testfile.txt', 'testfile.txt'], stdout=out).returncode, 0)
             lines = out.readlines()
             self.assertEqual(len(lines), len(content) * 2)
 
@@ -223,8 +221,7 @@ class SargeTest(unittest.TestCase):
         with open('testfile.txt', 'rb') as f:
             content = f.read().splitlines(True)
         with Capture(timeout=1) as out:
-            p = run('cat testfile.txt testfile.txt', stdout=out,
-                    async_=True)
+            p = run('cat testfile.txt testfile.txt', stdout=out, async_=True)
             # Do some other work in parallel, including reading from the
             # concurrently running child process
             read_count = 0
@@ -248,7 +245,7 @@ class SargeTest(unittest.TestCase):
         else:
             # Python 2.x wants native strings, at least on Windows
             # (and literals are Unicode in this module)
-            env = { b'FOO': b'BAR' }
+            env = {b'FOO': b'BAR'}
         c = Command('echo foo', env=env)
         d = c.kwargs['env']
         ek = set(e)
@@ -272,25 +269,19 @@ class SargeTest(unittest.TestCase):
         else:
             # Python 2.x wants native strings, at least on Windows
             # (and literals are Unicode in this module)
-            env = { b'FOO': b'BAR' }
+            env = {b'FOO': b'BAR'}
         c = Command(cmd, env=env, stdout=Capture(), shell=True)
         c.run()
         self.assertEqual(c.stdout.text.strip(), 'BAR')
 
     def test_shlex(self):
-        TESTS = (
-            ('',
-             []),
-            ('a',
-             [('a', 'a')]),
-            ('a && b\n',
-             [('a', 'a'), ('&&', 'c'), ('b', 'a')]),
-            ('a | b; c>/fred/jim-sheila.txt|&d;e&',
-             [('a', 'a'), ('|', 'c'), ('b', 'a'), (';', 'c'), ('c', 'a'),
-                 ('>', 'c'), ('/fred/jim-sheila.txt', 'a'), ('|&', 'c'),
-                 ('d', 'a'),
-                 (';', 'c'), ('e', 'a'), ('&', 'c')])
-        )
+        TESTS = (('', []), ('a', [('a', 'a')]), ('a && b\n', [('a', 'a'), ('&&', 'c'),
+                                                              ('b', 'a')]),
+                 ('a | b; c>/fred/jim-sheila.txt|&d;e&', [('a', 'a'), ('|', 'c'), ('b', 'a'),
+                                                          (';', 'c'), ('c', 'a'), ('>', 'c'),
+                                                          ('/fred/jim-sheila.txt', 'a'),
+                                                          ('|&', 'c'), ('d', 'a'), (';', 'c'),
+                                                          ('e', 'a'), ('&', 'c')]))
         for posix in False, True:
             for s, expected in TESTS:
                 s = shell_shlex(s, posix=posix, control=True)
@@ -303,19 +294,13 @@ class SargeTest(unittest.TestCase):
                 self.assertEqual(actual, expected)
 
     def test_shlex_without_control(self):
-        TESTS = (
-            ('',
-             []),
-            ('a',
-             [('a', 'a')]),
-            ('a && b\n',
-             [('a', 'a'), ('&', 'a'), ('&', 'a'), ('b', 'a')]),
-            ('a | b; c>/fred/jim-sheila.txt|&d;e&',
-             [('a', 'a'), ('|', 'a'), ('b', 'a'), (';', 'a'), ('c', 'a'),
-                 ('>', 'a'), ('/fred/jim-sheila.txt', 'a'), ('|', 'a'),
-                 ('&', 'a'),
-                 ('d', 'a'), (';', 'a'), ('e', 'a'), ('&', 'a')])
-        )
+        TESTS = (('', []), ('a', [('a', 'a')]), ('a && b\n', [('a', 'a'), ('&', 'a'), ('&', 'a'),
+                                                              ('b', 'a')]),
+                 ('a | b; c>/fred/jim-sheila.txt|&d;e&', [('a', 'a'), ('|', 'a'), ('b', 'a'),
+                                                          (';', 'a'), ('c', 'a'), ('>', 'a'),
+                                                          ('/fred/jim-sheila.txt', 'a'),
+                                                          ('|', 'a'), ('&', 'a'), ('d', 'a'),
+                                                          (';', 'a'), ('e', 'a'), ('&', 'a')]))
         for posix in False, True:
             for s, expected in TESTS:
                 s = shell_shlex(s, posix=posix)
@@ -350,8 +335,8 @@ class SargeTest(unittest.TestCase):
         TESTS = (
             ('rsync user.name@host.domain.tld:path dest',
              ('rsync', 'user.name@host.domain.tld:path', 'dest')),
-            (r'c:\Python26\Python lister.py -d 0.01',
-             (r'c:\Python26\Python', 'lister.py', '-d', '0.01')),
+            (r'c:\Python26\Python lister.py -d 0.01', (r'c:\Python26\Python', 'lister.py', '-d',
+                                                       '0.01')),
         )
         for s, t in TESTS:
             sh = shell_shlex(s)
@@ -380,12 +365,11 @@ class SargeTest(unittest.TestCase):
         parse_command_line('(a|b;c d && e || f >ghi jkl 2> mno)')
         parse_command_line('(abc; (def)); ghi & ((((jkl & mno)))); pqr')
         c = parse_command_line('git rev-list origin/master --since="1 hours ago"', posix=True)
-        self.assertEqual(c.command, ['git', 'rev-list', 'origin/master',
-                                     '--since=1 hours ago'])
+        self.assertEqual(c.command, ['git', 'rev-list', 'origin/master', '--since=1 hours ago'])
 
     def test_parsing_special(self):
-        for cmd in ('ls -l --color=auto', 'sleep 0.5', 'ls /tmp/abc.def',
-                    'ls *.py?', r'c:\Python26\Python lister.py -d 0.01'):
+        for cmd in ('ls -l --color=auto', 'sleep 0.5', 'ls /tmp/abc.def', 'ls *.py?',
+                    r'c:\Python26\Python lister.py -d 0.01'):
             node = parse_command_line(cmd, posix=False)
             if sys.platform != 'win32':
                 self.assertEqual(node.command, cmd.split())
@@ -410,7 +394,7 @@ class SargeTest(unittest.TestCase):
         self.assertEqual(gvc('||&'), ['||', '&'])
         self.assertEqual(gvc('|&'), ['|&'])
 
-    #def test_scratch(self):
+    # def test_scratch(self):
     #    import pdb; pdb.set_trace()
     #    parse_command_line('(a|b;c d && e || f >ghi jkl 2> mno)')
 
@@ -431,8 +415,7 @@ class SargeTest(unittest.TestCase):
 
     def test_pipeline_no_input_stdout(self):
         with Capture() as out:
-            with Pipeline('echo foo 2> %s | cat | cat' % os.devnull,
-                          stdout=out) as pl:
+            with Pipeline('echo foo 2> %s | cat | cat' % os.devnull, stdout=out) as pl:
                 pl.run()
             self.assertEqual(out.read().strip(), b'foo')
 
@@ -440,8 +423,7 @@ class SargeTest(unittest.TestCase):
         if os.name != 'posix':
             raise unittest.SkipTest('This test works only on POSIX')
         with Capture() as err:
-            with Pipeline('echo foo 2> %s | cat | cat >&2' % os.devnull,
-                          stderr=err) as pl:
+            with Pipeline('echo foo 2> %s | cat | cat >&2' % os.devnull, stderr=err) as pl:
                 pl.run()
             self.assertEqual(err.read().strip(), b'foo')
 
@@ -449,16 +431,14 @@ class SargeTest(unittest.TestCase):
         if os.name != 'posix':
             raise unittest.SkipTest('This test works only on POSIX')
         with Capture() as err:
-            with Pipeline('echo foo 2> %s | cat >&2 |& cat >&2' %
-                          os.devnull, stderr=err) as pl:
+            with Pipeline('echo foo 2> %s | cat >&2 |& cat >&2' % os.devnull, stderr=err) as pl:
                 pl.run()
             self.assertEqual(err.read().strip(), b'foo')
 
     def test_pipeline_with_input_stdout(self):
         logger.debug('starting')
         with Capture() as out:
-            with Pipeline('cat 2>> %s | cat | cat' % os.devnull,
-                          stdout=out) as pl:
+            with Pipeline('cat 2>> %s | cat | cat' % os.devnull, stdout=out) as pl:
                 pl.run(input='foo' * 1000)
             self.assertEqual(out.read().strip(), b'foo' * 1000)
 
@@ -466,8 +446,7 @@ class SargeTest(unittest.TestCase):
         if os.name != 'posix':
             raise unittest.SkipTest('This test works only on POSIX')
         with Capture() as err:
-            with Pipeline('echo foo 2> %s | cat 2>&1 | cat >&2' % os.devnull,
-                          stderr=err) as pl:
+            with Pipeline('echo foo 2> %s | cat 2>&1 | cat >&2' % os.devnull, stderr=err) as pl:
                 pl.run()
             self.assertEqual(err.read().strip(), b'foo')
 
@@ -486,9 +465,9 @@ class SargeTest(unittest.TestCase):
             os.unlink(fn)
 
     def test_pipeline_large_file(self):
-        if os.path.exists('dest.bin'):  #pragma: no cover
+        if os.path.exists('dest.bin'):  # pragma: no cover
             os.unlink('dest.bin')
-        if not os.path.exists('random.bin'):    #pragma: no cover
+        if not os.path.exists('random.bin'):  # pragma: no cover
             with open('random.bin', 'wb') as f:
                 f.write(os.urandom(20 * 1048576))
         with Pipeline('cat random.bin | cat | cat | cat | cat | '
@@ -527,8 +506,7 @@ class SargeTest(unittest.TestCase):
 
     def test_list(self):
         with Capture() as out:
-            with Pipeline('echo foo > %s; echo bar' % os.devnull,
-                          stdout=out) as pl:
+            with Pipeline('echo foo > %s; echo bar' % os.devnull, stdout=out) as pl:
                 pl.run()
         self.assertEqual(out.read().strip(), b'bar')
 
@@ -552,19 +530,19 @@ class SargeTest(unittest.TestCase):
 
     def test_double_redirect(self):
         with Capture() as out:
-            self.assertRaises(ValueError, run, 'echo foo > %s' % os.devnull,
-                              stdout=out)
+            self.assertRaises(ValueError, run, 'echo foo > %s' % os.devnull, stdout=out)
         with Capture() as out:
             with Capture() as err:
-                self.assertRaises(ValueError, run,
-                                  'echo foo 2> %s' % os.devnull, stdout=out,
+                self.assertRaises(ValueError,
+                                  run,
+                                  'echo foo 2> %s' % os.devnull,
+                                  stdout=out,
                                   stderr=err)
 
     def test_pipeline_async(self):
         logger.debug('starting')
         with Capture() as out:
-            p = run('echo foo & (sleep 2; echo bar) & (sleep 1; echo baz)',
-                    stdout=out)
+            p = run('echo foo & (sleep 2; echo bar) & (sleep 1; echo baz)', stdout=out)
             self.assertEqual(p.returncode, 0)
         items = out.bytes.split()
         for item in (b'foo', b'bar', b'baz'):
@@ -572,7 +550,7 @@ class SargeTest(unittest.TestCase):
         self.assertTrue(items.index(b'bar') > items.index(b'baz'))
 
     def ensure_emitter(self):
-        if not os.path.exists('emitter.py'): #pragma: no cover
+        if not os.path.exists('emitter.py'):  # pragma: no cover
             with open('emitter.py', 'w') as f:
                 f.write(EMITTER)
 
@@ -586,8 +564,7 @@ class SargeTest(unittest.TestCase):
 
     def test_capture_stderr(self):
         self.ensure_emitter()
-        p = capture_stderr('"%s" emitter.py > %s' % (sys.executable,
-                                                     os.devnull))
+        p = capture_stderr('"%s" emitter.py > %s' % (sys.executable, os.devnull))
         self.assertEqual(p.stderr.text.strip(), 'bar')
 
     def test_get_stderr(self):
@@ -670,9 +647,8 @@ class SargeTest(unittest.TestCase):
             shutil.rmtree(d)
 
     def test_expect(self):
-        cap = Capture(buffer_size=-1)   # line buffered
-        p = run('%s lister.py -d 0.01' % sys.executable,
-                async_=True, stdout=cap)
+        cap = Capture(buffer_size=-1)  # line buffered
+        p = run('%s lister.py -d 0.01' % sys.executable, async_=True, stdout=cap)
         timeout = 1.0
         m1 = cap.expect('^line 1\r?$', timeout)
         self.assertTrue(m1)
@@ -712,15 +688,15 @@ class SargeTest(unittest.TestCase):
         finally:
             shutil.rmtree(workdir)
 
-    if sys.platform == 'win32':  #pragma: no cover
+    if sys.platform == 'win32':  # pragma: no cover
         pyrunner_re = re.compile(r'.*py.*\.exe', re.I)
         pywrunner_re = re.compile(r'.*py.*w\.exe', re.I)
 
         def test_find_command(self):
             cmd = find_command('dummy.py')
-            self.assertTrue(cmd is None or pyrunner_re.match(cmd))
+            self.assertTrue(cmd is None or self.pyrunner_re.match(cmd))
             cmd = find_command('dummy.pyw')
-            self.assertTrue(cmd is None or pywrunner_re.match(cmd))
+            self.assertTrue(cmd is None or self.pywrunner_re.match(cmd))
 
         def test_run_found_command(self):
             with open('hello.py', 'w') as f:
@@ -733,8 +709,7 @@ class SargeTest(unittest.TestCase):
 
     def test_feeder(self):
         feeder = Feeder()
-        p = capture_stdout([sys.executable, 'echoer.py'], input=feeder,
-                           async_=True)
+        p = capture_stdout([sys.executable, 'echoer.py'], input=feeder, async_=True)
         try:
             lines = ('hello', 'goodbye')
             gen = iter(lines)
@@ -748,14 +723,13 @@ class SargeTest(unittest.TestCase):
                 feeder.feed(data + '\n')
                 if p.commands:
                     p.commands[0].poll()
-                time.sleep(0.05)    # wait for child to return echo
+                time.sleep(0.05)  # wait for child to return echo
         finally:
             # p.commands may not be set yet (separate thread)
             if p.commands:
                 p.commands[0].terminate()
             feeder.close()
-        self.assertEqual(p.stdout.text.splitlines(),
-                         ['hello hello', 'goodbye goodbye'])
+        self.assertEqual(p.stdout.text.splitlines(), ['hello hello', 'goodbye goodbye'])
 
     def test_timeout(self):
         if sys.version_info[:2] < (3, 3):
@@ -771,12 +745,15 @@ class SargeTest(unittest.TestCase):
         expected = b'done.\n' if os.name != 'nt' else b'done.\r\n'
         self.assertEqual(cap.read(), expected)
 
-if __name__ == '__main__':  #pragma: no cover
+
+if __name__ == '__main__':  # pragma: no cover
     # switch the level to DEBUG for in-depth logging.
     fn = 'test_sarge-%d.%d.log' % sys.version_info[:2]
-    logging.basicConfig(level=logging.DEBUG, filename=fn, filemode='w',
-                        format='%(threadName)s %(funcName)s %(lineno)d '
-                               '%(message)s')
+    logging.basicConfig(level=logging.DEBUG,
+                        filename=fn,
+                        filemode='w',
+                        format='%(threa dName)s %(funcName)s %(lineno)d '
+                        '%(message)s')
     logging.getLogger('sarge.parse').setLevel(logging.WARNING)
     fn = 'threads-%d.%d.log' % sys.version_info[:2]
     if TRACE_THREADS:

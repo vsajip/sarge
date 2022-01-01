@@ -13,10 +13,12 @@ import time
 
 logger = logging.getLogger(__name__)
 
+
 def _file_lines(fn):
     with open(fn) as f:
         for line in f:
             yield line
+
 
 def _auto_lines():
     i = 1
@@ -25,19 +27,28 @@ def _auto_lines():
         i += 1
         yield line
 
+
 def main(args=None):
     parser = optparse.OptionParser(usage='usage: %prog [options] [filename]',
                                    description='Print lines optionally from '
-                                               'a file, with a delay between '
-                                               'lines. If no filename is '
-                                               'specified, lines of the form '
-                                               '"line N" are generated '
-                                               'internally and printed.')
-    parser.add_option('-d', '--delay', default=None, type=float,
+                                   'a file, with a delay between '
+                                   'lines. If no filename is '
+                                   'specified, lines of the form '
+                                   '"line N" are generated '
+                                   'internally and printed.')
+    parser.add_option('-d',
+                      '--delay',
+                      default=None,
+                      type=float,
                       help='Delay between lines (seconds)')
-    parser.add_option('-c', '--count', default=0, type=int,
+    parser.add_option('-c',
+                      '--count',
+                      default=0,
+                      type=int,
                       help='Maximum number of lines to output')
-    parser.add_option('-i', '--interest', default=None,
+    parser.add_option('-i',
+                      '--interest',
+                      default=None,
                       help='Indicate patterns of interest for logging')
     if args is None:
         args = sys.argv[1:]
@@ -72,9 +83,12 @@ def main(args=None):
         if options.delay:
             time.sleep(options.delay)
 
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, filename='lister.log',
-                        filemode='w', format='%(asctime)s %(levelname)s %(message)s')
+    logging.basicConfig(level=logging.INFO,
+                        filename='lister.log',
+                        filemode='w',
+                        format='%(asctime)s %(levelname)s %(message)s')
     try:
         rc = main()
     except Exception as e:

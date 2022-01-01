@@ -24,18 +24,22 @@ import threading
 try:
     from logging import NullHandler
 except ImportError:  # pragma: no cover
+
     class NullHandler(logging.Handler):
-        def handle(self, record): pass
+
+        def handle(self, record):
+            pass
 
         emit = handle
 
-        def createLock(self): self.lock = None
+        def createLock(self):
+            self.lock = None
+
 
 from .shlext import shell_shlex
 
-__all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline',
-           'shell_format', 'run', 'parse_command_line',
-           'capture_stdout', 'capture_stderr', 'capture_both')
+__all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline', 'shell_format',
+           'run', 'parse_command_line', 'capture_stdout', 'capture_stderr', 'capture_both')
 
 __version__ = '0.1.8.dev0'
 __date__ = '2021-12-11'
@@ -117,8 +121,7 @@ class ShellFormatter(string.Formatter):
         if conversion is None:
             result = shell_quote(str(value))
         else:
-            result = super(ShellFormatter, self).convert_field(value,
-                                                               conversion)
+            result = super(ShellFormatter, self).convert_field(value, conversion)
         return result
 
 
@@ -232,8 +235,7 @@ class Capture(WithMixin):
         ready.set()
         chunk_size = self.buffer_size
         if chunk_size > 0:
-            logger.debug('%r: reader thread about to read %s', self,
-                         chunk_size)
+            logger.debug('%r: reader thread about to read %s', self, chunk_size)
         else:
             logger.debug('%r: reader thread about to read line', self)
         self._done = False
@@ -244,8 +246,8 @@ class Capture(WithMixin):
                 chunk = stream.read(chunk_size)
             if chunk:
                 self.buffer.put_nowait(chunk)
-                logger.debug('queued chunk of length %d to %s: %r', len(chunk),
-                             self.buffer, chunk[:30])
+                logger.debug('queued chunk of length %d to %s: %r', len(chunk), self.buffer,
+                             chunk[:30])
                 if self.pattern and not self.matched.is_set():
                     self._try_match()
             if chunk_size > 0:
@@ -369,6 +371,7 @@ class Capture(WithMixin):
                 self.matched.set()
 
     def expect(self, pattern, timeout=None):
+
         def as_pattern(p):
             if isinstance(p, string_types):
                 if isinstance(p, text_type):
@@ -401,7 +404,7 @@ class Capture(WithMixin):
                 t.join()
             except RuntimeError:  # pragma: no cover
                 logger.debug('failed to join thread: %s', t)
-                #raise
+                # raise
 
     def __repr__(self):  # pragma: no cover
         return '%s-%d' % (self.__class__.__name__, self.counter)
@@ -446,6 +449,7 @@ def ensure_stream(input, encoding='utf-8'):
         logger.debug('returning %s', input)
     return input
 
+
 # Used to redirect stdout to stderr. Use a value less likely to clash with
 # future additions to subprocess.py.
 STDERR = -9
@@ -469,6 +473,7 @@ class Popen(subprocess.Popen):
     """
 
     def _get_handles(self, stdin, stdout, stderr):
+
         def close(h):
             if h not in (-1, None):
                 if hasattr(h, 'Close'):
@@ -508,8 +513,7 @@ class Popen(subprocess.Popen):
                 for h in (p2cread, c2pwrite, errwrite):
                     if h is not None:
                         to_close.add(h)
-                result = (p2cread, p2cwrite, errread,
-                          errwrite, c2pread, c2pwrite), to_close
+                result = (p2cread, p2cwrite, errread, errwrite, c2pread, c2pwrite), to_close
             else:
                 result = p2cread, p2cwrite, errread, errwrite, c2pread, c2pwrite
             # logger.debug('Our _get_handles returned %s', result)
@@ -540,8 +544,7 @@ class Popen(subprocess.Popen):
                 for h in (p2cread, c2pwrite, errwrite):
                     if h is not None:
                         to_close.add(h)
-                result = (p2cread, p2cwrite, c2pread,
-                          c2pwrite, errread, errwrite), to_close
+                result = (p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite), to_close
             else:
                 result = p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite
             # logger.debug('Our _get_handles returned %s', result)
@@ -557,16 +560,17 @@ class Popen(subprocess.Popen):
             # from a non-main thread, as that becomes the main
             # thread in the child process and will not be a _MainThread
             # instance.
-            if not isinstance(threading.current_thread(),
-                              threading._MainThread):
+            if not isinstance(threading.current_thread(), threading._MainThread):
                 preexec = preexec_fn
             else:
+
                 def preexec():
                     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
                     if preexec_fn:
                         preexec_fn()
+
             # logger.debug('Calling Base _execute_child: %s', ((args, executable,
-                                                              # preexec, rest),))
+            # preexec, rest),))
             super(Popen, self)._execute_child(args, executable, preexec, *rest)
 
     def __repr__(self):  # pragma: no cover
@@ -666,7 +670,7 @@ class Command(object):
             logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
             try:
                 self.process = p = Popen(self.args, **self.kwargs)
-            except (OSError, Exception) as e:  #pragma: no cover
+            except (OSError, Exception) as e:  # pragma: no cover
                 if isinstance(e, OSError) and e.errno == errno.ENOENT:
                     raise ValueError('Command not found: %s' % self.args[0])
                 logger.exception('Popen call failed: %s: %s', type(e), e)
@@ -905,12 +909,11 @@ class CommandLineParser(object):
             tt = self.peek_token()
             while tt in ('|', '|&'):
                 last_part = parts[-1]
-                if ((tt == '|' and 1 in last_part.redirects) or
-                        (tt == '|&' and 2 in last_part.redirects)):
+                if ((tt == '|' and 1 in last_part.redirects)
+                        or (tt == '|&' and 2 in last_part.redirects)):
                     if last_part.redirects != SWAP_OUTPUTS:
-                        raise ValueError(
-                            'semantics: cannot redirect and pipe the '
-                            'same stream')
+                        raise ValueError('semantics: cannot redirect and pipe the '
+                                         'same stream')
                 self.consume(tt)
                 part = self.parse_command()
                 parts.append(Node(kind='pipe', pipe=tt))
@@ -945,7 +948,7 @@ class CommandLineParser(object):
             if d:
                 raise ValueError('semantics: can only redirect stdout and '
                                  'stderr, not %s' % list(d.keys()))
-        if sys.platform == 'win32':  #pragma: no cover
+        if sys.platform == 'win32':  # pragma: no cover
             from .utils import find_command
 
             cmd = find_command(node.command[0])
@@ -1062,8 +1065,7 @@ class Pipeline(WithMixin):
         e = threading.Event()
         with self.lock:
             self.events.append(e)
-        t = threading.Thread(target=self.run_node, args=(node, input,
-                                                         async_, e))
+        t = threading.Thread(target=self.run_node, args=(node, input, async_, e))
         t.daemon = True
         logger.debug('thread %s started to run node: %s', t.name, node)
         t.start()
@@ -1271,7 +1273,7 @@ class Pipeline(WithMixin):
         parts = node.parts
         last = len(parts) - 1
         assert last > 1
-        prev = None
+        prev = pipe = None
         i = 0
         while i <= last:
             curr = parts[i]
@@ -1291,7 +1293,7 @@ class Pipeline(WithMixin):
             else:
                 try:
                     stdout, stderr = self.get_redirects(curr)
-                except IOError:  #pragma: no cover
+                except IOError:  # pragma: no cover
                     if prev and stdin == prev.process.stdout:
                         stdin.close()
                     raise
@@ -1445,6 +1447,7 @@ class Pipeline(WithMixin):
 
 
 # Module-level convenience functions
+
 
 def run(cmd, **kwargs):
     """

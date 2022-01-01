@@ -7,6 +7,7 @@
 import sys
 import time
 
+
 def main(args=None):
     sys.stdout.write('Waiting ... ')
     sys.stdout.flush()
@@ -16,6 +17,7 @@ def main(args=None):
         timeout = float(sys.argv[1])
     time.sleep(timeout)
     sys.stdout.write('done.\n')
+
 
 if __name__ == '__main__':
     try:

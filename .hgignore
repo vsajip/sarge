@@ -1,4 +1,4 @@
-\.(pyc|log)$
+\.(pyc|log|yapf)$
 (\.(idea|tox)|build|dist|htmlcov)/
 docs/_build/
 ^MANIFEST$

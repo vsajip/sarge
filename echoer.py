@@ -6,6 +6,7 @@
 #
 import sys
 
+
 def main(args=None):
     while True:
         data = sys.stdin.readline()
@@ -15,6 +16,7 @@ def main(args=None):
         data = '%s %s\n' % (data, data)
         sys.stdout.write(data)
         sys.stdout.flush()
+
 
 if __name__ == '__main__':
     try:

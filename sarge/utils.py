@@ -22,12 +22,12 @@ except ImportError:
         path.
 
         """
+
         # Check that a given file can be accessed with the correct mode.
         # Additionally check that `file` is not a directory, as on Windows
         # directories pass the os.access check.
         def _access_check(fn, mode):
-            return (os.path.exists(fn) and os.access(fn, mode)
-                    and not os.path.isdir(fn))
+            return (os.path.exists(fn) and os.access(fn, mode) and not os.path.isdir(fn))
 
         # If we're given a path with a directory part, look it up directly rather
         # than referring to PATH directories. This includes checking relative to the
@@ -39,13 +39,13 @@ except ImportError:
 
         if path is None:
             path = os.environ.get("PATH", os.defpath)
-        if not path:
+        if not path:  # pragma: no cover
             return None
         path = path.split(os.pathsep)
 
         if sys.platform == "win32":
             # The current directory takes precedence on Windows.
-            if not os.curdir in path:
+            if os.curdir not in path:
                 path.insert(0, os.curdir)
 
             # PATHEXT is necessary to check on Windows.
@@ -54,11 +54,11 @@ except ImportError:
             # This will allow us to short circuit when given "python.exe".
             # If it does match, only test that one, otherwise we have to try
             # others.
-            if any(cmd.lower().endswith(ext.lower()) for ext in pathext):
+            if any(cmd.lower().endswith(ext.lower()) for ext in pathext):  # pragma: no cover
                 files = [cmd]
             else:
                 files = [cmd + ext for ext in pathext]
-        else:
+        else:  # pragma: no cover
             # On other platforms you don't have things like PATHEXT to tell you
             # what file suffixes are executable, so just pass on cmd as-is.
             files = [cmd]
@@ -66,13 +66,14 @@ except ImportError:
         seen = set()
         for dir in path:
             normdir = os.path.normcase(dir)
-            if not normdir in seen:
+            if normdir not in seen:
                 seen.add(normdir)
                 for thefile in files:
                     name = os.path.join(dir, thefile)
                     if _access_check(name, mode):
                         return name
         return None
+
 
 if sys.platform == 'win32':
     try:
@@ -106,9 +107,9 @@ if sys.platform == 'win32':
                 s = winreg.QueryValue(HKCR, path)
                 exe = None
                 m = COMMAND_RE.match(s)
-                if m:
+                if m:  # pragma: no cover
                     exe = m.groups()[0]
                     result = exe, cmd
-            except OSError:
+            except OSError:  # pragma: no cover
                 pass
         return result
