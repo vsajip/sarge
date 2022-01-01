@@ -49,7 +49,7 @@ jobs:
     - name: Test with coverage
       run: |
         pip install coverage
-        coverage run --branch python setup.py test
+        coverage run --branch setup.py test
         coverage xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
