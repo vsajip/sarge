@@ -1,10 +1,25 @@
-name: Package tests
+name: Tests
 
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'LICENSE.*'
+      - 'README.*'
+      - '.github/ISSUE-TEMPLATE/**'
+      - 'docs/**'
+      - '.hgignore'
+      - '.gitignore'
+
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - 'LICENSE.*'
+      - 'README.*'
+      - '.github/ISSUE-TEMPLATE/**'
+      - 'docs/**'
+      - '.hgignore'
+      - '.gitignore'
 
 jobs:
   build:
@@ -13,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['2.7', '3.7', '3.8', '3.9', '3.10', 'pypy2', 'pypy3']
+        python-version: ['2.7', '3.7', '3.8', '3.9', '3.10', 'pypy-2.7', 'pypy-3.7']
 
     steps:
     - uses: actions/checkout@v2
@@ -31,3 +46,14 @@ jobs:
     - name: Test with unittest
       run: |
         python setup.py test
+    - name: Test with coverage
+      run: |
+        pip install coverage
+        coverage run --branch python setup.py test
+        coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        flags: unittests
+        files: coverage.xml
+        fail_ci_if_error: true
