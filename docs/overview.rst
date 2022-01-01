@@ -248,6 +248,9 @@ Released: 2020-08-24
 
 - Fixed #51: Improved error handling around a ``Popen`` call.
 
+- Fixed #55: Polled subcommands in order to return up-to-date return codes in
+  ``Pipeline.returncodes``.
+
 0.1.5
 ~~~~~
 
