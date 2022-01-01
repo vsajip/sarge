@@ -1123,9 +1123,8 @@ class Pipeline(WithMixin):
             for c in self.commands:
                 rc = None
                 if c.process:
-                    rc = c.process.returncode
+                    rc = c.process.poll()
                 result.append(rc)
-            # result = [c.process.returncode for c in self.commands]
         return result
 
     def wait_events(self):
