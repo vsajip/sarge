@@ -1,8 +1,10 @@
-.. image:: https://travis-ci.org/vsajip/sarge.svg
-   :target: https://travis-ci.org/vsajip/sarge
+|badge1| |badge2|
 
-.. image:: https://coveralls.io/repos/vsajip/sarge/badge.svg
-   :target: https://coveralls.io/github/vsajip/sarge
+.. |badge1| image:: https://img.shields.io/github/workflow/status/vsajip/sarge/Tests
+   :alt: GitHub test status
+
+.. |badge2| image:: https://img.shields.io/codecov/c/github/vsajip/sarge
+   :alt: GitHub coverage status
 
 Overview
 ========
