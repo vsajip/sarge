@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2021 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2022 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
@@ -656,49 +656,47 @@ class Command(object):
         :type async_:  bool
         """
         # noinspection PyBroadException
-        try:
-            if input is None:
-                self.kwargs['stdin'] = None
+        if input is None:
+            self.kwargs['stdin'] = None
+        else:
+            input = ensure_stream(input)
+            if not isinstance(input, BytesIO):
+                if hasattr(input, 'fileno'):
+                    input = input.fileno()
+                self.kwargs['stdin'] = input
             else:
-                input = ensure_stream(input)
-                if not isinstance(input, BytesIO):
-                    if hasattr(input, 'fileno'):
-                        input = input.fileno()
-                    self.kwargs['stdin'] = input
-                else:
-                    self.kwargs['stdin'] = subprocess.PIPE
-            logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
-            try:
-                self.process = p = Popen(self.args, **self.kwargs)
-            except (OSError, Exception) as e:  # pragma: no cover
-                if isinstance(e, OSError) and e.errno == errno.ENOENT:
-                    raise ValueError('Command not found: %s' % self.args[0])
-                logger.exception('Popen call failed: %s: %s', type(e), e)
-                raise
-            self.stdin = p.stdin
-            logger.debug('Popen: %s, %s -> %s', self, self.kwargs, p.__dict__)
-            if isinstance(input, BytesIO):
-                t = threading.Thread(target=copier, args=(input, p.stdin))
-                t.daemon = True
-                t.start()
-                logger.debug('copier thread started: %s', t.name)
-                # The thread may take a while to finish, but we want to wait
-                # until it's on its way; otherwise, any pipeline dependent on
-                # this input could be dead-locked.
-                # Possibly a better mechanism than just waiting a while is needed.
-                # I've tried a threading.Event passed in from here which gets
-                # set after a chunk has been written in the copier and which we
-                # wait for here, but that doesn't seem to work reliably.
-                t.join(0.0001)
-            for attr in ('stdout', 'stderr'):
-                s = getattr(self, attr, None)
-                if isinstance(s, Capture):
-                    s.add_stream(getattr(p, attr))
-            if not async_:
-                logger.debug('about to wait for process')
-                p.wait()
-        finally:
-            self.process_ready.set()
+                self.kwargs['stdin'] = subprocess.PIPE
+        logger.debug('About to call Popen: %s, %s', self.args, self.kwargs)
+        try:
+            self.process = p = Popen(self.args, **self.kwargs)
+        except (OSError, Exception) as e:  # pragma: no cover
+            if isinstance(e, OSError) and e.errno == errno.ENOENT:
+                raise ValueError('Command not found: %s' % self.args[0])
+            logger.exception('Popen call failed: %s: %s', type(e), e)
+            raise
+        self.stdin = p.stdin
+        logger.debug('Popen: %s, %s -> %s', self, self.kwargs, p.__dict__)
+        if isinstance(input, BytesIO):
+            t = threading.Thread(target=copier, args=(input, p.stdin))
+            t.daemon = True
+            t.start()
+            logger.debug('copier thread started: %s', t.name)
+            # The thread may take a while to finish, but we want to wait
+            # until it's on its way; otherwise, any pipeline dependent on
+            # this input could be dead-locked.
+            # Possibly a better mechanism than just waiting awhile is needed.
+            # I've tried a threading.Event passed in from here which gets
+            # set after a chunk has been written in the copier and which we
+            # wait for here, but that doesn't seem to work reliably.
+            t.join(0.0001)
+        for attr in ('stdout', 'stderr'):
+            s = getattr(self, attr, None)
+            if isinstance(s, Capture):
+                s.add_stream(getattr(p, attr))
+        self.process_ready.set()
+        if not async_:
+            logger.debug('about to wait for process %s', self)
+            p.wait()
         logger.debug('returning %s (%s)', self, self.process)
         return self
 
@@ -1025,6 +1023,7 @@ class Pipeline(WithMixin):
         else:
             self.source = source
             t = CommandLineParser().parse(source, posix=posix)
+        logger.debug('command tree: %s', t)
         self.tree = t
         self.last = self.find_last_command(t)
         self.events = []
@@ -1204,6 +1203,7 @@ class Pipeline(WithMixin):
         """
         kind = node.kind
         method = 'run_%s_node' % kind
+        logger.debug('%s %s %s', method, async_, event)
         result = getattr(self, method)(node, input, async_)
         if event:
             event.set()

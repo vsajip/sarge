@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2021 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2022 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # Test harness for sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #

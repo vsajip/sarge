@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2021 Vinay M. Sajip. See LICENSE for licensing information.
+# Copyright (C) 2012-2022 Vinay M. Sajip. See LICENSE for licensing information.
 #
 # sarge: Subprocess Allegedly Rewards Good Encapsulation :-)
 #
@@ -77,6 +77,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: Implementation',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',

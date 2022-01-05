@@ -224,6 +224,12 @@ Change log
 
 Released: Not yet.
 
+
+- Fixed #55: Polled subcommands in order to return up-to-date return codes in
+  ``Pipeline.returncodes``.
+
+- Fixed #56: Ensure process_ready event is set at the appropriate time.
+
 0.1.7
 ~~~~~
 
@@ -247,9 +253,6 @@ Released: 2020-08-24
   replacement for ``os.environ`` to be passed.
 
 - Fixed #51: Improved error handling around a ``Popen`` call.
-
-- Fixed #55: Polled subcommands in order to return up-to-date return codes in
-  ``Pipeline.returncodes``.
 
 0.1.5
 ~~~~~
