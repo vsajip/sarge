@@ -752,7 +752,7 @@ if __name__ == '__main__':  # pragma: no cover
     logging.basicConfig(level=logging.DEBUG,
                         filename=fn,
                         filemode='w',
-                        format='%(threa dName)s %(funcName)s %(lineno)d '
+                        format='%(threadName)s %(funcName)s %(lineno)d '
                         '%(message)s')
     logging.getLogger('sarge.parse').setLevel(logging.WARNING)
     fn = 'threads-%d.%d.log' % sys.version_info[:2]
