@@ -8,7 +8,7 @@ from distutils.core import setup, Command
 from os.path import join, dirname
 import re
 
-import sarge
+from sarge import __version__ as version
 
 
 class TestCommand(Command):
@@ -45,15 +45,15 @@ setup(
     description=('A wrapper for subprocess which provides command '
                  'pipeline functionality.'),
     long_description=description(),
-    version=sarge.__version__,
+    version=version,
     license='BSD',
     author='Vinay Sajip',
     author_email='vinay_sajip@yahoo.co.uk',
     maintainer='Vinay Sajip',
     maintainer_email='vinay_sajip@yahoo.co.uk',
     url='http://sarge.readthedocs.org/',
-    download_url=('https://github.com/vsajip/sarge/releases/download/' + sarge.__version__ +
-                  '/sarge-%s.tar.gz' % sarge.__version__),
+    download_url=('https://github.com/vsajip/sarge/releases/download/' + version +
+                  '/sarge-%s.tar.gz' % version),
     packages=['sarge'],
     keywords=['subprocess', 'wrapper', 'external', 'command'],
     platforms=['Any'],
