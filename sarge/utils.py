@@ -97,7 +97,7 @@ if sys.platform == 'win32':
         result = None
         cmd = which(cmd)
         if cmd:
-            if cmd.startswith('.\\'):
+            if cmd.startswith('.\\'):  # pragma: no cover
                 cmd = cmd[2:]
             _, extn = os.path.splitext(cmd)
             HKCR = winreg.HKEY_CLASSES_ROOT
