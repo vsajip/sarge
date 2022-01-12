@@ -43,7 +43,7 @@ class TraceDumper(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        while not self.stop_requested.isSet():
+        while not self.stop_requested.is_set():
             time.sleep(self.interval)
             self.write_stack_traces()
 
