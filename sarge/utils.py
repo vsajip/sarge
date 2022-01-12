@@ -7,6 +7,7 @@
 import os
 import re
 import sys
+import threading
 
 try:
     from shutil import which
@@ -92,7 +93,7 @@ if sys.platform == 'win32':
                   with the extension of the command script. The second
                   element is the script name, including the extension and
                   pathname if found on the path. Example for 'hello' might be
-                  (r'c:\Python\python.exe', r'c:\MyTools\hello.py').
+                  (r'c:/Python/python.exe', r'c:/MyTools/hello.py').
         """
         result = None
         cmd = which(cmd)
@@ -113,3 +114,11 @@ if sys.platform == 'win32':
             except OSError:  # pragma: no cover
                 pass
         return result
+
+
+if sys.version_info[:2] < (3, 4):
+    def is_main_thread():
+        return isinstance(threading.current_thread(), threading._MainThread)
+else:
+    def is_main_thread():
+        return threading.current_thread() is threading.main_thread()

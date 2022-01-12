@@ -230,6 +230,8 @@ Released: Not yet.
 
 - Fixed #56: Ensure process_ready event is set at the appropriate time.
 
+- Fixed #57: Stored exception in command node for use when in asynchronous mode.
+
 0.1.7
 ~~~~~
 

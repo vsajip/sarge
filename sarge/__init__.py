@@ -631,6 +631,7 @@ class Command(object):
             kwargs['env'] = env
         self.process_ready = threading.Event()
         self.process = None
+        self.exception = None
         logger.debug('%r created', self)
 
     def __repr__(self):  # pragma: no cover
@@ -670,9 +671,14 @@ class Command(object):
         try:
             self.process = p = Popen(self.args, **self.kwargs)
         except (OSError, Exception) as e:  # pragma: no cover
+            self.process_ready.set()
             if isinstance(e, OSError) and e.errno == errno.ENOENT:
-                raise ValueError('Command not found: %s' % self.args[0])
+                ve = ValueError('Command not found: %s' % self.args[0])
+                self.exception = ve
+                logger.exception('Popen call failed: %s: %s', type(ve), ve)
+                raise ve
             logger.exception('Popen call failed: %s: %s', type(e), e)
+            self.exception = e
             raise
         self.stdin = p.stdin
         logger.debug('Popen: %s, %s -> %s', self, self.kwargs, p.__dict__)
@@ -756,7 +762,7 @@ class Command(object):
     @property
     def returncode(self):
         self.process_ready.wait()
-        return self.process.returncode
+        return self.process.returncode if self.process else None
 
 
 class Node(object):
@@ -1204,10 +1210,16 @@ class Pipeline(WithMixin):
         kind = node.kind
         method = 'run_%s_node' % kind
         logger.debug('%s %s %s', method, async_, event)
-        result = getattr(self, method)(node, input, async_)
-        if event:
-            event.set()
-        return result
+        try:
+            result = getattr(self, method)(node, input, async_)
+            return result
+        except Exception as e:
+            logger.exception('Failed: %s', e)
+            node.exception = e
+            raise
+        finally:
+            if event:
+                event.set()
 
     def new_command(self, args, **kwargs):
         """
@@ -1350,7 +1362,15 @@ class Pipeline(WithMixin):
                                  'places')
             kwargs['stderr'] = self.stderr or stderr
         node.cmd = self.new_command(node.command, **kwargs)
-        node.cmd.run(input=input, async_=async_)
+        try:
+            node.cmd.run(input=input, async_=async_)
+        except Exception as e:
+            from .utils import is_main_thread
+            if is_main_thread():
+                raise
+            # if not the main thread, then the exception should have been stored in
+            # node, so just do nothing more
+            assert node.cmd.exception is not None
 
     def get_status(self, node):
         """

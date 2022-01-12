@@ -840,6 +840,23 @@ and now, in the other terminal, look for defunct processes again::
 
 No zombies found :-)
 
+Handling errors in asynchronous mode
+------------------------------------
+
+If an exception occurs calling :meth:`~Command.run` when trying to start a child
+process in synchronous mode, it's raised immediately. However, when running in
+asynchronous mode (`async_=True`), there will be a command pipeline which is run in a
+separate thread. In this case, the exception is caught in that thread but not
+propagated to the calling thread; instead, it is stored in the `exception` attribute of
+the :class:`Command` instance. The `process` attribute of that instance will be `None`,
+as the child process couldn't be started.
+
+You can check the `exception` attributes of commands in a :class:`Pipeline` instance to
+see if any have occurred.
+
+.. versionadded:: 0.18
+   The `exception` attribute was added to :class:`Command`.
+
 About threading and forking on Posix
 ------------------------------------
 
