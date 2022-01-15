@@ -883,9 +883,9 @@ do not occur on Windows, for example: because Windows doesn't have a
 ``fork()`` system call, child processes are created in a different way which
 doesn't give rise to the issues which sometimes crop up in a Posix environment.
 
-For an exposition of the sort of things which might bite you if you are using
-locks, threading and ``fork()`` on Posix, see `this post
-<http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
+For an exposition of the sort of things which might bite you if you are using locks,
+threading and ``fork()`` on Posix, see `this post
+<https://web.archive.org/web/20211015140727/http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
 
 Other resources on this topic:
 

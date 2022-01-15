@@ -212,6 +212,32 @@ Classes
                   :meth:`~Command.run`).
 
 
+   .. cssclass:: class-members-heading
+
+   Attributes
+
+   .. attribute:: process
+
+      The `subprocess.Popen` instance for the subprocess, once it has been created. It
+      is initially `None`.
+
+   .. attribute:: returncode
+
+      The subprocess returncode, when that is available. It is initially `None`.
+
+   .. attribute:: exception
+
+      Any exception which occurred when trying to create the subprocess. Note that once
+      a subprocess has been created, any exceptions in the subprocess can only be
+      communicated via the :attr:`returncode` - this value is *only* for exceptions
+      during subprocess creation.
+
+      .. versionadded:: 0.1.8
+
+   .. cssclass:: class-members-heading
+
+   Methods
+
    .. method:: run(input=None, async_=False)
 
       Run the command.
@@ -279,6 +305,36 @@ Classes
                   keyword arguments, which will cause those streams to be
                   captured to those instances.
 
+   .. cssclass:: class-members-heading
+
+   Attributes
+
+   .. attribute:: returncodes
+
+      A list of the return codes of all sub-processes which were actually run. This
+      will internally poll the commands in the pipeline to find the latest known return
+      codes.
+
+   .. attribute:: returncode
+
+      The return code of the last sub-process which was actually run.
+
+   .. attribute:: commands
+
+      The :class:`Command` instances which were actually created.
+
+   .. attribute:: exceptions
+
+      A list of any exceptions creating subprocesses. This should be of use in
+      diagnosing problems with commands (e.g. typos, or executables correctly spelled
+      but not found on the system path).
+
+      .. versionadded:: 0.1.8
+
+   .. cssclass:: class-members-heading
+
+   Methods
+
    .. method:: run(input=None, async_=False)
 
       Run the pipeline.
@@ -320,21 +376,6 @@ Classes
       Wait for all command sub-processes to finish, and close all opened
       streams.
 
-   .. attribute:: returncodes
-
-      A list of the return codes of all sub-processes which were actually run. This
-      will internally poll the commands in the pipeline to find the latest known return
-      codes.
-
-   .. attribute:: returncode
-
-      The return code of the last sub-process which was actually run.
-
-   .. attribute:: commands
-
-      The :class:`Command` instances which were actually created.
-
-
 .. class:: Capture(timeout=None, buffer_size=0)
 
    A class which allows an output stream from a sub-process to be captured.
@@ -349,6 +390,10 @@ Classes
                        buffer is used. For interactive applications, use a value
                        of 1.
    :type buffer_size: int
+
+   .. cssclass:: class-members-heading
+
+   Methods
 
    .. method:: read(size=-1, block=True, timeout=None)
 
@@ -431,6 +476,7 @@ Classes
    stderr=STDOUT`` in a call. The ``STDERR`` value is defined in ``sarge``
    as an integer constant which is understood by ``sarge`` (much as
    ``STDOUT`` is an integer constant which is understood by ``subprocess``).
+
 
 Shell syntax understood by ``sarge``
 ------------------------------------

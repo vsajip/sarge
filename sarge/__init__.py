@@ -1129,6 +1129,14 @@ class Pipeline(WithMixin):
                 result.append(rc)
         return result
 
+    @property
+    def exceptions(self):
+        """
+        A list of any exceptions raised by commands which have been run.
+        """
+        result = [c.exception for c in self.commands if c]
+        return result
+
     def wait_events(self):
         """
         Wait for all the events in the pipeline to be set

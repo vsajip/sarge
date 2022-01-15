@@ -560,7 +560,9 @@ class SargeTest(unittest.TestCase):
 
     def test_get_stdout(self):
         s = get_stdout('echo foo; echo bar')
-        self.assertEqual(s.split(), ['foo', 'bar'])
+        parts = s.split()
+        possibilities = (['foo', 'bar'], ['bar', 'foo'])
+        self.assertIn(parts, possibilities)
 
     def test_capture_stderr(self):
         self.ensure_emitter()
@@ -745,6 +747,20 @@ class SargeTest(unittest.TestCase):
         expected = b'done.\n' if os.name != 'nt' else b'done.\r\n'
         self.assertEqual(cap.read(), expected)
 
+    def test_exceptions(self):
+        cmd = 'echo "Hello" && eco "Goodbye"'
+        cap = Capture(buffer_size=1)
+        p = run(cmd, async_=True, stdout=cap)
+        time.sleep(0.01)
+        exceptions = p.exceptions
+        self.assertEqual(2, len(exceptions))
+        self.assertIsNone(exceptions[0])
+        e = exceptions[1]
+        self.assertIsNotNone(e)
+        self.assertIsInstance(e, ValueError)
+        self.assertEqual(e.args, ('Command not found: eco',))
+        returncodes = p.returncodes
+        self.assertEqual(returncodes, [0, None])
 
 if __name__ == '__main__':  # pragma: no cover
     # switch the level to DEBUG for in-depth logging.
