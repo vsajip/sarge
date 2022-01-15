@@ -751,7 +751,7 @@ class SargeTest(unittest.TestCase):
         cmd = 'echo "Hello" && eco "Goodbye"'
         cap = Capture(buffer_size=1)
         p = run(cmd, async_=True, stdout=cap)
-        time.sleep(0.01)
+        time.sleep(0.1) # Can be slow on Windows!
         exceptions = p.exceptions
         self.assertEqual(2, len(exceptions))
         self.assertIsNone(exceptions[0])
