@@ -766,14 +766,17 @@ class SargeTest(unittest.TestCase):
 
 if __name__ == '__main__':  # pragma: no cover
     # switch the level to DEBUG for in-depth logging.
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
     fn = 'test_sarge-%d.%d.log' % sys.version_info[:2]
     logging.basicConfig(level=logging.DEBUG,
-                        filename=fn,
+                        filename=os.path.join('logs', fn),
                         filemode='w',
                         format='%(threadName)s %(funcName)s %(lineno)d '
                         '%(message)s')
     logging.getLogger('sarge.parse').setLevel(logging.WARNING)
     fn = 'threads-%d.%d.log' % sys.version_info[:2]
+    fn = os.path.join('logs', fn)
     if TRACE_THREADS:
         start_trace(fn)
     try:

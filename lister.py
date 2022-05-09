@@ -85,8 +85,10 @@ def main(args=None):
 
 
 if __name__ == '__main__':
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
     logging.basicConfig(level=logging.INFO,
-                        filename='lister.log',
+                        filename=os.path.join('logs', 'lister.log'),
                         filemode='w',
                         format='%(asctime)s %(levelname)s %(message)s')
     try:
