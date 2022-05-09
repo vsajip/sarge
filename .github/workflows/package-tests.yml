@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['2.7', '3.7', '3.8', '3.9', '3.10', 'pypy-2.7', 'pypy-3.7']
+        python-version: ['2.7', '3.7', '3.8', '3.9', '3.10', '3.11-dev', 'pypy-2.7', 'pypy-3.9']
 
     steps:
     - uses: actions/checkout@v2
@@ -45,11 +45,11 @@ jobs:
       if: ${{ matrix.os == 'windows-latest' }}
     - name: Test with unittest
       run: |
-        python setup.py test
+        python test_sarge.py
     - name: Test with coverage
       run: |
         pip install coverage
-        coverage run --branch setup.py test
+        coverage run --branch test_sarge.py
         coverage xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2

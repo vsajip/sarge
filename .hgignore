@@ -1,5 +1,5 @@
 \.(pyc|log|yapf)$
-(\.(idea|tox)|build|dist|htmlcov)/
+(\.(idea|tox)|build|dist|htmlcov|egg-info)/
 docs/_build/
 ^MANIFEST$
 testfile.txt
