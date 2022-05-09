@@ -660,6 +660,7 @@ class SargeTest(unittest.TestCase):
         self.assertTrue(m3)
         cap.close(True)
         p.commands[0].kill()
+        p.commands[0].wait()
         data = cap.bytes
         self.assertEqual(data[m1.start():m1.end()].rstrip(), b'line 1')
         self.assertEqual(data[m2.start():m2.end()].rstrip(), b'line 5')
@@ -730,6 +731,7 @@ class SargeTest(unittest.TestCase):
             # p.commands may not be set yet (separate thread)
             if p.commands:
                 p.commands[0].terminate()
+                p.commands[0].wait()
             feeder.close()
         self.assertEqual(p.stdout.text.splitlines(), ['hello hello', 'goodbye goodbye'])
 
