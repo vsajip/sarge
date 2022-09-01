@@ -19,7 +19,7 @@ Python's ``site-packages`` directory.
 
 A full test suite is included with ``sarge``. To run it, you'll need to unpack
 a source tarball and run ``python setup.py test`` in the top-level directory
-of the unpack location. You can of course also run ``python setup.py install``
+of the unpack location. You can of course also run ``pip install <archive>``
 to install from the source tarball (perhaps invoking with ``sudo`` if you need
 to install to a protected location).
 
