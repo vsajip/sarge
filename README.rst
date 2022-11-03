@@ -4,6 +4,7 @@
    :alt: GitHub test status
 
 .. |badge2| image:: https://img.shields.io/codecov/c/github/vsajip/sarge
+   :target: https://app.codecov.io/gh/vsajip/sarge
    :alt: GitHub coverage status
 
 Overview
