@@ -165,14 +165,14 @@ Functions
 
 .. function:: shell_quote(s)
 
-   Quote text so that it is safe for Posix command shells.
+   Quote text so that it is safe for POSIX command shells.
 
    For example, "*.py" would be converted to "'*.py'". If the text is
    considered safe it is returned unquoted.
 
    :param s: The value to quote
    :type s: str, or unicode on 2.x
-   :return: A safe version of the input, from the point of view of Posix
+   :return: A safe version of the input, from the point of view of POSIX
             command shells
    :rtype: The passed-in type
 
@@ -295,7 +295,7 @@ Classes
 
    :param source: The source text with the command(s) to run.
    :type source: str
-   :param posix: Whether the source will be parsed using Posix conventions.
+   :param posix: Whether the source will be parsed using POSIX conventions.
    :type posix: bool
    :param kwargs: Any keyword parameters you would pass to
                   :class:`subprocess.Popen`, other than ``stdin`` (for which,

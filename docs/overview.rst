@@ -63,7 +63,7 @@ function, :func:`run`. You can also use conditionals::
 
 The conditional logic is being done by sarge and not the shell -- which means
 you can use the identical code on Windows. Here's an example of some more
-involved use of pipes, which also works identically on Posix and Windows::
+involved use of pipes, which also works identically on POSIX and Windows::
 
     >>> cmd = 'echo foo | tee stdout.log 3>&1 1>&2 2>&3 | tee stderr.log > %s' % os.devnull
     >>> p = run(cmd)
@@ -86,7 +86,7 @@ Why not just use ``subprocess``?
 
 The :mod:`subprocess` module in the standard library contains some very
 powerful functionality. It encapsulates the nitty-gritty details of subprocess
-creation and communication on Posix and Windows platforms, and presents the
+creation and communication on POSIX and Windows platforms, and presents the
 application programmer with a uniform interface to the OS-level facilities.
 However, :mod:`subprocess` does not do much more than this,
 and is difficult to use in some scenarios. For example:

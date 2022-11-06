@@ -1,0 +1,17 @@
+Coghlan
+Sarge
+Reitz
+nitty
+pypy
+macOS
+kwarg
+es
+py
+returncode
+bytestring
+fulfill
+virtualenv
+ftype
+assoc
+tty
+etc

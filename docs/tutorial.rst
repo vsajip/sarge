@@ -13,7 +13,7 @@ sarge is a pure-Python library. You should be able to install it using::
     pip install sarge
 
 for installing ``sarge`` into a virtualenv or other directory where you have
-write permissions. On Posix platforms, you may need to invoke using ``sudo``
+write permissions. On POSIX platforms, you may need to invoke using ``sudo``
 if you need to install ``sarge`` in a protected location such as your system
 Python's ``site-packages`` directory.
 
@@ -363,7 +363,7 @@ You can also use redirection to files as you might expect. For example::
     $ cat /tmp/junk
     foo
 
-You can use ``>``, ``>>``, ``2>``, ``2>>`` which all work as on Posix systems.
+You can use ``>``, ``>>``, ``2>``, ``2>>`` which all work as on POSIX systems.
 However, you can't use ``<`` or ``<<``.
 
 To send things to the bit-bucket in a cross-platform way,
@@ -548,7 +548,7 @@ the above example to work:
   which would depend on how many bytes the Capture reads at a time. You can
   also pass a ``buffer_size=-1`` to indicate that you want to use line-
   buffering, i.e. read a line at a time from the child process. (This may only
-  work as expected if the child process flushes its outbut buffers after every
+  work as expected if the child process flushes its output buffers after every
   line.)
 * We make a ``flush`` call in the ``receiver`` script, to ensure that the pipe
   is flushed to the capture queue. You could avoid the  ``flush`` call in the
@@ -561,7 +561,7 @@ output buffers and doesn't flush them, you could be kept waiting for input
 until the buffers fill up or a flush occurs.
 
 If a third party package you're trying to interact with gives you buffering
-problems, you may or may not have luck (on Posix, at least) using the
+problems, you may or may not have luck (on POSIX, at least) using the
 ``unbuffer`` utility from the ``expect-dev`` package (do a Web search to find
 it). This invokes a program directing its output to a pseudo-tty device which
 gives line buffering behaviour. This doesn't always work, though :-(
@@ -730,7 +730,7 @@ process. This can lead to problems on Windows, where if you don't pass the
 ``SYSTEMROOT`` environment variable, things can break. With ``sarge``, it's
 assumed by default that anything you pass in ``env`` is *added* to the
 contents of ``os.environ``. This is almost always what you want -- after all,
-in a Posix shell, the environment is generally inherited with certain
+in a POSIX shell, the environment is generally inherited with certain
 additions for a specific command invocation. However, if you want to pass a
 complete environment rather than an augmented ``os.environ``, you can do this
 by passing ``replace_env=True`` in the keyword arguments. In that case, the
@@ -857,7 +857,7 @@ see if any have occurred.
 .. versionadded:: 0.18
    The `exception` attribute was added to :class:`Command`.
 
-About threading and forking on Posix
+About threading and forking on POSIX
 ------------------------------------
 
 If you run commands asynchronously by using ``&`` in a command pipeline, then a
@@ -873,7 +873,7 @@ it may vary from machine to machine and even from one run to the next. This has
 nothing to do with ``sarge`` -- there are no guarantees with just plain Bash,
 either.
 
-On Posix, :mod:`subprocess` uses :func:`os.fork` to create the child process,
+On POSIX, :mod:`subprocess` uses :func:`os.fork` to create the child process,
 and you may see dire warnings on the Internet about mixing threads, processes
 and ``fork()``. It *is* a heady mix, to be sure: you need to understand what's
 going on in order to avoid nasty surprises. If you run into any such, it may be
@@ -881,10 +881,10 @@ hard to get help because others can't reproduce the problems. However, that's
 no reason to shy away from providing the functionality altogether. Such issues
 do not occur on Windows, for example: because Windows doesn't have a
 ``fork()`` system call, child processes are created in a different way which
-doesn't give rise to the issues which sometimes crop up in a Posix environment.
+doesn't give rise to the issues which sometimes crop up in a POSIX environment.
 
 For an exposition of the sort of things which might bite you if you are using locks,
-threading and ``fork()`` on Posix, see `this post
+threading and ``fork()`` on POSIX, see `this post
 <https://web.archive.org/web/20211015140727/http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them>`_.
 
 Other resources on this topic:
