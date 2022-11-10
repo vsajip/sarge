@@ -1,5 +1,7 @@
 .. _reference:
 
+.. currentmodule:: sarge
+
 API Reference
 =============
 
@@ -174,7 +176,6 @@ Functions
    :type s: str, or unicode on 2.x
    :return: A safe version of the input, from the point of view of POSIX
             command shells
-   :rtype: The passed-in type
 
 .. function:: shell_format(fmt, *args, **kwargs)
 

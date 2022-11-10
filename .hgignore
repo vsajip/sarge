@@ -1,4 +1,4 @@
-\.(pyc|log|yapf)$
+\.(pyc|log|yapf|json)$
 (\.(idea|tox|egg-info)|build|dist|htmlcov|logs)/
 docs/_build/
 ^MANIFEST$
@@ -7,4 +7,3 @@ random.bin
 \.(dict-validwords|coverage)$
 watcher.conf
 (test\d+|emitter|hello)\.py
-

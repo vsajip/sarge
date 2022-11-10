@@ -38,8 +38,9 @@ except ImportError:  # pragma: no cover
 
 from .shlext import shell_shlex
 
-__all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline', 'shell_format',
-           'run', 'parse_command_line', 'capture_stdout', 'capture_stderr', 'capture_both')
+__all__ = ('shell_quote', 'Capture', 'Command', 'ShellFormatter', 'Pipeline', 'Feeder',
+           'shell_format', 'run', 'parse_command_line', 'capture_stdout',
+           'capture_stderr', 'capture_both', 'get_stdout', 'get_stderr', 'get_both')
 
 __version__ = '0.1.8.dev0'
 __date__ = '2021-12-11'
@@ -80,11 +81,12 @@ def shell_quote(s):
     For example, "*.py" would be converted to "'*.py'". If the text is
     considered safe it is returned unquoted.
 
-    :param s: The value to quote
-    :type s: str (or unicode on 2.x)
-    :return: A safe version of the input, from the point of view of Posix
+    Args:
+        s (str): The value to quote
+
+    Returns:
+        str: A safe version of the input, from the point of view of POSIX
              command shells
-    :rtype: The passed-in type
     """
     assert isinstance(s, string_types)
     if not s:
@@ -99,8 +101,8 @@ def shell_quote(s):
 class ShellFormatter(string.Formatter):
     """
     This class overrides :class:`string.Formatter` to provide a custom
-    :meth:`convert_field` method, which ensures that fields are quoted for
-    safety using :func:`shell_quote`.
+    `convert_field()` method, which ensures that fields are quoted for
+    safety using `shell_quote()`.
     """
 
     def convert_field(self, value, conversion):
@@ -109,14 +111,16 @@ class ShellFormatter(string.Formatter):
 
         If a conversion is specified (e.g. !s, !r), no quoting is performed.
         If *no* conversion is specified, the value is converted to string
-        (using :func:`str`) and that value is quoted using :func:`shell_quote`
+        (using `str()`) and that value is quoted using `shell_quote()`
         before being returned.
-        :param value: The value to be converted
-        :type value: any
-        :param conversion: The conversion to apply
-        :type conversion: str (or None)
-        :return: The converted value
-        :rtype: str
+
+        Args:
+            value (Any): The value to be converted.
+
+            conversion (str|None): The conversion to apply.
+
+        Returns:
+            str: The converted value.
         """
         if conversion is None:
             result = shell_quote(str(value))
@@ -136,15 +140,18 @@ def shell_format(fmt, *args, **kwargs):
     the counter. It's not that hard to specify the values explicitly
     yourself :-)
 
-    :param fmt: The shell command as a format string. Note that you will need
-                to double up braces you want in the result, i.e. { -> {{ and
-                } -> }}, due to the way :meth:`str.format` works.
-    :type fmt: str, or unicode on 2.x
-    :param args: Positional arguments for use with ``fmt``.
-    :param kwargs: Keyword arguments for use with ``fmt``.
-    :return: The formatted shell command, which should be safe for use in
+    Args:
+        fmt (str): The shell command as a format string. Note that you will need
+                   to double up braces you want in the result, i.e. { -> {{ and
+                   } -> }}, due to the way `str.format()` works.
+
+        args (list): Positional arguments for use with ``fmt``.
+
+        kwargs (dict): Keyword arguments for use with ``fmt``.
+
+    Returns:
+        str: The formatted shell command, which should be safe for use in
              shells from the point of view of shell injection.
-    :rtype: The type of ``fmt``.
     """
     return ShellFormatter().vformat(fmt, args, kwargs)
 
@@ -171,13 +178,6 @@ class Capture(WithMixin):
     This class encapsulates an output stream of a sub-process. You just set
     ``stdout`` or ``stderr`` of a :class:`Command` or :class:`Pipeline` to an
     instance of this class.
-
-    :param timeout: The timeout to use for this instance. If not specified,
-                    the module attribute ``default_capture_timeout` is used.
-    :type timeout: float
-    :param buffer_size: The buffer size to use when reading from streams.
-                        If not specified, a 4K buffer is used.
-    :type buffer_size: int
     """
     counter = 1
 
@@ -188,6 +188,16 @@ class Capture(WithMixin):
     closed = False
 
     def __init__(self, timeout=None, buffer_size=-1, encoding='utf-8'):
+        """
+        Create a new instance.
+
+        Args:
+            timeout (float): The timeout to use for this instance. If not specified,
+                             the module attribute ``default_capture_timeout` is used.
+            buffer_size (int): The buffer size to use when reading from streams.
+                               If not specified, a 4K buffer is used.
+            encoding (str): The encoding to use.
+        """
         self.timeout = timeout or default_capture_timeout
         self.streams = []
         self.buffer = queue.Queue()
@@ -208,9 +218,10 @@ class Capture(WithMixin):
         Add a stream to this instance. A new thread is spawned to read from
         the stream into the capture queue for this instance.
 
-        :param stream: An output stream from a child process (i.e. the read
-                       end of a pipe, whose write end is the output stream
-                       from the process.
+        Args:
+            stream (file): An output stream from a child process (i.e. the read
+                           end of a pipe, whose write end is the output stream
+                           from the process.
         """
         self.streams.append(stream)
 
@@ -228,9 +239,11 @@ class Capture(WithMixin):
         """
         The callable used as the runnable in reader threads.
 
-        :param stream: The stream to read.
-        :param ready: A :class:`threading.Event` instance to set when the
-                      reader thread starts executing.
+        Args:
+            stream (file): The stream to read.
+
+            ready (threading.Event): An Event instance to set when the
+                                     reader thread starts executing.
         """
         ready.set()
         chunk_size = self.buffer_size
@@ -286,6 +299,21 @@ class Capture(WithMixin):
         return result
 
     def read(self, size=-1, block=True, timeout=None):
+        """
+        Read some bytes from this instance.
+
+        Args:
+            size (int): The number of bytes to read. If less than zero, the
+                        reading continues until there is no more data.
+
+            block (bool): If ``True``, don't return until the required bytes
+                          are available.
+
+            timeout (float): The timeout in seconds.
+
+        Returns:
+            bytes: The bytes requested.
+        """
         if not self.streams_open():
             block = False
             timeout = None
@@ -322,6 +350,18 @@ class Capture(WithMixin):
         return self.read(n)
 
     def readline(self, size=-1, block=True, timeout=None):
+        """
+        Read a line from this instance, optionally up to a certain size.
+
+        Args:
+            size (int): If specified as greater than zero, this many bytes
+                        are returned even if not a complete line.
+
+            block (bool): If ``True``, don't return until the required bytes
+                          are available.
+
+            timeout (float): The timeout in seconds.
+        """
         if not self.streams_open():
             block = False
             timeout = None
@@ -349,6 +389,17 @@ class Capture(WithMixin):
         return result
 
     def readlines(self, sizehint=-1, block=True, timeout=None):
+        """
+        Read multiple lines from this instance.
+
+        Args:
+            sizehint (int): A suggested number of bytes to read.
+
+            block (bool): If ``True``, don't return until the required bytes
+                          are available.
+
+            timeout (float): The timeout in seconds.
+        """
         if not self.streams_open():
             block = False
             timeout = None
@@ -371,7 +422,17 @@ class Capture(WithMixin):
                 self.matched.set()
 
     def expect(self, pattern, timeout=None):
+        """
+        Wait for a pattern to appear.
 
+        Args:
+            pattern (str|bytes): The pattern to wait for.
+
+            timeout (float): The timeout in seconds.
+
+        Returns:
+            bytes: The matching input.
+        """
         def as_pattern(p):
             if isinstance(p, string_types):
                 if isinstance(p, text_type):
@@ -397,6 +458,16 @@ class Capture(WithMixin):
             yield line
 
     def close(self, stop_threads=False):
+        """
+        Close this instance. Once this is done, no attempts should be made to read from it.
+
+        We don't mark it as closed, so that a TextIOWrapper wrapping it won't fail
+        before all the input has been read.
+
+        Args:
+            stop_threads (bool): If ``True``, the threads populating this instance are
+                                 asked to stop.
+        """
         if stop_threads:
             self._done = True  # may lose some data sent from subprocess
         for t in self.threads:
@@ -589,19 +660,19 @@ class Command(object):
     """
     This class represents a shell command to be run in a subprocess.
 
-    :param args:   The command string or array or command/args to be run.
-    :type args:    This is the same as the first argument to the constructor of
-                   :class:`subprocess.Popen'.
-    :param kwargs: The same as you would pass to :class:`subprocess.Popen'.
-                   However, the ``env`` parameter is handled differently: it
-                   is treated as a set of *additional* environment variables
-                   to be added to the values in ``os.environ``, unless the
-                   ``replace_env`` keyword argument is present and truthy, in
-                   which case the env value is used *in place of*
-                   ``os.environ``.
+    Args:
+        args (str|list[str]):   The command string or array or command/args to be run.
 
-                   .. versionadded:: 0.1.6
-                      The ``replace_env`` keyword argument was added.
+        kwargs (dict): The same as you would pass to `subprocess.Popen`.
+                       However, the ``env`` parameter is handled differently: it
+                       is treated as a set of *additional* environment variables
+                       to be added to the values in ``os.environ``, unless the
+                       ``replace_env`` keyword argument is present and truthy, in
+                       which case the env value is used *in place of*
+                       ``os.environ``.
+
+    .. versionadded:: 0.1.6
+       The ``replace_env`` keyword argument was added.
     """
 
     def __init__(self, args, **kwargs):
@@ -646,15 +717,15 @@ class Command(object):
         Run the command with optional input and either synchronously or
         asynchronously.
 
-        :param input: The input to pass to the command subprocess.
-        :type input:  If this is text, it is encoded to bytes using UTF-8.
-                      If it is a byte string, it is used as is. Otherwise, a
-                      file-like object containing bytes should be passed: this
-                      will be read to the end, but not closed.
-        :param async_: If ``True``, this method returns without waiting for the
-                       subprocess to complete. Otherwise, it awaits completion
-                       by calling the :meth:`subprocess.Popen.wait` method.
-        :type async_:  bool
+        Args:
+            input (str|bytes|file): The input to pass to the command subprocess.
+                                        If this is text, it is encoded to bytes using UTF-8.
+                                        If it is a byte string, it is used as is. Otherwise, a
+                                        file-like object containing bytes should be passed: this
+                                        will be read to the end, but not closed.
+            async_ (bool): If ``True``, this method returns without waiting for the
+                           subprocess to complete. Otherwise, it awaits completion
+                           by calling the `subprocess.Popen.wait()` method.
         """
         # noinspection PyBroadException
         if input is None:
@@ -708,8 +779,12 @@ class Command(object):
 
     def wait(self, timeout=None):
         """
-        Wait for a command's underlying sub-process to complete. The timeout
-        parameter only applies for Python >= 3.3 and has no effect otherwise.
+        Wait for a command's underlying sub-process to complete.
+
+        Args:
+            timeout (float): How many seconds to wait.
+                                This parameter only applies for
+                                Python >= 3.3 and has no effect otherwise.
         """
         self.process_ready.wait()
         p = self.process
@@ -1008,15 +1083,17 @@ class CommandLineParser(object):
 class Pipeline(WithMixin):
     """
     This class represents a pipeline of commands.
-
-    :param source: The command line.
-    :type source: str
-    :param posix: Whether Posix conventions are used in the lexer.
-    :type posix: bool
-    :param kwargs: Whatever you might pass to :class:`subprocess.Popen'.
     """
 
     def __init__(self, source, posix=None, **kwargs):
+        """
+        Initialize a new instance.
+
+        Args:
+            source (str|list|tuple): The command line.
+            posix (bool): Whether POSIX conventions are used in the lexer.
+            kwargs (dict): Whatever you might pass to `subprocess.Popen`.
+        """
         if posix is None:
             posix = os.name == 'posix'
         is_shell = kwargs.get('shell', False)
@@ -1043,8 +1120,8 @@ class Pipeline(WithMixin):
         """
         Find the last command node in a parse sub-tree.
 
-        :param node: The root of the sub-tree to search.
-        :type node: An AST node from the parser.
+        Args:
+            node (Node): The root of the sub-tree to search.
         """
         if not hasattr(node, 'parts'):
             result = node
@@ -1055,10 +1132,14 @@ class Pipeline(WithMixin):
 
     def run_node_in_thread(self, node, input, async_):
         """
-        Run a node in a separate thread.
+        Run a node in a separate thread. A thread is created and
+        the `run_node()` method is run with the specified arguments
+        in that thread.
 
-        A thread is created and the run_node method is run with the
-        specified arguments in that thread.
+        Args:
+            node (Node): The node to run.
+            input (str|bytes): The data to pass to the node's command.
+            async_ (bool): This is passed to `run_node()`.
         """
         # When the node is run in a separate thread, we need
         # a sync point for when all the commands have been created
@@ -1079,11 +1160,10 @@ class Pipeline(WithMixin):
         """
         Run the commands in the pipeline.
 
-        :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes.
-        :param async_: If True, don't wait for the pipeline to complete
-                       before returning.
-        :type async_: bool
+        Args:
+            input (str|bytes|file): The data to pass to the command.
+            async_ (bool): If `True`, don't wait for the pipeline to
+                           complete before returning.
         """
         self.commands = []
         self.opened = []
@@ -1146,9 +1226,14 @@ class Pipeline(WithMixin):
 
     def wait(self, timeout=None):
         """
-        Wait for all the commands in the pipeline to complete. The timeout
-        parameter only applies for Python >= 3.3 and has no effect otherwise. It will
-        be applied to each command in turn, so the effect could be cumulative.
+        Wait for all the commands in the pipeline to complete.
+
+        Args:
+            timeout (float): The timeout in seconds.
+                                This parameter only applies for
+                                Python >= 3.3 and has no effect otherwise.
+                                It will be applied to each command in turn,
+                                so the effect could be cumulative.
         """
         logger.debug('pipeline waiting')
         self.wait_events()
@@ -1204,16 +1289,16 @@ class Pipeline(WithMixin):
         """
         This runs a single node in the parse tree.
 
-        :param node: The node to run.
-        :type node: An AST node from the parser.
-        :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes.
-        :param async_: If True, don't wait for the pipeline to complete
-                       before returning.
-        :type async_: bool
-        :param event: If specified, call :meth:`threading.Event.set` on the
-                      event.
-        :type event: :class:`threading.Event' or ``None``.
+        Args:
+            node (Node): The node to run.
+
+            input (str|bytes|file): The data to pass to the command.
+
+            async_ (bool): If `True`, don't wait for the pipeline to complete
+                           before returning.
+
+            event (threading.Event): If specified, call `threading.Event.set()`
+                                     on the event.
         """
         kind = node.kind
         method = 'run_%s_node' % kind
@@ -1231,8 +1316,11 @@ class Pipeline(WithMixin):
 
     def new_command(self, args, **kwargs):
         """
-        Create a new :class:`Command` from the provided arguments,
+        Create a new `Command` from the provided arguments,
         and append it to the list of commands.
+
+        Args:
+            args (list[str]): The command and arguments to be created.
         """
         cmd = Command(args, **kwargs)
         with self.lock:
@@ -1243,11 +1331,13 @@ class Pipeline(WithMixin):
         """
         Get the redirects for a node, if any.
 
-        :param node: An AST node from the parser.
-        :return: The ``stdout`` and ``stderr`` redirect targets. If either of
-                 these is not specified, the corresponding value in the
-                 result will be ``None``.
-        :rtype: tuple
+        Args:
+            node (Node): An AST node from the parser.
+
+        Returns:
+            tuple: The ``stdout`` and ``stderr`` redirect targets.
+                   If either of these is not specified, the
+                   corresponding value in the result will be ``None``.
         """
         stdout = stderr = None
         for fd, fs in node.redirects.items():
@@ -1279,14 +1369,14 @@ class Pipeline(WithMixin):
         """
         This runs a 'logical' node in the parse tree.
 
-        :param node: The node to run.
-        :type node: An AST node from the parser.
-        :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes. Text will be
-                     encoded using UTF-8.
-        :param async_: If True, don't wait for the pipeline to complete
-                       before returning.
-        :type async_: bool
+        Args:
+            node (Node): The node to run.
+
+            input (str|bytes|file): The data to pass to the command.
+                                        Text will be encoded using UTF-8.
+
+            async_ (bool): If `True`, don't wait for the pipeline to complete
+                           before returning.
         """
         logger.debug('started: %s, %s, %s', node, input, async_)
         parts = node.parts
@@ -1346,13 +1436,13 @@ class Pipeline(WithMixin):
         """
         This runs a 'command' node in the parse tree.
 
-        :param node: The node to run.
-        :type node: An AST node from the parser.
-        :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes.
-        :param async_: If True, don't wait for the pipeline to complete
-                       before returning.
-        :type async_: bool
+        Args:
+            node (Node): The node to run.
+
+            input (str|bytes|file): The data to pass to the command.
+
+            async_ (bool): If `True`, don't wait for the pipeline to
+                           complete before returning.
         """
         logger.debug('started: %s, %s, %s', node, input, async_)
         kwargs = dict(self.kwargs)
@@ -1384,7 +1474,13 @@ class Pipeline(WithMixin):
         """
         Get the return code for a node. For a node with multiple commands,
         the return code of the last command (as determined by
-        :meth:`find_last_command` is returned.
+        `find_last_command()` is returned.
+
+        Args:
+            node (Node): The node to query.
+
+        Returns:
+            int|None: The return code for the node.
         """
         if node.kind == 'command':
             last = node
@@ -1396,14 +1492,13 @@ class Pipeline(WithMixin):
         """
         This runs a 'pipeline' node in the parse tree.
 
-        :param node: The node to run.
-        :type node: An AST node from the parser.
-        :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes. Text will be
-                     encoded using UTF-8.
-        :param async_: If True, don't wait for the pipeline to complete
-                       before returning.
-        :type async_: bool
+        Args:
+            node (Node): The node to run.
+
+            input (str|bytes|file): The data to pass to the command.
+
+            async_(bool): If `True`, don't wait for the pipeline to
+                          complete before returning.
         """
         logger.debug('started: %s, %s, %s', node, input, async_)
         parts = node.parts
@@ -1439,14 +1534,13 @@ class Pipeline(WithMixin):
         """
         This runs a 'list' node in the parse tree.
 
-        :param node: The node to run.
-        :type node: An AST node from the parser.
-        :param input: The data to pass to the command.
-        :type input: Bytes, text or a file-like object of bytes. Text will be
-                     encoded using UTF-8.
-        :param async_: If True, don't wait for the pipeline to complete
-                       before returning.
-        :type async_: bool
+        Args:
+            node (Node): The node to run.
+
+            input (str|bytes|file): The data to pass to the command.
+
+            async_(bool): If `True`, don't wait for the pipeline to
+                          complete before returning.
         """
         logger.debug('started: %s, %s, %s', node, input, async_)
         parts = node.parts
@@ -1488,18 +1582,14 @@ def run(cmd, **kwargs):
     in :class:`~subprocess.Popen`: it is treated as a set of *additional*
     environment variables to be added to the values in ``os.environ``.
 
-    :param cmd:    The command string or array or command/args to be run.
-    :type cmd:     This is the same as the first argument to the constructor of
-                   :class:`subprocess.Popen'.
-    :param input: The input to pass to the command subprocess.
-    :type input:  If this is text, it is encoded to bytes using UTF-8. If
-                  it is a byte string, it is used as is. Otherwise, a
-                  file-like object containing bytes should be passed: this
-                  will be read to the end, but not closed.
-    :param async_: If ``True``, this method returns without waiting for the
-                   subprocess to complete. Otherwise, it awaits completion
-                   by calling the :meth:`subprocess.Popen.wait` method.
-    :type async_:  bool
+    Args:
+        cmd (str|list[str]): The command string or array or command/args to be run.
+
+        input (str|bytes|file): The input to pass to the command subprocess.
+
+        async_ (bool): If `True`, this method returns without waiting for the
+                       subprocess to complete. Otherwise, it awaits completion
+                       by calling the `subprocess.Popen.wait()` method.
     """
     input = kwargs.pop('input', None)
     async_ = kwargs.pop('async_', False)
@@ -1514,9 +1604,18 @@ def run(cmd, **kwargs):
 
 def capture_stdout(cmd, **kwargs):
     """
-    This is the same as :func:`run`, but the ``stdout`` is captured. You can
+    This is the same as `run()`, but the ``stdout`` is captured. You can
     access this via the ``stdout`` attribute of the return value from this
     function.
+
+    Args:
+        cmd (str|list[str]): The command string or array or command/args to be run.
+
+        input (str|bytes|file): The input to pass to the command subprocess.
+
+        async_ (bool): If `True`, this method returns without waiting for the
+                       subprocess to complete. Otherwise, it awaits completion
+                       by calling the `subprocess.Popen.wait()` method.
     """
     kwargs['stdout'] = Capture()
     return run(cmd, **kwargs)
@@ -1524,9 +1623,18 @@ def capture_stdout(cmd, **kwargs):
 
 def capture_stderr(cmd, **kwargs):
     """
-    This is the same as :func:`run`, but the ``stderr`` is captured. You can
+    This is the same as `run()`, but the ``stderr`` is captured. You can
     access this via the ``stderr`` attribute of the return value from this
     function.
+
+    Args:
+        cmd (str|list[str]): The command string or array or command/args to be run.
+
+        input (str|bytes|file): The input to pass to the command subprocess.
+
+        async_ (bool): If `True`, this method returns without waiting for the
+                       subprocess to complete. Otherwise, it awaits completion
+                       by calling the `subprocess.Popen.wait()` method.
     """
     kwargs['stderr'] = Capture()
     return run(cmd, **kwargs)
@@ -1534,9 +1642,18 @@ def capture_stderr(cmd, **kwargs):
 
 def capture_both(cmd, **kwargs):
     """
-    This is the same as :func:`run`, but the ``stdout`` and ``stderr`` are
+    This is the same as `run()`, but the ``stdout`` and ``stderr`` are
     both captured. You can access these via the ``stdout`` and
     ``stderr`` attributes of the return value from this function.
+
+    Args:
+        cmd (str|list[str]): The command string or array or command/args to be run.
+
+        input (str|bytes|file): The input to pass to the command subprocess.
+
+        async_ (bool): If `True`, this method returns without waiting for the
+                       subprocess to complete. Otherwise, it awaits completion
+                       by calling the `subprocess.Popen.wait()` method.
     """
     kwargs['stdout'] = Capture()
     kwargs['stderr'] = Capture()
@@ -1545,7 +1662,7 @@ def capture_both(cmd, **kwargs):
 
 def get_stdout(cmd, **kwargs):
     """
-    This is the same as :func:`capture_stdout`, but it returns the captured
+    This is the same as `capture_stdout()`, but it returns the captured
     text. Use this when you know the output will not be voluminous - it will
     be buffered in memory.
     """
@@ -1555,7 +1672,7 @@ def get_stdout(cmd, **kwargs):
 
 def get_stderr(cmd, **kwargs):
     """
-    This is the same as :func:`capture_stderr`, but it returns the captured
+    This is the same as `capture_stderr()`, but it returns the captured
     text. Use this when you know the output will not be voluminous - it will
     be buffered in memory.
     """
@@ -1565,7 +1682,7 @@ def get_stderr(cmd, **kwargs):
 
 def get_both(cmd, **kwargs):
     """
-    This is the same as :func:`capture_both`, but it returns the captured
+    This is the same as `capture_both()`, but it returns the captured
     text from the two streams as a 2-element tuple, with the ``stdout`` text as
     the first element and the ``stderr`` text as the second. Use this when you
     know the output will not be voluminous - it will be buffered in memory.
@@ -1578,10 +1695,10 @@ def parse_command_line(source, posix=None):
     """
     Parse a command line into an AST.
 
-    :param source: The command line to parse.
-    :type source: str
-    :param posix: Whether Posix conventions are used in the lexer.
-    :type posix: bool
+    Args:
+        source (str): The command line to parse.
+
+        posix (bool): Whether POSIX conventions are used in the lexer.
     """
     if posix is None:
         posix = os.name == 'posix'

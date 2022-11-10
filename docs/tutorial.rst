@@ -125,18 +125,18 @@ whereas this would have been more involved if you were just using
     0
 
 You get two return codes, one for each command. The same information is
-available from ``sarge``, in one place -- the :class:`Pipeline` instance that's
-returned from a :func:`run` call::
+available from ``sarge``, in one place -- the :class:`~sarge.Pipeline` instance that's
+returned from a :func:`~sarge.run` call::
 
     >>> run('echo "Hello,"; echo "world!"').returncodes
     Hello,
     world!
     [0, 0]
 
-The :attr:`returncodes` property of a :class:`Pipeline` instance returns a
+The :attr:`returncodes` property of a :class:`~sarge.Pipeline` instance returns a
 list of the return codes of all the commands that were run,
 whereas the :attr:`returncode` property just returns the last element of
-this list. The :class:`Pipeline` class defines a number of useful properties
+this list. The :class:`~sarge.Pipeline` class defines a number of useful properties
 - see the reference for full details.
 
 Handling user input safely
@@ -162,7 +162,7 @@ Formatting commands with placeholders for safe usage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you need to merge commands with external inputs (e.g. user inputs) and you
-want to prevent shell injection attacks, you can use the :func:`shell_format`
+want to prevent shell injection attacks, you can use the :func:`~sarge.shell_format`
 function. This takes a format string, positional and keyword arguments and
 uses the new formatting (:meth:`str.format`) to produce the result::
 
@@ -182,7 +182,7 @@ just use the ``s`` conversion::
     >>> shell_format('ls {0!s}', '*.py')
     'ls *.py'
 
-There is also a :func:`shell_quote` function which quotes potentially unsafe
+There is also a :func:`~sarge.shell_quote` function which quotes potentially unsafe
 input::
 
     >>> from sarge import shell_quote
@@ -195,14 +195,14 @@ input::
     >>> shell_quote("'ab?'")
     '"\'ab?\'"'
 
-This function is used internally by :func:`shell_format`, so you shouldn't need
+This function is used internally by :func:`~sarge.shell_format`, so you shouldn't need
 to call it directly except in unusual cases.
 
 Passing input data to commands
 ------------------------------
 
 You can pass input to a command pipeline using the ``input`` keyword parameter
-to :func:`run`::
+to :func:`~sarge.run`::
 
     >>> from sarge import run
     >>> p = run('cat|cat', input='foo')
@@ -375,7 +375,7 @@ you can do something like::
 Capturing ``stdout`` and ``stderr`` from commands
 -------------------------------------------------
 
-To capture output for commands, just pass a :class:`Capture` instance for the
+To capture output for commands, just pass a :class:`~sarge.Capture` instance for the
 relevant stream::
 
     >>> from sarge import run, Capture
@@ -384,26 +384,26 @@ relevant stream::
     u'foo\nbar\n'
 
 
-The :class:`Capture` instance acts like a stream you can read from: it has
-:meth:`~Capture.read`, :meth:`~Capture.readline` and :meth:`~Capture.readlines`
-methods which you can call just like on any file-like object,
-except that they offer additional options through ``block`` and ``timeout``
-keyword parameters.
+The :class:`~sarge.Capture` instance acts like a stream you can read from: it has
+:meth:`~sarge.Capture.read`, :meth:`~sarge.Capture.readline` and
+:meth:`~sarge.Capture.readlines` methods which you can call just like on any
+file-like object, except that they offer additional options through ``block``
+and ``timeout`` keyword parameters.
 
 As in the above example, you can use the ``bytes`` or ``text`` property of a
-:class:`Capture` instance to read all the bytes or text captured. The latter
+:class:`~sarge.Capture` instance to read all the bytes or text captured. The latter
 just decodes the former using UTF-8 (the default encoding isn't used,
 because on Python 2.x, the default encoding isn't UTF-8 -- it's ASCII).
 
-There are some convenience functions -- :func:`capture_stdout`,
-:func:`capture_stderr` and :func:`capture_both` -- which work just like
-:func:`run` but capture the relevant streams to :class:`Capture` instances,
+There are some convenience functions -- :func:`~sarge.capture_stdout`,
+:func:`~sarge.capture_stderr` and :func:`~sarge.capture_both` -- which work just like
+:func:`~sarge.run` but capture the relevant streams to :class:`~sarge.Capture` instances,
 which can be accessed using the appropriate attribute on the
-:class:`Pipeline` instance returned from the functions.
+:class:`~sarge.Pipeline` instance returned from the functions.
 
-There are more convenience functions, :func:`get_stdout`, :func:`get_stderr`
-and :func:`get_both`, which work just like :func:`capture_stdout`,
-:func:`capture_stderr` and :func:`capture_both` respectively, but return the
+There are more convenience functions, :func:`~sarge.get_stdout`, :func:`~sarge.get_stderr`
+and :func:`~sarge.get_both`, which work just like :func:`~sarge.capture_stdout`,
+:func:`~sarge.capture_stderr` and :func:`~sarge.capture_both` respectively, but return the
 captured text. For example::
 
     >>> from sarge import get_stdout
@@ -411,14 +411,14 @@ captured text. For example::
     u'foo\nbar\n'
 
 .. versionadded:: 0.1.1
-   The :func:`get_stdout`, :func:`get_stderr` and :func:`get_both` functions
+   The :func:`~sarge.get_stdout`, :func:`~sarge.get_stderr` and :func:`~sarge.get_both` functions
    were added.
 
 
-A :class:`Capture` instance can capture output from one or
+A :class:`~sarge.Capture` instance can capture output from one or
 more sub-process streams, and will create a thread for each such stream so
 that it can read all sub-process output without causing the sub-processes to
-block on their output I/O. However, if you use a :class:`Capture`,
+block on their output I/O. However, if you use a :class:`~sarge.Capture`,
 you should be prepared either to consume what it's read from the
 sub-processes, or else be prepared for it all to be buffered in memory (which
 may be problematic if the sub-processes generate a *lot* of output).
@@ -426,7 +426,7 @@ may be problematic if the sub-processes generate a *lot* of output).
 Iterating over captures
 -----------------------
 
-You can iterate over :class:`Capture` instances. By default you will get
+You can iterate over :class:`~sarge.Capture` instances. By default you will get
 successive lines from the captured data, as bytes; if you want text,
 you can wrap with :class:`io.TextIOWrapper`. Here's an example using Python
 3.2::
@@ -534,7 +534,7 @@ to do some things slightly differently:
 The ``p.returncode`` didn't print anything, indicating that the return code
 was ``None``. This means that although the child process has exited,
 it's still a zombie because we haven't "reaped" it by making a call to
-:meth:`~Command.wait`. Once that's done, the zombie disappears and we get the
+:meth:`~sarge.Command.wait`. Once that's done, the zombie disappears and we get the
 return code.
 
 Buffering issues
@@ -570,7 +570,7 @@ Looking for specific patterns in child process output
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can look for specific patterns in the output of a child process, by using
-the :meth:`~Capture.expect` method of the :class:`Capture` class. This takes a
+the :meth:`~sarge.Capture.expect` method of the :class:`~sarge.Capture` class. This takes a
 string, bytestring or regular expression pattern object and a timeout, and
 either returns a regular expression match object (if a match was found in the
 specified timeout) or ``None`` (if no match was found in the specified
@@ -588,7 +588,7 @@ newlines (CRLF).
 .. versionadded:: 0.1.1
    The ``expect`` method was added.
 
-To illustrate usage of :meth:`Capture.expect`, consider the program
+To illustrate usage of :meth:`~sarge.Capture.expect`, consider the program
 ``lister.py`` (which is provided as part of the source distribution, as it's
 used in the tests). This prints ``line 1``, ``line 2`` etc. indefinitely with
 a configurable delay, flushing its output stream after each line. We can
@@ -755,22 +755,22 @@ value of the ``env`` keyword argument is passed as-is to the child process.
 Working directory and other options
 -----------------------------------
 
-You can set the working directory for a :class:`Command` or :class:`Pipeline`
+You can set the working directory for a :class:`~sarge.Command` or :class:`~sarge.Pipeline`
 using the ``cwd`` keyword argument to the constructor, which is passed through
 to the subprocess when it's created. Likewise, you can use the other keyword
 arguments which are accepted by the :class:`subprocess.Popen` constructor.
 
 Avoid using the ``stdin`` keyword argument -- instead, use the ``input`` keyword
-argument to the :meth:`Command.run` and :meth:`Pipeline.run` methods, or the
-:func:`run`, :func:`capture_stdout`, :func:`capture_stderr`, and
-:func:`capture_both` functions. The ``input`` keyword makes it easier for you
+argument to the :meth:`~sarge.Command.run` and :meth:`~sarge.Pipeline.run` methods, or the
+:func:`~sarge.run`, :func:`~sarge.capture_stdout`, :func:`~sarge.capture_stderr`, and
+:func:`~sarge.capture_both` functions. The ``input`` keyword makes it easier for you
 to pass literal text or byte data.
 
 Unicode and bytes
 -----------------
 
 All data between your process and sub-processes is communicated as bytes. Any
-text passed as input to :func:`run` or a :meth:`~Pipeline.run` method will be
+text passed as input to :func:`~sarge.run` or a :meth:`~sarge.Pipeline.run` method will be
 converted to bytes using UTF-8 (the default encoding isn't used, because on
 Python 2.x, the default encoding isn't UTF-8 -- it's ASCII).
 
@@ -779,14 +779,14 @@ import unicode_literals`` and byte literals like ``b'foo'`` so that your code
 looks and behaves the same under Python 2.x and Python 3.x. (See the note on
 using native string keys and values in :ref:`environments`.)
 
-As mentioned above, :class:`Capture` instances return bytes, but you can wrap
+As mentioned above, :class:`~sarge.Capture` instances return bytes, but you can wrap
 with :class:`io.TextIOWrapper` if you want text.
 
 
 Use as context managers
 -----------------------
 
-The :class:`Capture` and :class:`Pipeline` classes can be used as context
+The :class:`~sarge.Capture` and :class:`~sarge.Pipeline` classes can be used as context
 managers::
 
     >>> with Capture() as out:
@@ -801,11 +801,11 @@ managers::
 Synchronous and asynchronous execution of commands
 --------------------------------------------------
 
-By default. commands passed to :func:`run` run synchronously,
+By default. commands passed to :func:`~sarge.run` run synchronously,
 i.e. all commands run to completion before the call returns. However, you can
-pass ``async_=True`` to run, in which case the call returns a :class:`Pipeline`
+pass ``async_=True`` to run, in which case the call returns a :class:`~sarge.Pipeline`
 instance before all the commands in it have run. You will need to call
-:meth:`~Pipeline.wait` or :meth:`~Pipeline.close` on this instance when you
+:meth:`~sarge.Pipeline.wait` or :meth:`~sarge.Pipeline.close` on this instance when you
 are ready to synchronise with it; this is needed so that the sub processes
 can be properly disposed of (otherwise, you will leave zombie processes
 hanging around, which show up, for example, as ``<defunct>`` on Linux systems
@@ -828,7 +828,7 @@ In another terminal, you can see the zombies::
     vinay     4222  4217  0 19:27 pts/0    00:00:00 [cat] <defunct>
     vinay     4223  4217  0 19:27 pts/0    00:00:00 [cat] <defunct>
 
-Now back in the interactive Python session, we call :meth:`~Pipeline.close` on
+Now back in the interactive Python session, we call :meth:`~sarge.Pipeline.close` on
 the pipeline::
 
     >>> p.close()
@@ -843,19 +843,19 @@ No zombies found :-)
 Handling errors in asynchronous mode
 ------------------------------------
 
-If an exception occurs calling :meth:`~Command.run` when trying to start a child
+If an exception occurs calling :meth:`~sarge.Command.run` when trying to start a child
 process in synchronous mode, it's raised immediately. However, when running in
 asynchronous mode (`async_=True`), there will be a command pipeline which is run in a
 separate thread. In this case, the exception is caught in that thread but not
 propagated to the calling thread; instead, it is stored in the `exception` attribute of
-the :class:`Command` instance. The `process` attribute of that instance will be `None`,
+the :class:`~sarge.Command` instance. The `process` attribute of that instance will be `None`,
 as the child process couldn't be started.
 
-You can check the `exception` attributes of commands in a :class:`Pipeline` instance to
+You can check the `exception` attributes of commands in a :class:`~sarge.Pipeline` instance to
 see if any have occurred.
 
 .. versionadded:: 0.18
-   The `exception` attribute was added to :class:`Command`.
+   The `exception` attribute was added to :class:`~sarge.Command`.
 
 About threading and forking on POSIX
 ------------------------------------

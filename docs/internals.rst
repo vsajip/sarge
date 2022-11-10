@@ -1,5 +1,7 @@
 .. _internals:
 
+.. currentmodule:: sarge
+
 Under the hood
 ==============
 
@@ -14,12 +16,13 @@ This section describes how :class:`Capture` is implemented.
 Basic approach
 ^^^^^^^^^^^^^^
 
-A :class:`Capture` consists of a queue, some output streams from sub-processes,
-and some threads to read from those streams into the queue. One thread is
-created for each stream, and the thread exits when its stream has been
-completely read. When you read from a :class:`Capture` instance using methods
-like :meth:`~Capture.read`, :meth:`~Capture.readline` and
-:meth:`~Capture.readlines`, you are effectively reading from the queue.
+A :class:`~sarge.Capture` consists of a queue, some output streams from
+sub-processes, and some threads to read from those streams into the queue. One
+thread is created for each stream, and the thread exits when its stream has
+been completely read. When you read from a :class:`~sarge.Capture` instance
+using methods like :meth:`~sarge.Capture.read`, :meth:`~sarge.Capture.readline`
+and :meth:`~sarge.Capture.readlines`, you are effectively reading from the
+queue.
 
 Blocking and timeouts
 ^^^^^^^^^^^^^^^^^^^^^
