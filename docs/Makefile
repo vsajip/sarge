@@ -46,7 +46,7 @@ pdoc:
 	pdoc -o $(BUILDDIR)/html/apidocs --no-show-source --docformat google --logo https://www.red-dove.com/assets/img/rdclogo.gif ../sarge
 
 apidocs:
-	docfrag --venv local_tools --libs .. sarge -f hovertip > hover.json
+	docfrag --libs .. sarge -f hovertip > hover.json
 
 remote:
 	rsync -avz $(BUILDDIR)/html/* vopal:~/apps/rdc_docs/sarge
