@@ -184,7 +184,7 @@ and pypy3 on Linux, Windows, and macOS.
 Project status
 --------------
 
-The project has reached alpha status in its development: there is a test
+The project has reached production/stable status in its development: there is a test
 suite and it has been exercised on Windows, Ubuntu and Mac OS X. However,
 because of the timing sensitivity of the functionality, testing needs to be
 performed on as wide a range of hardware and platforms as possible.
