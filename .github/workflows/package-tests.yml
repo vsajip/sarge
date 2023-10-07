@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12', 'pypy-2.7', 'pypy-3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13-dev', 'pypy-2.7', 'pypy-3.9']
 
     steps:
     - uses: actions/checkout@v3
@@ -50,7 +50,7 @@ jobs:
         coverage run --branch test_sarge.py
         coverage xml
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         flags: unittests
         files: coverage.xml
