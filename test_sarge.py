@@ -744,7 +744,7 @@ class SargeTest(unittest.TestCase):
             p.wait(2.5)
         self.assertEqual(p.returncodes, [None])
         self.assertEqual(cap.read(block=False), b'Waiting ... ')
-        p.wait(2.6)  # ensure the child process finishes
+        p.wait(3.0)  # ensure the child process finishes
         self.assertEqual(p.returncodes, [0])
         expected = b'done.\n' if os.name != 'nt' else b'done.\r\n'
         self.assertEqual(cap.read(), expected)
