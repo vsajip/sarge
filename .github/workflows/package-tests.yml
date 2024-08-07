@@ -54,6 +54,8 @@ jobs:
         coverage run --branch test_sarge.py
         coverage xml
     - name: Upload coverage to Codecov
+      # Repeated failures of Codecov on macos-12
+      if: ${{ matrix.os != 'macos-12' }}
       uses: codecov/codecov-action@v3
       with:
         flags: unittests
