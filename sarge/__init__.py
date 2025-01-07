@@ -411,6 +411,10 @@ class Capture(WithMixin):
         self.current = None
         return data.splitlines(True)
 
+    def flush(self):
+        # This is sometimes called when you pass an instance to a TextIOWrapper
+        pass
+
     def _try_match(self):
         data = self.bytes
         if data and self.pattern:
