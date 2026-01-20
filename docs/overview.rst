@@ -219,10 +219,16 @@ feature, and ``sarge`` should be useful without it.
 Change log
 ----------
 
-0.1.8 (future)
+0.1.9 (future)
 ~~~~~~~~~~~~~~
 
 Released: Not yet.
+
+
+0.1.8
+~~~~~
+
+Released: 2026-01-20
 
 
 - Fixed #55: Polled subcommands in order to return up-to-date return codes in
@@ -231,6 +237,9 @@ Released: Not yet.
 - Fixed #56: Ensure process_ready event is set at the appropriate time.
 
 - Fixed #57: Stored exception in command node for use when in asynchronous mode.
+
+- Fixed #58: Ensure ``Capture`` object has a ``flush`` method.
+
 
 0.1.7
 ~~~~~
